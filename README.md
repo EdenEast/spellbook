@@ -13,14 +13,26 @@ just list           # list pi packages
 just config         # open pi package config UI
 ```
 
-For project-local installation:
+Set `PI_BIN` to use a non-default pi executable, or `SPELLBOOK_PI_SOURCE` to install from another checkout path.
+
+## Install skills with Claude Code
+
+For now, Claude Code installation only uses `source/skills`.
 
 ```sh
-just install-local
-just uninstall-local
+just install-claude          # link skills into ~/.claude/skills
+just uninstall-claude        # remove those links
 ```
 
-Set `PI_BIN` to use a non-default pi executable, or `SPELLBOOK_PI_SOURCE` to install from another checkout path.
+The installer links each skill directory directly because Claude Code discovers skills as immediate children of its `skills` directory. It refuses conflicts by default. Use the script directly for extra options:
+
+```sh
+scripts/claude-skills.sh install --dry-run
+scripts/claude-skills.sh install --backup
+scripts/claude-skills.sh install --force
+```
+
+Set `CLAUDE_CODE_DIR` to use a non-default Claude Code config directory, or `SPELLBOOK_SKILLS_SOURCE` to install skills from another checkout path.
 
 ## Home Manager
 

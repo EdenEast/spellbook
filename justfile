@@ -3,6 +3,7 @@ set dotenv-load := true
 repo := justfile_directory()
 pi := env_var_or_default("PI_BIN", "pi")
 source := env_var_or_default("SPELLBOOK_PI_SOURCE", repo)
+claude_skills := repo / "scripts" / "claude-skills.sh"
 
 _default:
     @just --list
@@ -22,17 +23,17 @@ remove: uninstall
 list:
     {{pi}} list
 
-# Install this repository as a project-local pi package in the current directory.
-install-local:
-    {{pi}} install {{source}} -l
-
-# Remove this repository as a project-local pi package in the current directory.
-uninstall-local:
-    {{pi}} remove {{source}} -l
-
 # Run pi's package config UI.
 config:
     {{pi}} config
+
+# Install source/skills into Claude Code's user skills directory.
+install-claude:
+    {{claude_skills}} install
+
+# Remove source/skills from Claude Code's user skills directory.
+uninstall-claude:
+    {{claude_skills}} uninstall
 
 # Create node_modules shims to Pi's bundled modules (useful on NixOS).
 shim-node-modules:

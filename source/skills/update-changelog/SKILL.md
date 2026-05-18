@@ -1,4 +1,3 @@
-
 ---
 name: update-changelog
 description: "Read this skill before updating changelogs"

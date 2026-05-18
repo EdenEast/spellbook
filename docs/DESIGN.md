@@ -13,6 +13,16 @@
 - Automatically installing npm dependencies.
 - Profiles or resource groups.
 
+## Claude Code install model
+
+Claude Code support currently installs only `source/skills`. Unlike pi's package install, the local helper links each skill as a direct child of Claude Code's skills directory:
+
+```text
+~/.claude/skills/<skill-name> -> $REPO/source/skills/<skill-name>
+```
+
+A second-level `spellbook` namespace is intentionally not used because Claude Code discovers skills from immediate child directories containing `SKILL.md`. The installer is conservative: it creates parent directories, refuses conflicts by default, supports `--backup`, `--force`, and `--dry-run`, and uninstall only removes symlinks that still point at the current skills source.
+
 ## Install model
 
 Resources are linked below a `spellbook` namespace inside pi's normal additive directories:
