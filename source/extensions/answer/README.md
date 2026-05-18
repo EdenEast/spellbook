@@ -14,7 +14,7 @@ Extract questions from the last assistant message and answer them in an interact
 3. Shows each question in an interactive form.
 4. Sends the compiled answers back as a follow-up message and triggers the next turn.
 
-Model selection prefers `openai-codex/gpt-5.3` when available, then `anthropic/claude-haiku-4-5`, then the currently selected model.
+Question extraction uses the currently selected model with low reasoning.
 
 ## TUI controls
 

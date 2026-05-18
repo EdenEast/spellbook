@@ -10,7 +10,7 @@
  * 4. Submits the compiled answers when done
  */
 
-import { complete, type Model, type Api, type UserMessage } from "@earendil-works/pi-ai";
+import { completeSimple, type Model, type Api, type UserMessage } from "@earendil-works/pi-ai";
 import type { ExtensionAPI, ExtensionContext, ModelRegistry } from "@earendil-works/pi-coding-agent";
 import { BorderedLoader } from "@earendil-works/pi-coding-agent";
 import {
@@ -34,6 +34,11 @@ interface ExtractedQuestion {
 interface ExtractionResult {
 	questions: ExtractedQuestion[];
 }
+
+type ExtractionOutcome =
+	| { status: "ok"; result: ExtractionResult; warning?: string }
+	| { status: "cancelled" }
+	| { status: "error"; error: string };
 
 const SYSTEM_PROMPT = `You are a question extractor. Given text from a conversation, extract any questions that need answering.
 
@@ -67,35 +72,16 @@ Example output:
   ]
 }`;
 
-const CODEX_MODEL_ID = "gpt-5.3";
-const HAIKU_MODEL_ID = "claude-haiku-4-5";
-
 /**
- * Prefer GPT-5.3 for extraction when available, otherwise fallback to haiku or the current model.
+ * Use the currently selected model for extraction so /answer follows the user's
+ * active model/provider/auth settings. The extraction request asks for low
+ * reasoning via completeSimple().
  */
 async function selectExtractionModel(
 	currentModel: Model<Api>,
-	modelRegistry: ModelRegistry,
+	_modelRegistry: ModelRegistry,
 ): Promise<Model<Api>> {
-	const codexModel = modelRegistry.find("openai-codex", CODEX_MODEL_ID);
-	if (codexModel) {
-		const auth = await modelRegistry.getApiKeyAndHeaders(codexModel);
-		if (auth.ok) {
-			return codexModel;
-		}
-	}
-
-	const haikuModel = modelRegistry.find("anthropic", HAIKU_MODEL_ID);
-	if (!haikuModel) {
-		return currentModel;
-	}
-
-	const auth = await modelRegistry.getApiKeyAndHeaders(haikuModel);
-	if (auth.ok === false) {
-		return currentModel;
-	}
-
-	return haikuModel;
+	return currentModel;
 }
 
 /**
@@ -104,22 +90,66 @@ async function selectExtractionModel(
 function parseExtractionResult(text: string): ExtractionResult | null {
 	try {
 		// Try to find JSON in the response (it might be wrapped in markdown code blocks)
-		let jsonStr = text;
+		let jsonStr = text.trim();
 
 		// Remove markdown code block if present
 		const jsonMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/);
 		if (jsonMatch) {
 			jsonStr = jsonMatch[1].trim();
+		} else {
+			// Some models include a short preface. Extract the outer JSON object when possible.
+			const firstBrace = jsonStr.indexOf("{");
+			const lastBrace = jsonStr.lastIndexOf("}");
+			if (firstBrace !== -1 && lastBrace > firstBrace) {
+				jsonStr = jsonStr.slice(firstBrace, lastBrace + 1);
+			}
 		}
 
 		const parsed = JSON.parse(jsonStr);
 		if (parsed && Array.isArray(parsed.questions)) {
-			return parsed as ExtractionResult;
+			return {
+				questions: parsed.questions
+					.filter((q: unknown): q is { question: unknown; context?: unknown } =>
+						typeof q === "object" && q !== null && "question" in q,
+					)
+					.map((q) => ({
+						question: String(q.question).trim(),
+						...(typeof q.context === "string" && q.context.trim()
+							? { context: q.context.trim() }
+							: {}),
+					}))
+					.filter((q) => q.question.length > 0),
+			};
 		}
 		return null;
 	} catch {
 		return null;
 	}
+}
+
+/**
+ * Best-effort local fallback so /answer still works when the extraction model
+ * errors or returns non-JSON. It intentionally only captures obvious questions.
+ */
+function extractQuestionsLocally(text: string): ExtractionResult {
+	const questions: ExtractedQuestion[] = [];
+	const seen = new Set<string>();
+
+	for (const rawLine of text.split(/\r?\n/)) {
+		const line = rawLine
+			.trim()
+			.replace(/^[-*]\s+/, "")
+			.replace(/^\d+[.)]\s+/, "")
+			.trim();
+
+		if (!line.endsWith("?") || line.length < 2) continue;
+		if (seen.has(line)) continue;
+
+		seen.add(line);
+		questions.push({ question: line });
+	}
+
+	return { questions };
 }
 
 /**
@@ -447,54 +477,90 @@ export default function (pi: ExtensionAPI) {
 				return;
 			}
 
-			// Select the best model for extraction (prefer GPT-5.3, then haiku)
+			// Use the current model for extraction at low reasoning.
 			const extractionModel = await selectExtractionModel(ctx.model, ctx.modelRegistry);
 
 			// Run extraction with loader UI
-			const extractionResult = await ctx.ui.custom<ExtractionResult | null>((tui, theme, _kb, done) => {
-				const loader = new BorderedLoader(tui, theme, `Extracting questions using ${extractionModel.id}...`);
-				loader.onAbort = () => done(null);
+			const extractionOutcome = await ctx.ui.custom<ExtractionOutcome>((tui, theme, _kb, done) => {
+				const loader = new BorderedLoader(tui, theme, `Extracting questions using ${extractionModel.id} (low reasoning)...`);
+				loader.onAbort = () => done({ status: "cancelled" });
 
-				const doExtract = async () => {
-					const auth = await ctx.modelRegistry.getApiKeyAndHeaders(extractionModel);
-					if (auth.ok === false) {
-						throw new Error(auth.error);
+				const doExtract = async (): Promise<ExtractionOutcome> => {
+					try {
+						const auth = await ctx.modelRegistry.getApiKeyAndHeaders(extractionModel);
+						if (auth.ok === false) {
+							throw new Error(auth.error);
+						}
+						const userMessage: UserMessage = {
+							role: "user",
+							content: [{ type: "text", text: lastAssistantText! }],
+							timestamp: Date.now(),
+						};
+
+						const response = await completeSimple(
+							extractionModel,
+							{ systemPrompt: SYSTEM_PROMPT, messages: [userMessage] },
+							{ apiKey: auth.apiKey, headers: auth.headers, signal: loader.signal, reasoning: "low" },
+						);
+
+						if (response.stopReason === "aborted") {
+							return { status: "cancelled" };
+						}
+
+						const responseText = response.content
+							.filter((c): c is { type: "text"; text: string } => c.type === "text")
+							.map((c) => c.text)
+							.join("\n");
+
+						const parsed = parseExtractionResult(responseText);
+						if (parsed) {
+							return { status: "ok", result: parsed };
+						}
+
+						const fallback = extractQuestionsLocally(lastAssistantText!);
+						if (fallback.questions.length > 0) {
+							return {
+								status: "ok",
+								result: fallback,
+								warning: "Model returned invalid JSON; used local question extraction fallback",
+							};
+						}
+
+						return { status: "error", error: "Question extraction returned invalid JSON" };
+					} catch (error) {
+						const fallback = extractQuestionsLocally(lastAssistantText!);
+						if (fallback.questions.length > 0) {
+							return {
+								status: "ok",
+								result: fallback,
+								warning: `Question extraction model failed; used local fallback (${error instanceof Error ? error.message : String(error)})`,
+							};
+						}
+
+						return { status: "error", error: error instanceof Error ? error.message : String(error) };
 					}
-					const userMessage: UserMessage = {
-						role: "user",
-						content: [{ type: "text", text: lastAssistantText! }],
-						timestamp: Date.now(),
-					};
-
-					const response = await complete(
-						extractionModel,
-						{ systemPrompt: SYSTEM_PROMPT, messages: [userMessage] },
-						{ apiKey: auth.apiKey, headers: auth.headers, signal: loader.signal },
-					);
-
-					if (response.stopReason === "aborted") {
-						return null;
-					}
-
-					const responseText = response.content
-						.filter((c): c is { type: "text"; text: string } => c.type === "text")
-						.map((c) => c.text)
-						.join("\n");
-
-					return parseExtractionResult(responseText);
 				};
 
-				doExtract()
-					.then(done)
-					.catch(() => done(null));
+				doExtract().then(done);
 
 				return loader;
 			});
 
-			if (extractionResult === null) {
+			if (extractionOutcome.status === "cancelled") {
 				ctx.ui.notify("Cancelled", "info");
 				return;
 			}
+
+			if (extractionOutcome.status === "error") {
+				ctx.ui.notify(`Question extraction failed: ${extractionOutcome.error}`, "error");
+				return;
+			}
+
+			if (extractionOutcome.warning) {
+				ctx.ui.notify(extractionOutcome.warning, "warning");
+			}
+
+			const extractionResult = extractionOutcome.result;
 
 			if (extractionResult.questions.length === 0) {
 				ctx.ui.notify("No questions found in the last message", "info");
