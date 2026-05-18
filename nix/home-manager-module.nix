@@ -12,7 +12,7 @@
     else null;
   sourceRoot = "${self}/source";
 
-  enabledResourceLinks = lib.filterAttrs (_: v: v.enable) cfg.resources;
+  enabledResourceLinks = lib.filterAttrs (_: v: v.enable) cfg.sources;
   sourceLink = name: _cfg: {
     name = "${cfg.piDir}/${name}/spellbook";
     value = {

@@ -5,10 +5,10 @@
   "description": "Additive resources for pi-coding-agent.",
   "keywords": ["pi-package"],
   "pi": {
-    "extensions": ["./resources/extensions"],
-    "skills": ["./resources/skills"],
-    "prompts": ["./resources/prompts"],
-    "themes": ["./resources/themes"]
+    "extensions": ["./source/extensions"],
+    "skills": ["./source/skills"],
+    "prompts": ["./source/prompts"],
+    "themes": ["./source/themes"]
   },
   "dependencies": {},
   "devDependencies": {}
