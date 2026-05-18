@@ -46,6 +46,7 @@ import {
 	Spacer,
 	type SelectItem,
 	Text,
+	type AutocompleteItem,
 	TUI,
 	fuzzyMatch,
 	matchesKey,
@@ -63,6 +64,19 @@ const DEFAULT_TODO_SETTINGS = {
 	gcDays: 7,
 };
 const LOCK_TTL_MS = 30 * 60 * 1000;
+
+const TODO_COMMAND_COMPLETIONS: AutocompleteItem[] = [
+	{ value: "help", label: "help", description: "Show todos extension help" },
+	{ value: "list", label: "list", description: "List open and assigned todos (agent tool action)" },
+	{ value: "list-all", label: "list-all", description: "List open, assigned, and closed todos (agent tool action)" },
+	{ value: "get", label: "get", description: "Read a todo by id (agent tool action)" },
+	{ value: "create", label: "create", description: "Create a todo (agent tool action)" },
+	{ value: "update", label: "update", description: "Update todo fields or status (agent tool action)" },
+	{ value: "append", label: "append", description: "Append markdown notes to a todo (agent tool action)" },
+	{ value: "claim", label: "claim", description: "Assign a todo to the current session (agent tool action)" },
+	{ value: "release", label: "release", description: "Release a todo assignment (agent tool action)" },
+	{ value: "delete", label: "delete", description: "Delete a todo (agent tool action)" },
+];
 
 interface TodoFrontMatter {
 	id: string;
@@ -1176,6 +1190,46 @@ function formatTodoList(todos: TodoFrontMatter[]): string {
 	return lines.join("\n");
 }
 
+function buildTodoHelp(todosDirLabel: string): string {
+	return [
+		"todos extension help",
+		"",
+		"Slash command:",
+		"  /todos                 Open the searchable todo manager (or print todos without UI).",
+		"  /todos <search terms>  Open the manager pre-filtered by the search terms.",
+		"  /todos help            Show this help text.",
+		"",
+		"Agent tool actions:",
+		"  list, list-all, get, create, update, append, delete, claim, release",
+		"",
+		"Notes:",
+		`  Storage: ${todosDirLabel}`,
+		"  Todo ids are displayed as TODO-<hex>; id parameters accept TODO-<hex> or raw hex.",
+	].join("\n");
+}
+
+function getTodoArgumentCompletions(argumentPrefix: string): AutocompleteItem[] | null {
+	const prefix = argumentPrefix.trimStart().toLowerCase();
+	if (prefix.includes(" ")) return null;
+
+	const commandMatches = TODO_COMMAND_COMPLETIONS.filter((item) =>
+		item.value.toLowerCase().startsWith(prefix),
+	);
+	const todos = listTodosSync(getTodosDir(process.cwd()));
+	const todoMatches = filterTodos(todos, argumentPrefix).map((todo) => {
+		const title = todo.title || "(untitled)";
+		const tags = todo.tags.length ? ` • ${todo.tags.join(", ")}` : "";
+		return {
+			value: title,
+			label: `${formatTodoId(todo.id)} ${title}`,
+			description: `${todo.status || "open"}${tags}`,
+		};
+	});
+
+	const items = [...commandMatches, ...todoMatches];
+	return items.length > 0 ? items : null;
+}
+
 function serializeTodoForAgent(todo: TodoRecord): string {
 	const payload = { ...todo, id: formatTodoId(todo.id) };
 	return JSON.stringify(payload, null, 2);
@@ -1799,11 +1853,17 @@ export default function todosExtension(pi: ExtensionAPI) {
 
 	pi.registerCommand("todos", {
 		description: "List todos from .pi/todos",
+		getArgumentCompletions: getTodoArgumentCompletions,
 		handler: async (args, ctx) => {
 			const todosDir = getTodosDir(ctx.cwd);
+			const searchTerm = (args ?? "").trim();
+			if (["help", "--help", "-h"].includes(searchTerm.toLowerCase())) {
+				console.log(buildTodoHelp(getTodosDirLabel(ctx.cwd)));
+				return;
+			}
+
 			const todos = await listTodos(todosDir);
 			const currentSessionId = ctx.sessionManager.getSessionId();
-			const searchTerm = (args ?? "").trim();
 
 			if (!ctx.hasUI) {
 				const text = formatTodoList(todos);

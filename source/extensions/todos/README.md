@@ -13,6 +13,8 @@ Todos are stored as markdown files in `.pi/todos` by default, with JSON front ma
 
 In interactive mode, `/todos` opens a searchable TUI. In non-interactive mode it prints the todo list.
 
+Argument autocomplete suggests todo extension actions (for recall) and matching todo titles.
+
 TUI actions include viewing details, working on a todo, refining a todo, closing/reopening, releasing assignment, copying the file path/text, and deleting.
 
 Useful shortcuts in the selector:
