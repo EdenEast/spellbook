@@ -6,24 +6,28 @@ disable-model-invocation: true
 
 # Sync Pocock Skills
 
-Sync our copies of [mattpocock/skills](https://github.com/mattpocock/skills) against upstream, apply pi-specific patches, and flag anything new.
+Sync our `source/skills` copies of [mattpocock/skills](https://github.com/mattpocock/skills) against upstream, apply pi-specific patches, and flag anything new.
 
 ## Quick start
 
 Run the sync analysis script, then follow its output:
 
 ```bash
-bash scripts/sync.sh ~/.pi/agent/skills scripts/../patches --keep-upstream
+PROJECT_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+SKILL_DIR="$PROJECT_ROOT/.pi/skills/sync-pocock-skills"
+bash "$SKILL_DIR/scripts/sync.sh" "$PROJECT_ROOT/source/skills" "$SKILL_DIR/patches" --keep-upstream
 ```
 
 ## Workflow
 
 ### 1. Analyse
 
-Run `scripts/sync.sh` with args `<skills_dir>` `<patches_dir>`, usually with `--keep-upstream` so the printed upstream clone remains available for inspection:
+Run `scripts/sync.sh` with args `<skills_dir>` `<patches_dir>`, targeting this repo's `source/skills`. Usually use `--keep-upstream` so the printed upstream clone remains available for inspection:
 
 ```bash
-bash "$(dirname "$0")/scripts/sync.sh" "$HOME/.pi/agent/skills" "$(dirname "$0")/patches" --keep-upstream
+PROJECT_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+SKILL_DIR="$PROJECT_ROOT/.pi/skills/sync-pocock-skills"
+bash "$SKILL_DIR/scripts/sync.sh" "$PROJECT_ROOT/source/skills" "$SKILL_DIR/patches" --keep-upstream
 ```
 
 Options:
@@ -48,7 +52,7 @@ For each `NEW:` entry, show the name, category, and description. Ask the user wh
 Install with:
 
 ```bash
-bash scripts/install-new.sh <skill_name> <upstream_skill_dir> <skills_dir> <patches_dir>
+bash "$SKILL_DIR/scripts/install-new.sh" <skill_name> <upstream_skill_dir> "$PROJECT_ROOT/source/skills" "$SKILL_DIR/patches"
 ```
 
 ### 3. Apply upstream changes
@@ -64,7 +68,7 @@ For each `CHANGED:` entry:
 Apply with:
 
 ```bash
-bash scripts/apply-upstream.sh <skill_name> <upstream_skill_dir> <skills_dir> <patches_dir>
+bash "$SKILL_DIR/scripts/apply-upstream.sh" <skill_name> <upstream_skill_dir> "$PROJECT_ROOT/source/skills" "$SKILL_DIR/patches"
 ```
 
 ### 4. Handle unpatched patterns
@@ -76,7 +80,7 @@ For each `UNPATCHED:` entry, read the flagged file and create a patch:
 3. Regenerate the patch:
 
 ```bash
-bash scripts/make-patch.sh <skill_name> <rel_path> <upstream_file> <our_file> <patches_dir>
+bash "$SKILL_DIR/scripts/make-patch.sh" <skill_name> <rel_path> <upstream_file> <our_file> "$SKILL_DIR/patches"
 ```
 
 4. This skill is now self-updated — the new patch is stored for future syncs.
@@ -99,7 +103,7 @@ Report to the user:
 disable-model-invocation: true
 ```
 
-`scripts/apply-upstream.sh`, `scripts/install-new.sh`, and `scripts/sync.sh` all account for these overrides.
+`scripts/apply-upstream.sh`, `scripts/install-new.sh`, and `scripts/sync.sh` all account for these overrides. They run the Python helper with `python3` when available, or through `nix-shell -p python3` when Python is not already installed.
 
 ## Patch conventions
 

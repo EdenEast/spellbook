@@ -52,6 +52,23 @@ UPSTREAM_REPO="https://github.com/mattpocock/skills.git"
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 OVERRIDES_SCRIPT="$SCRIPT_DIR/apply-frontmatter-overrides.py"
 
+run_overrides_script() {
+  if command -v python3 >/dev/null 2>&1; then
+    python3 "$OVERRIDES_SCRIPT" "$@"
+    return
+  fi
+
+  if command -v nix-shell >/dev/null 2>&1; then
+    local cmd
+    printf -v cmd '%q ' python3 "$OVERRIDES_SCRIPT" "$@"
+    nix-shell -p python3 --run "$cmd"
+    return
+  fi
+
+  echo "ERROR: need python3 or nix-shell to apply frontmatter overrides" >&2
+  return 1
+}
+
 if [[ -n "$REQUESTED_UPSTREAM_DIR" ]]; then
   WORK_DIR=$(mktemp -d)
   UPSTREAM_DIR="$REQUESTED_UPSTREAM_DIR"
@@ -92,7 +109,7 @@ apply_local_overrides_quiet() {
 
   [[ "$rel_path" == "SKILL.md" ]] || return 0
   [[ -f "$OVERRIDES_SCRIPT" ]] || return 0
-  python3 "$OVERRIDES_SCRIPT" "$skill_name" "$file" "$PATCHES_DIR" --quiet
+  run_overrides_script "$skill_name" "$file" "$PATCHES_DIR" --quiet
 }
 
 # --- Clone upstream ---

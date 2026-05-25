@@ -17,6 +17,23 @@ PATCHES_DIR="${4:?}"
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 OVERRIDES_SCRIPT="$SCRIPT_DIR/apply-frontmatter-overrides.py"
 
+run_overrides_script() {
+  if command -v python3 >/dev/null 2>&1; then
+    python3 "$OVERRIDES_SCRIPT" "$@"
+    return
+  fi
+
+  if command -v nix-shell >/dev/null 2>&1; then
+    local cmd
+    printf -v cmd '%q ' python3 "$OVERRIDES_SCRIPT" "$@"
+    nix-shell -p python3 --run "$cmd"
+    return
+  fi
+
+  echo "ERROR: need python3 or nix-shell to apply frontmatter overrides" >&2
+  return 1
+}
+
 TARGET_DIR="$SKILLS_DIR/$SKILL_NAME"
 
 if [[ ! -d "$UPSTREAM_SKILL_DIR" ]]; then
@@ -59,7 +76,7 @@ done
 # Apply local frontmatter overrides after patches so they are independent of
 # upstream text changes and do not need one-line patch files.
 if [[ -f "$TARGET_DIR/SKILL.md" && -f "$OVERRIDES_SCRIPT" ]]; then
-  python3 "$OVERRIDES_SCRIPT" "$SKILL_NAME" "$TARGET_DIR/SKILL.md" "$PATCHES_DIR"
+  run_overrides_script "$SKILL_NAME" "$TARGET_DIR/SKILL.md" "$PATCHES_DIR"
 fi
 
 echo "Result: $applied patched, $failed conflicts"

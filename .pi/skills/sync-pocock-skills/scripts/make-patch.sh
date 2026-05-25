@@ -16,6 +16,23 @@ PATCHES_DIR="${5:?}"
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 OVERRIDES_SCRIPT="$SCRIPT_DIR/apply-frontmatter-overrides.py"
 
+run_overrides_script() {
+  if command -v python3 >/dev/null 2>&1; then
+    python3 "$OVERRIDES_SCRIPT" "$@"
+    return
+  fi
+
+  if command -v nix-shell >/dev/null 2>&1; then
+    local cmd
+    printf -v cmd '%q ' python3 "$OVERRIDES_SCRIPT" "$@"
+    nix-shell -p python3 --run "$cmd"
+    return
+  fi
+
+  echo "ERROR: need python3 or nix-shell to strip frontmatter overrides" >&2
+  return 1
+}
+
 # Convert path separators to __ for flat patch filename
 PATCH_NAME="${SKILL_NAME}__${REL_PATH//\//__}.patch"
 PATCH_FILE="$PATCHES_DIR/$PATCH_NAME"
@@ -35,7 +52,7 @@ trap cleanup EXIT
 if [[ "$REL_PATH" == "SKILL.md" && -f "$OVERRIDES_SCRIPT" ]]; then
   TEMP_OUR_FILE=$(mktemp)
   cp "$OUR_FILE" "$TEMP_OUR_FILE"
-  python3 "$OVERRIDES_SCRIPT" "$SKILL_NAME" "$TEMP_OUR_FILE" "$PATCHES_DIR" --strip --quiet
+  run_overrides_script "$SKILL_NAME" "$TEMP_OUR_FILE" "$PATCHES_DIR" --strip --quiet
   COMPARE_OUR_FILE="$TEMP_OUR_FILE"
 fi
 
