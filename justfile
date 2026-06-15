@@ -11,6 +11,7 @@ _default:
 
 # Install this repository as a pi local-path package.
 install:
+    npm install
     {{pi}} install {{source}}
 
 # Remove this repository as a pi local-path package.

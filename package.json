@@ -10,6 +10,11 @@
     "prompts": ["./source/prompts"],
     "themes": ["./source/themes"]
   },
-  "dependencies": {},
+  "dependencies": {
+    "@mozilla/readability": "^0.5.0",
+    "linkedom": "^0.16.0",
+    "turndown": "^7.2.0",
+    "unpdf": "^1.4.0"
+  },
   "devDependencies": {}
 }
