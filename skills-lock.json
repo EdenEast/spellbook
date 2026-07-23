@@ -1,0 +1,152 @@
+{
+  "version": 1,
+  "skills": {
+    "code-review": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/code-review",
+      "destinationPath": "source/skills/code-review",
+      "revision": "ed37663cc5fbef691ddfecd080dff42f7e7e350d"
+    },
+    "codebase-design": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/codebase-design",
+      "destinationPath": "source/skills/codebase-design",
+      "revision": "ed37663cc5fbef691ddfecd080dff42f7e7e350d"
+    },
+    "design-an-interface": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/deprecated/design-an-interface",
+      "destinationPath": "source/skills/design-an-interface",
+      "revision": "ed37663cc5fbef691ddfecd080dff42f7e7e350d"
+    },
+    "diagnosing-bugs": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/diagnosing-bugs",
+      "destinationPath": "source/skills/diagnosing-bugs",
+      "revision": "ed37663cc5fbef691ddfecd080dff42f7e7e350d"
+    },
+    "domain-modeling": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/domain-modeling",
+      "destinationPath": "source/skills/domain-modeling",
+      "revision": "ed37663cc5fbef691ddfecd080dff42f7e7e350d"
+    },
+    "grill-me": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/productivity/grill-me",
+      "destinationPath": "source/skills/grill-me",
+      "revision": "ed37663cc5fbef691ddfecd080dff42f7e7e350d"
+    },
+    "grill-with-docs": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/grill-with-docs",
+      "destinationPath": "source/skills/grill-with-docs",
+      "revision": "ed37663cc5fbef691ddfecd080dff42f7e7e350d"
+    },
+    "grilling": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/productivity/grilling",
+      "destinationPath": "source/skills/grilling",
+      "revision": "ed37663cc5fbef691ddfecd080dff42f7e7e350d"
+    },
+    "handoff": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/productivity/handoff",
+      "destinationPath": "source/skills/handoff",
+      "revision": "ed37663cc5fbef691ddfecd080dff42f7e7e350d"
+    },
+    "implement": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/implement",
+      "destinationPath": "source/skills/implement",
+      "revision": "ed37663cc5fbef691ddfecd080dff42f7e7e350d"
+    },
+    "improve-codebase-architecture": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/improve-codebase-architecture",
+      "destinationPath": "source/skills/improve-codebase-architecture",
+      "revision": "ed37663cc5fbef691ddfecd080dff42f7e7e350d"
+    },
+    "prototype": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/prototype",
+      "destinationPath": "source/skills/prototype",
+      "revision": "ed37663cc5fbef691ddfecd080dff42f7e7e350d"
+    },
+    "research": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/research",
+      "destinationPath": "source/skills/research",
+      "revision": "ed37663cc5fbef691ddfecd080dff42f7e7e350d"
+    },
+    "setup-matt-pocock-skills": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/setup-matt-pocock-skills",
+      "destinationPath": "source/skills/setup-matt-pocock-skills",
+      "revision": "ed37663cc5fbef691ddfecd080dff42f7e7e350d"
+    },
+    "tdd": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/tdd",
+      "destinationPath": "source/skills/tdd",
+      "revision": "ed37663cc5fbef691ddfecd080dff42f7e7e350d"
+    },
+    "teach": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/productivity/teach",
+      "destinationPath": "source/skills/teach",
+      "revision": "ed37663cc5fbef691ddfecd080dff42f7e7e350d"
+    },
+    "to-questionnaire": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/in-progress/to-questionnaire",
+      "destinationPath": "source/skills/to-questionnaire",
+      "revision": "ed37663cc5fbef691ddfecd080dff42f7e7e350d"
+    },
+    "to-spec": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/to-spec",
+      "destinationPath": "source/skills/to-spec",
+      "revision": "ed37663cc5fbef691ddfecd080dff42f7e7e350d"
+    },
+    "to-tickets": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/to-tickets",
+      "destinationPath": "source/skills/to-tickets",
+      "revision": "ed37663cc5fbef691ddfecd080dff42f7e7e350d"
+    },
+    "triage": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/triage",
+      "destinationPath": "source/skills/triage",
+      "revision": "ed37663cc5fbef691ddfecd080dff42f7e7e350d"
+    },
+    "wayfinder": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/wayfinder",
+      "destinationPath": "source/skills/wayfinder",
+      "revision": "ed37663cc5fbef691ddfecd080dff42f7e7e350d"
+    }
+  }
+}

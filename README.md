@@ -19,6 +19,31 @@ Set `PI_BIN` to use a non-default pi executable, or `SPELLBOOK_PI_SOURCE` to ins
 
 For now, Claude Code installation only uses `source/skills`.
 
+## Manage external skill repositories
+
+Use the included CLI to copy skills from external repositories into `./source/skills`:
+
+```sh
+just skills add vercel-labs/agent-skills   # prompts you to select skills
+just skills add vercel-labs/agent-skills --skill web-design-guidelines
+just skills list
+just skills remove web-design-guidelines
+just skills update
+```
+
+The interactive picker supports typing to search, arrow keys to move, space to toggle skills, enter to confirm, and escape to cancel.
+
+The default storage directory is `source/skills`. Override it with `--dir` or `SPELLBOOK_SKILLS_DIR`:
+
+```sh
+just skills add ./my-skills-repo --dir ./source/skills
+SPELLBOOK_SKILLS_DIR=./source/skills just skills add https://github.com/vercel-labs/agent-skills
+```
+
+Sources may be GitHub shorthands (`owner/repo`), GitHub/tree URLs, generic git URLs, or local paths. Use `--list` to inspect a source without installing, `--skill` multiple times to pick specific skills non-interactively, `--all` to install everything, and `--force` to replace an existing skill. Installed source metadata is tracked in `skills-lock.json` for updates, including source type, source skill path, destination path, and git revision. Override the lock path with `--lock-file` or `SPELLBOOK_SKILLS_LOCK`.
+
+If a skill's `SKILL.md` frontmatter declares `dependencies`, the CLI installs those first. Dependency entries may be strings like `owner/repo@skill-name` or objects with `source` and `skill`/`skills`.
+
 ```sh
 just install-claude          # link skills into ~/.claude/skills
 just uninstall-claude        # remove those links
