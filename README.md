@@ -7,11 +7,13 @@ Additive resources for [`pi-coding-agent`](https://github.com/Plato-solutions/pi
 Use the included `justfile` helpers:
 
 ```sh
-just install        # install this repo as a pi local-path package
+just install        # install deps and this repo as a pi local-path package
 just uninstall      # remove it
 just list           # list pi packages
 just config         # open pi package config UI
 ```
+
+Installing spellbook also enables [`@tintinweb/pi-subagents`](https://github.com/tintinweb/pi-subagents), which adds the `Agent`, `get_subagent_result`, and `steer_subagent` tools plus the `/agents` command. Define project-specific agents in `.pi/agents/*.md` or `.agents/agents/*.md`.
 
 Set `PI_BIN` to use a non-default pi executable, or `SPELLBOOK_PI_SOURCE` to install from another checkout path.
 
