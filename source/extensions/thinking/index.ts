@@ -118,7 +118,7 @@ export default function (pi: ExtensionAPI): void {
 		},
 	});
 
-	pi.registerShortcut("ctrl+e", {
+	pi.registerShortcut("ctrl+alt+e", {
 		description: "Select thinking level",
 		handler: async (ctx) => {
 			await selectThinkingLevel(pi, ctx);
