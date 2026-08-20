@@ -4,12 +4,6 @@
   "private": true,
   "description": "Additive resources for pi-coding-agent.",
   "keywords": ["pi-package"],
-  "bin": {
-    "spellbook-skills": "./scripts/spellbook-skills.mjs"
-  },
-  "scripts": {
-    "skills": "node ./scripts/spellbook-skills.mjs"
-  },
   "pi": {
     "extensions": [
       "./source/extensions",
