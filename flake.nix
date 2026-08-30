@@ -25,6 +25,7 @@
       default = pkgs.mkShell {
         packages = [
           pkgs.nodejs
+          pkgs.typescript
         ];
       };
     });
