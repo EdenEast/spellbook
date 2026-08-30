@@ -3,16 +3,18 @@ set dotenv-load := true
 repo := justfile_directory()
 pi := env_var_or_default("PI_BIN", "pi")
 source := env_var_or_default("SPELLBOOK_PI_SOURCE", repo)
+pi_agents := repo / "scripts" / "pi-agents.sh"
 claude_skills := repo / "scripts" / "claude-skills.sh"
 shim_node_modules := repo / "scripts" / "shim-node-modules.sh"
 
 _default:
     @just --list
 
-# Install this repository as a pi local-path package.
+# Install this repository as a pi local-path package and global AGENTS.md.
 install:
     npm install
     {{pi}} install {{source}}
+    {{pi_agents}} install --backup
 
 # Remove this repository as a pi local-path package.
 uninstall:
