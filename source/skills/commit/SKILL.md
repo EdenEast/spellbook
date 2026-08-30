@@ -1,7 +1,6 @@
 ---
 name: commit
 description: Create a commit, or draft a commit message, when the user asks to commit changes.
-disable-model-invocation: true
 ---
 
 # Create a commit or draft a commit message
