@@ -2,7 +2,7 @@
   "name": "spellbook",
   "version": "0.1.0",
   "private": true,
-  "description": "Additive resources for pi-coding-agent.",
+  "description": "Additive agent resources for pi, Claude Code, and Codex.",
   "keywords": ["pi-package"],
   "pi": {
     "extensions": [

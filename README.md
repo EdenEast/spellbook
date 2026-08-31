@@ -1,6 +1,6 @@
 # spellbook
 
-Additive resources for [`pi-coding-agent`](https://github.com/Plato-solutions/pi), packaged for reproducible installs and local iteration.
+Additive agent resources for pi, Claude Code, and Codex, packaged for reproducible installs and local iteration.
 
 ## Install with pi
 
@@ -35,6 +35,32 @@ scripts/claude-skills.sh install --force
 ```
 
 Set `CLAUDE_CODE_DIR` to use a non-default Claude Code config directory, or `SPELLBOOK_SKILLS_SOURCE` to install skills from another checkout path.
+
+## Install with Codex
+
+Codex installation links the shared global guidance and skills into Codex's user locations:
+
+```sh
+just install-codex          # link source/AGENTS.md and source/skills for Codex
+just uninstall-codex        # remove those links
+```
+
+The installer links:
+
+```text
+${CODEX_HOME:-$HOME/.codex}/AGENTS.md -> source/AGENTS.md
+${CODEX_SKILLS_DIR:-${CODEX_HOME:-$HOME/.codex}/skills} -> source/skills
+```
+
+The skills link points at the whole `source/skills` directory, so skill additions and removals in this repo are reflected without reinstalling. It refuses conflicts by default. Use the script directly for extra options:
+
+```sh
+scripts/codex.sh install --dry-run
+scripts/codex.sh install --backup
+scripts/codex.sh install --force
+```
+
+Set `CODEX_HOME` to use a non-default Codex config directory, `CODEX_SKILLS_DIR` to use a non-default user skills directory, `SPELLBOOK_CODEX_SOURCE` to install from another checkout path, or `SPELLBOOK_SKILLS_SOURCE` to install skills from another source directory.
 
 ## Skill provenance
 

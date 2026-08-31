@@ -5,6 +5,7 @@ pi := env_var_or_default("PI_BIN", "pi")
 source := env_var_or_default("SPELLBOOK_PI_SOURCE", repo)
 pi_agents := repo / "scripts" / "pi-agents.sh"
 claude_skills := repo / "scripts" / "claude-skills.sh"
+codex := repo / "scripts" / "codex.sh"
 shim_node_modules := repo / "scripts" / "shim-node-modules.sh"
 
 _default:
@@ -38,6 +39,14 @@ install-claude:
 # Remove source/skills from Claude Code's user skills directory.
 uninstall-claude:
     {{claude_skills}} uninstall
+
+# Install source/AGENTS.md and source/skills into Codex's user locations.
+install-codex:
+    {{codex}} install
+
+# Remove spellbook resources from Codex's user locations.
+uninstall-codex:
+    {{codex}} uninstall
 
 # Create node_modules shims to Pi's bundled modules (useful on NixOS).
 shim-node-modules:
