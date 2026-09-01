@@ -2,65 +2,39 @@
 
 Additive agent resources for pi, Claude Code, and Codex, packaged for reproducible installs and local iteration.
 
-## Install with pi
+## Install
 
-Use the included `justfile` helpers:
-
-```sh
-just install        # install deps and this repo as a pi local-path package
-just uninstall      # remove it
-just list           # list pi packages
-just config         # open pi package config UI
-```
-
-Installing spellbook also enables [`@tintinweb/pi-subagents`](https://github.com/tintinweb/pi-subagents), which adds the `Agent`, `get_subagent_result`, and `steer_subagent` tools plus the `/agents` command. Define project-specific agents in `.pi/agents/*.md` or `.agents/agents/*.md`.
-
-Set `PI_BIN` to use a non-default pi executable, or `SPELLBOOK_PI_SOURCE` to install from another checkout path.
-
-## Install skills with Claude Code
-
-For now, Claude Code installation only uses `source/skills`.
+Use one installer for Pi, Claude Code, and Codex. It detects which CLIs are on your `PATH` and links spellbook into only those harnesses' own configuration directories. It never uses `~/.agents`.
 
 ```sh
-just install-claude          # link skills into ~/.claude/skills
-just uninstall-claude        # remove those links
+just install                         # link every detected harness
+just install pi                      # link only Pi
+just uninstall codex                 # remove only Codex links
+scripts/install.sh status            # inspect managed links
+scripts/install.sh install --target pi
+scripts/install.sh install --dry-run
+scripts/install.sh install --backup
+scripts/install.sh install --force
 ```
 
-The installer links each skill directory directly because Claude Code discovers skills as immediate children of its `skills` directory. It refuses conflicts by default. Use the script directly for extra options:
+By default, a missing CLI is reported and skipped. Use `--target pi`, `--target claude`, or `--target codex` to configure a specific harness, including one that is not currently on your `PATH`. The installer refuses conflicts unless you choose `--backup` or `--force`.
 
-```sh
-scripts/claude-skills.sh install --dry-run
-scripts/claude-skills.sh install --backup
-scripts/claude-skills.sh install --force
+Pi gets its shared `AGENTS.md` plus additive, namespaced links for extensions, skills, prompts, and themes. In particular, its extensions link is:
+
+```text
+${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}/extensions/spellbook -> source/extensions
 ```
 
-Set `CLAUDE_CODE_DIR` to use a non-default Claude Code config directory, or `SPELLBOOK_SKILLS_SOURCE` to install skills from another checkout path.
+This exposes the Pi-specific extensions in this repository without registering a global Pi package. Run `npm install` separately when those extensions need this repository's Node dependencies. `just shim-node-modules` remains available for Pi installations that need local module shims.
 
-## Install with Codex
-
-Codex installation links the shared global guidance and skills into Codex's user locations:
-
-```sh
-just install-codex          # link source/AGENTS.md and source/skills for Codex
-just uninstall-codex        # remove those links
-```
-
-The installer links:
+Claude Code receives one link per skill because it discovers immediate children of its `skills` directory. Codex retains its existing `AGENTS.md` and whole-skills-directory links:
 
 ```text
 ${CODEX_HOME:-$HOME/.codex}/AGENTS.md -> source/AGENTS.md
 ${CODEX_SKILLS_DIR:-${CODEX_HOME:-$HOME/.codex}/skills} -> source/skills
 ```
 
-The skills link points at the whole `source/skills` directory, so skill additions and removals in this repo are reflected without reinstalling. It refuses conflicts by default. Use the script directly for extra options:
-
-```sh
-scripts/codex.sh install --dry-run
-scripts/codex.sh install --backup
-scripts/codex.sh install --force
-```
-
-Set `CODEX_HOME` to use a non-default Codex config directory, `CODEX_SKILLS_DIR` to use a non-default user skills directory, `SPELLBOOK_CODEX_SOURCE` to install from another checkout path, or `SPELLBOOK_SKILLS_SOURCE` to install skills from another source directory.
+Set `PI_BIN`, `CLAUDE_BIN`, or `CODEX_BIN` to use a non-default executable for detection. Set `PI_CODING_AGENT_DIR`, `CLAUDE_CODE_DIR`, `CODEX_HOME`, or `CODEX_SKILLS_DIR` to choose a non-default configuration directory. `SPELLBOOK_SOURCE` sets a common source checkout; the existing `SPELLBOOK_PI_SOURCE`, `SPELLBOOK_CODEX_SOURCE`, and `SPELLBOOK_SKILLS_SOURCE` overrides still work.
 
 ## Skill provenance
 
