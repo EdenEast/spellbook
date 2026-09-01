@@ -1,65 +1,70 @@
 # spellbook
 
-Additive resources for [`pi-coding-agent`](https://github.com/Plato-solutions/pi), packaged for reproducible installs and local iteration.
+Additive agent resources for pi, Claude Code, and Codex, packaged for reproducible installs and local iteration.
 
-## Install with pi
+## Install
 
-Use the included `justfile` helpers:
-
-```sh
-just install        # install deps and this repo as a pi local-path package
-just uninstall      # remove it
-just list           # list pi packages
-just config         # open pi package config UI
-```
-
-Installing spellbook also enables [`@tintinweb/pi-subagents`](https://github.com/tintinweb/pi-subagents), which adds the `Agent`, `get_subagent_result`, and `steer_subagent` tools plus the `/agents` command. Define project-specific agents in `.pi/agents/*.md` or `.agents/agents/*.md`.
-
-Set `PI_BIN` to use a non-default pi executable, or `SPELLBOOK_PI_SOURCE` to install from another checkout path.
-
-## Install skills with Claude Code
-
-For now, Claude Code installation only uses `source/skills`.
-
-## Manage external skill repositories
-
-Use the included CLI to copy skills from external repositories into `./source/skills`:
+Use one installer for Pi, Claude Code, and Codex. It detects which CLIs are on your `PATH` and links spellbook into only those harnesses' own configuration directories. It never uses `~/.agents`.
 
 ```sh
-just skills add vercel-labs/agent-skills   # prompts you to select skills
-just skills add vercel-labs/agent-skills --skill web-design-guidelines
-just skills list
-just skills remove web-design-guidelines
-just skills update
+just install                         # link every detected harness
+just install pi                      # link only Pi
+just uninstall codex                 # remove only Codex links
+scripts/install.sh status            # inspect managed links
+scripts/install.sh install --target pi
+scripts/install.sh install --dry-run
+scripts/install.sh install --backup
+scripts/install.sh install --force
 ```
 
-The interactive picker supports typing to search, arrow keys to move, space to toggle skills, enter to confirm, and escape to cancel.
+By default, a missing CLI is reported and skipped. Use `--target pi`, `--target claude`, or `--target codex` to configure a specific harness, including one that is not currently on your `PATH`. The installer refuses conflicts unless you choose `--backup` or `--force`.
 
-The default storage directory is `source/skills`. Override it with `--dir` or `SPELLBOOK_SKILLS_DIR`:
+Pi gets its shared `AGENTS.md` plus additive, namespaced links for extensions, skills, prompts, and themes. In particular, its extensions link is:
 
-```sh
-just skills add ./my-skills-repo --dir ./source/skills
-SPELLBOOK_SKILLS_DIR=./source/skills just skills add https://github.com/vercel-labs/agent-skills
+```text
+${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}/extensions/spellbook -> source/extensions
 ```
 
-Sources may be GitHub shorthands (`owner/repo`), GitHub/tree URLs, generic git URLs, or local paths. Use `--list` to inspect a source without installing, `--skill` multiple times to pick specific skills non-interactively, `--all` to install everything, and `--force` to replace an existing skill. Installed source metadata is tracked in `skills-lock.json` for updates, including source type, source skill path, destination path, and git revision. Override the lock path with `--lock-file` or `SPELLBOOK_SKILLS_LOCK`.
+This exposes the Pi-specific extensions in this repository without registering a global Pi package. Run `npm install` separately when those extensions need this repository's Node dependencies. `just shim-node-modules` remains available for Pi installations that need local module shims.
 
-If a skill's `SKILL.md` frontmatter declares `dependencies`, the CLI installs those first. Dependency entries may be strings like `owner/repo@skill-name` or objects with `source` and `skill`/`skills`.
+Claude Code receives one link per skill because it discovers immediate children of its `skills` directory. Codex retains its existing `AGENTS.md` and whole-skills-directory links:
 
-```sh
-just install-claude          # link skills into ~/.claude/skills
-just uninstall-claude        # remove those links
+```text
+${CODEX_HOME:-$HOME/.codex}/AGENTS.md -> source/AGENTS.md
+${CODEX_SKILLS_DIR:-${CODEX_HOME:-$HOME/.codex}/skills} -> source/skills
 ```
 
-The installer links each skill directory directly because Claude Code discovers skills as immediate children of its `skills` directory. It refuses conflicts by default. Use the script directly for extra options:
+Set `PI_BIN`, `CLAUDE_BIN`, or `CODEX_BIN` to use a non-default executable for detection. Set `PI_CODING_AGENT_DIR`, `CLAUDE_CODE_DIR`, `CODEX_HOME`, or `CODEX_SKILLS_DIR` to choose a non-default configuration directory. `SPELLBOOK_SOURCE` sets a common source checkout; the existing `SPELLBOOK_PI_SOURCE`, `SPELLBOOK_CODEX_SOURCE`, and `SPELLBOOK_SKILLS_SOURCE` overrides still work.
 
-```sh
-scripts/claude-skills.sh install --dry-run
-scripts/claude-skills.sh install --backup
-scripts/claude-skills.sh install --force
+## Skill provenance
+
+External skills are copied into `source/skills` manually. When adding a copied skill, add a `SOURCE.toml` file beside its `SKILL.md` with:
+
+- source repository URL
+- source path inside that repository
+- original commit SHA
+- original URL to that exact commit and path
+
+Example:
+
+```text
+source/skills/example-skill/
+  SKILL.md
+  SOURCE.toml
 ```
 
-Set `CLAUDE_CODE_DIR` to use a non-default Claude Code config directory, or `SPELLBOOK_SKILLS_SOURCE` to install skills from another checkout path.
+Example `SOURCE.toml`:
+
+```toml
+kind = "copied-skill"
+source_name = "pstack"
+source_repository = "https://github.com/cursor/plugins"
+source_path = "pstack/skills/example-skill"
+original_commit = "60c641e4fad674784b30abcf9f8915dea39df38d"
+original_url = "https://github.com/cursor/plugins/tree/60c641e4fad674784b30abcf9f8915dea39df38d/pstack/skills/example-skill"
+```
+
+`SOURCE.toml` is the provenance record. It replaces the old external-skill manager and `skills-lock.json` workflow.
 
 ## Home Manager
 

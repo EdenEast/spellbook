@@ -1,5 +1,5 @@
 {
-  description = "Additive pi-coding-agent resources and Home Manager module";
+  description = "Additive agent resources and Home Manager module";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -25,6 +25,7 @@
       default = pkgs.mkShell {
         packages = [
           pkgs.nodejs
+          pkgs.typescript
         ];
       };
     });

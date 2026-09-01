@@ -1,0 +1,6 @@
+kind = "copied-skill"
+source_name = "mattpocock-skills"
+source_repository = "https://github.com/mattpocock/skills"
+source_path = "skills/engineering/wayfinder"
+original_commit = "6654f6b60cd9d5be8b54c6fafe44346dabeb3b76"
+original_url = "https://github.com/mattpocock/skills/tree/6654f6b60cd9d5be8b54c6fafe44346dabeb3b76/skills/engineering/wayfinder"
