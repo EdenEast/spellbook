@@ -10,11 +10,12 @@ Use one installer for Pi, Claude Code, and Codex. It detects which CLIs are on y
 just install                         # link every detected harness
 just install pi                      # link only Pi
 just uninstall codex                 # remove only Codex links
-scripts/install.sh status            # inspect managed links
+scripts/install.sh status            # inspect managed links on Unix
 scripts/install.sh install --target pi
 scripts/install.sh install --dry-run
 scripts/install.sh install --backup
 scripts/install.sh install --force
+powershell -ExecutionPolicy Bypass -File scripts/install.ps1 install -Target pi  # Windows
 ```
 
 By default, a missing CLI is reported and skipped. Use `--target pi`, `--target claude`, or `--target codex` to configure a specific harness, including one that is not currently on your `PATH`. The installer refuses conflicts unless you choose `--backup` or `--force`.
