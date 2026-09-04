@@ -132,3 +132,8 @@ It does not manage `settings.json`, `keybindings.json`, `models.json`, `AGENTS.m
 - Resources are additive and namespaced under `spellbook`.
 - Existing pi settings, keybindings, models, and agent/system files are not managed.
 - Installs should be conservative and avoid overwriting user configuration.
+
+## External skill sources
+
+- [pstack](https://github.com/cursor/plugins/tree/main/pstack)
+- [Matt Pocock](https://github.com/mattpocock/skills)
