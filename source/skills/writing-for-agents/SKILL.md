@@ -1,11 +1,26 @@
 ---
 name: writing-for-agents
-description: Writing documents for agents. Use when creating or editing skills, or modifying AGENTS.md or CLAUDE.md.
+description: Writes, reviews, and updates agent instructions. Use when creating, reviewing, or improving skills, AGENTS.md, CLAUDE.md, or reference documents consumed by agents.
 ---
 
 Reference for writing any document an agent consumes: a skill, an `AGENTS.md` / `CLAUDE.md`, a doc reached by a pointer. The packaging differs; the writing does not: the same levers make each one predictable, since the agent takes the same _process_ every run rather than producing the same output.
 
-When the document you're writing is a skill, read [`SKILL-MECHANICS.md`](SKILL-MECHANICS.md) for frontmatter, invocation choice, and router skills.
+## Create, review, or update
+
+Match the work to the request. A review reports findings without editing. An update includes inspection, scoped edits, and validation; existing authorization to update is enough to proceed.
+
+1. **Inspect.** Read the target document and applicable repository instructions. For a skill, read [`SKILL-MECHANICS.md`](SKILL-MECHANICS.md), inventory its supporting files, and inspect the references, scripts, and callers affected by the request. Identify its intended tasks, target hosts, invocation policy, and behavior worth preserving. Finish when each proposed change has enough context to assess its effect.
+2. **Assess.** Apply the writing principles below and, for skills, the companion's authoring checks. Prioritize broken behavior, ambiguous instructions, missing branches, and stale references. Separate observed failures from untested concerns and optional preferences. Each finding needs a location, a concrete consequence, and a proposed correction. Mark conditional checks as inapplicable when appropriate.
+3. **Act.** For review-only requests, return the findings in priority order and the validation limits. For creation or updates, make the smallest coherent change that fulfills the request. Preserve unrelated edits, supported metadata, useful constraints, and existing invocation policy. Keep references, examples, and source attribution in sync. Remove resources only after checking their callers and purpose.
+4. **Validate.** Check the diff, local links, and any available format validator. Run changed executable helpers in a safe fixture when applicable. For behavior changes, use the evaluation guidance below in proportion to the change. Finish with what changed, why, checks actually run, and remaining uncertainty. A format check alone does not demonstrate better agent behavior.
+
+## Evaluate changes
+
+Before a substantial rewrite, define observable outcomes using representative requests. Start with a successful ordinary task, a conditional branch, and a nearby request that should not invoke the skill. For a narrow fix, use the reported failure and a relevant regression case. Define success by decisions and artifacts, not exact wording.
+
+Compare the existing skill with the revision on the same cases. For a new skill, use behavior without it as the baseline. Use fresh contexts when execution is available, and test each intended model before claiming cross-model reliability. Observe selection, reference navigation, constraint preservation, completion, and failure recovery. Record the prompt, model, skill version, expected behavior, and observed result outside the production instructions.
+
+If execution is unavailable, perform a static walkthrough and state that limitation. Keep proposed cases distinct from tests actually run. Revise from observed failures and rerun the affected cases; avoid expanding a local correction into a universal rule without evidence.
 
 ## Context pointers
 
@@ -14,7 +29,7 @@ A **context pointer** is a reference held in the agent's context that names some
 A pointer does two jobs: state what the material is, and list the **branches** that should trigger reaching it (a branch is a distinct case the document handles, so different runs take different paths through it). Every word of an always-loaded pointer costs on every turn, so it earns even harder pruning than the body:
 
 - **Front-load the leading word**: the pointer is where it does its triggering work.
-- **One trigger per branch.** Synonyms that rename a single branch are one branch written twice; collapse them and keep only genuinely distinct branches.
+- **Cover each trigger branch.** Collapse redundant synonyms, but preserve wording that changes successful discovery across representative prompts.
 - **Cut identity the body already carries.**
 
 ## The two loads
@@ -46,16 +61,18 @@ Push too little down and the top bloats; push too much and you hide material the
 
 Every step ends on a **completion criterion**, the condition that tells the agent the work is done. Two properties make it a lever:
 
-- **Clarity**: can the agent tell done from not-done? A vague bound ("understanding reached") invites **premature completion**: ending the step before it is genuinely done, attention slipping to _being done_. The visible steps still ahead (the **post-completion steps**) supply the pull; the criterion's clarity is the resistance. Defend in order: **sharpen the bound first** (local and cheap); only if it is irreducibly fuzzy _and_ you observe the rush, hide the later steps by splitting the sequence. Hiding only works across a real context boundary (a hand-off or a subagent dispatch; an inline call leaves the later steps in context and clears nothing).
+- **Clarity**: can the agent tell done from not-done? A vague bound ("understanding reached") invites **premature completion**: ending the step before it is genuinely done, attention slipping to _being done_. The visible steps still ahead (the **post-completion steps**) supply the pull; the criterion's clarity is the resistance. Defend in order: **sharpen the bound first** (local and cheap); only if it is irreducibly fuzzy _and_ you observe the rush, hide the later steps by splitting the sequence. Hiding requires a context boundary that actually excludes later steps. A hand-off or subagent that inherits the full conversation still sees them; inspect what context is passed and test the effect.
 - **Demand**: how much it requires. "Every modified model accounted for" forces thorough work where "produce a change list" does not. Demand drives **legwork** (the digging the agent does within the work, latent in the wording rather than written as its own step), and it is not step-bound: "every rule applied" binds a body of flat reference just as "every step done" binds a sequence, which is how an all-reference document still carries an exhaustiveness bar.
 
 The strongest criteria are both checkable and exhaustive.
+
+Set **procedural freedom** separately from the completion criterion. Specify the outcome when several methods work, a default with an escape condition when one usually fits, and an exact sequence when order or method determines correctness. For a fallible step, state how to inspect a failed check, repair the problem, and retry. Bound retries when repeated failure requires new information or further action would exceed the authorized scope.
 
 ## When to split
 
 Splitting one document into two spends one of the two loads, so split only when the cut earns it:
 
-- **By sequence**: split a run of steps where the post-completion steps tempt the agent to rush the one in front of it. Keeping them out of view drives more legwork on the current task. Beware the reverse: merging sequences exposes each step's later steps to what follows, inviting premature completion.
+- **By sequence**: split a run of steps where the post-completion steps tempt the agent to rush the one in front of it. Test whether excluding later steps improves work on the current task before keeping the split.
 - **By invocation**, skill-specific: see [`SKILL-MECHANICS.md`](SKILL-MECHANICS.md).
 
 ## Leading words
@@ -66,16 +83,16 @@ It anchors twice. In the body, _execution_: the agent reaches for the same behav
 
 Hunt for opportunities to refactor with leading words. A triad spelled out at three sites, a pointer spending a sentence to gesture at one idea. Each is a passage begging to collapse into a single token:
 
-- "fast, deterministic, low-overhead" → _tight_ (a _tight_ loop).
+- Define a _tight_ loop once with its required speed, determinism, and overhead constraints; reuse the label where those requirements remain in context.
 - "a loop you believe in" → _red_, turning a fuzzy gate into a binary observable state (the loop goes _red_ on the bug, or it doesn't).
 
-You win twice: fewer tokens, and a sharper hook for the agent to hang its thinking on. Assume every document is carrying restatements that leading words retire. Go find them.
+Use leading words as shorthand for a defined requirement. Preserve measurable conditions, and test that compression retains the intended behavior. Familiar terminology can help, but its effect depends on the model and context.
 
-**Negation** is the failure mode beside this lever: steering by prohibition drags the forbidden behaviour into context and makes it _more_ available, not less. _Don't think of an elephant_, and the elephant is all there is; the negation is a weak modifier the strongly-activated concept overruns, so the ban half-reads as an instruction to do the thing. Prompt the **positive**: state the target behaviour ("write one-line comments") so the banned one is never spoken. A prohibition earns its place only as a hard guardrail you cannot phrase positively; even then, pair it with the positive target so attention lands on what to do.
+**Positive instructions** name the desired behavior, such as "write one-line comments." Prefer them when they express the requirement clearly. Keep explicit prohibitions where they establish a necessary boundary, and pair them with the allowed action when useful. Treat claims about negation causing unwanted behavior as hypotheses to test, not a universal mechanism.
 
 ## Pruning
 
 - Keep each meaning in a **single source of truth**: one authoritative place, so changing the behaviour is a one-place edit. **Duplication** (the same meaning in more than one place) costs maintenance and tokens, and inflates a meaning's prominence on the ladder past its real rank. (The accidental inverse of a leading word, which repeats a token on purpose, never the meaning.)
 - The **environment** is a source of truth too (`package.json` scripts, config files, the directory layout, `--help` output), and a document that restates it is a **cache**: a copy of a lookup, earning its load only when the lookup is expensive. Cache what the agent cannot find by looking: the unwritten convention, the reason behind a choice, the gotcha no config confesses. Leave the one-file, one-command lookups to the environment, where they cannot go stale.
 - Check every line for **relevance**: does it still bear on what the document does? A line loses relevance by never bearing on the task (mere exposition, or a branch that should be disclosed) or by going stale as the behaviour or world it describes changes. Shorter documents are easier to keep relevant. Without a pruning discipline the default fate is **sediment**: stale layers that settle because adding feels safe and removing feels risky, until you must core down through them to find what is still live.
-- Hunt **no-ops** sentence by sentence: an instruction the model already obeys by default pays load to say nothing. The test (does it change behaviour versus the default?) is model-relative, not reader-relative: two people disagreeing about a no-op disagree about the default, and settle it by running the document, not by debate. When a sentence fails, delete the whole sentence rather than trim words from it. The test also grades leading words: a word too weak to beat the default (_be thorough_ when the agent is already thorough-ish) is a no-op, and the fix is a stronger word (_relentless_), not a different technique.
+- Hunt **no-ops** sentence by sentence: an instruction the model already obeys by default pays load to say nothing. The test (does it change behaviour versus the default?) is model-relative, not reader-relative: two people disagreeing about a no-op disagree about the default, and settle it by running the document, not by debate. When a sentence fails, delete the whole sentence rather than trim words from it. If the intended behavior is still missing, try a concrete criterion or different wording and compare the resulting behavior.
