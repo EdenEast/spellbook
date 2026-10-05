@@ -21,5 +21,10 @@
     "unpdf": "^1.4.0",
     "diff": "^8.0.4"
   },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "@earendil-works/pi-tui": "*",
+    "typebox": "*"
+  },
   "devDependencies": {}
 }
