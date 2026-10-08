@@ -2,6 +2,10 @@
 
 ## External skills
 
+When checking or updating an external skill, follow
+[EXTERNAL_SKILLS.md](EXTERNAL_SKILLS.md) for upstream reconstruction, merging
+local adaptations, validation, and advancing provenance.
+
 All skills live in `skills/<name>/`, regardless of their origin.
 
 Keep `skills/README.md` updated when adding, removing, or changing a skill. List

@@ -103,11 +103,10 @@ Use a full upstream commit SHA. `path` is relative to the repository root.
 you write yourself do not need a source record. Edit imported files directly and
 commit your changes normally.
 
-Upstream diff/check/update commands are the next implementation step; this
-scaffold does not provide them yet. The planned updater will reconstruct the
-recorded version in an external cache and merge it with your files and a new
-upstream version. It will advance the pin after conflicts are resolved. Neither
-upstream snapshots nor manually maintained patch files belong in this repo.
+Follow [Updating external skills](EXTERNAL_SKILLS.md) to check upstream changes,
+merge them with local adaptations, validate the result, and advance the source
+pin. This is a manual workflow; automated diff/check/update commands are not yet
+implemented. Keep upstream snapshots and generated patches outside this repo.
 
 ## Pi extensions
 
