@@ -2,29 +2,31 @@
   "name": "spellbook",
   "version": "0.1.0",
   "private": true,
-  "description": "Additive agent resources for pi, Claude Code, and Codex.",
-  "keywords": ["pi-package"],
+  "type": "module",
+  "description": "Personal agent skills and Pi extensions for Codex, Claude Code, and Pi.",
+  "engines": {
+    "node": ">=24.2"
+  },
+  "scripts": {
+    "check": "tsc --noEmit",
+    "test": "node --test scripts/*.test.ts",
+    "skills:install": "node scripts/install.ts install",
+    "skills:uninstall": "node scripts/install.ts uninstall",
+    "status": "node scripts/install.ts status"
+  },
+  "keywords": [
+    "pi-package"
+  ],
   "pi": {
     "extensions": [
-      "./source/extensions",
-      "./node_modules/@tintinweb/pi-subagents/src/index.ts"
+      "./pi/extensions"
     ],
-    "skills": ["./source/skills"],
-    "prompts": ["./source/prompts"],
-    "themes": ["./source/themes"]
+    "skills": [],
+    "prompts": [],
+    "themes": []
   },
-  "dependencies": {
-    "@mozilla/readability": "^0.5.0",
-    "@tintinweb/pi-subagents": "^0.14.3",
-    "linkedom": "^0.16.0",
-    "turndown": "^7.2.0",
-    "unpdf": "^1.4.0",
-    "diff": "^8.0.4"
-  },
-  "peerDependencies": {
-    "@earendil-works/pi-coding-agent": "*",
-    "@earendil-works/pi-tui": "*",
-    "typebox": "*"
-  },
-  "devDependencies": {}
+  "devDependencies": {
+    "@types/node": "24.19.1",
+    "typescript": "7.0.2"
+  }
 }

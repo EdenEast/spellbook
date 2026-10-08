@@ -1,139 +1,177 @@
-# spellbook
+# Spellbook
 
-Additive agent resources for pi, Claude Code, and Codex, packaged for reproducible installs and local iteration.
+Personal global skills for Codex, Claude Code, and Pi, plus Pi extensions.
 
-## Install
+The shared skill collection contains six personal skills restored from the
+previous layout: `babysit-pr`, `commit`, `file-pr`, `html-communication`,
+`postplan-read`, and `summarization`. It also includes five adapted external
+skills: `diagnosing-bugs`, `writing-for-agents`, `unslop`, `retro`, and
+`blast-radius`. Supporting files and imported license notices are included.
+Pi extensions remain empty; other previous content is in Git history.
 
-Use one installer for Pi, Claude Code, and Codex. It detects which CLIs are on your `PATH` and links spellbook into only those harnesses' own configuration directories. It never uses `~/.agents`.
+See the [skill catalog](skills/README.md) for invocation groups, descriptions,
+and use cases.
+
+## Layout
+
+```text
+skills/                  All skills, regardless of origin
+  <name>/
+    SKILL.md
+    SOURCE.toml          Only for skills imported from elsewhere
+    references/          Optional supporting files
+pi/
+  extensions/            Pi extension files or directories with index.ts/index.js
+scripts/                 Installation tooling and tests
+nix/                     Home Manager integration
+package.json             Pi extension package and Node tooling
+flake.nix                Development environment and checks
+```
+
+The paths above describe the structure. There is one editable copy of each
+skill, versioned in this repo.
+
+## Development
+
+Use Node.js 24.2 or newer, or enter `nix develop` for Node, Git, and Just:
 
 ```sh
-just install                         # link every detected harness
-just install pi                      # link only Pi
-just uninstall codex                 # remove only Codex links
-scripts/install.sh status            # inspect managed links on Unix
-scripts/install.sh install --target pi
-scripts/install.sh install --dry-run
-scripts/install.sh install --backup
-scripts/install.sh install --force
-powershell -ExecutionPolicy Bypass -File scripts/install.ps1 install -Target pi  # Windows
+npm ci
+npm run check
+npm test
 ```
 
-By default, a missing CLI is reported and skipped. Use `--target pi`, `--target claude`, or `--target codex` to configure a specific harness, including one that is not currently on your `PATH`. The installer refuses conflicts unless you choose `--backup` or `--force`.
+`just check` runs both checks. `nix flake check` also runs the installer tests.
+Node runs the TypeScript scripts directly; installation has no npm runtime
+dependencies and needs no build step.
 
-Pi gets its shared `AGENTS.md` plus additive, namespaced links for extensions, skills, prompts, and themes. In particular, its extensions link is:
+## Install from a checkout
 
-```text
-${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}/extensions/spellbook -> source/extensions
+Run on the machine and user account where the harness processes execute:
+
+```sh
+just install --dry-run
+just install
+just status
+just uninstall
 ```
 
-This exposes the Pi-specific extensions in this repository without registering a global Pi package. Run `npm install` separately when those extensions need this repository's Node dependencies. `just shim-node-modules` remains available for Pi installations that need local module shims.
+Without Just, use `node scripts/install.ts install` (or `status` / `uninstall`).
+The npm shortcuts are `npm run skills:install`, `npm run status`, and
+`npm run skills:uninstall`. `npm install` only installs development dependencies.
 
-Claude Code receives one link per skill because it discovers immediate children of its `skills` directory. Codex retains its existing `AGENTS.md` and whole-skills-directory links:
+All three targets are selected by default. Select a subset with repeatable
+`--target codex`, `--target claude`, or `--target pi` flags.
 
-```text
-${CODEX_HOME:-$HOME/.codex}/AGENTS.md -> source/AGENTS.md
-${CODEX_SKILLS_DIR:-${CODEX_HOME:-$HOME/.codex}/skills} -> source/skills
-```
+| Resource | Destination |
+| --- | --- |
+| Codex and Pi skills | `~/.agents/skills/<name>` |
+| Claude Code skills | `~/.claude/skills/<name>` |
+| Pi extensions | `~/.pi/agent/extensions/spellbook-<name>` |
 
-Set `PI_BIN`, `CLAUDE_BIN`, or `CODEX_BIN` to use a non-default executable for detection. Set `PI_CODING_AGENT_DIR`, `CLAUDE_CODE_DIR`, `CODEX_HOME`, or `CODEX_SKILLS_DIR` to choose a non-default configuration directory. `SPELLBOOK_SOURCE` sets a common source checkout; the existing `SPELLBOOK_PI_SOURCE`, `SPELLBOOK_CODEX_SOURCE`, and `SPELLBOOK_SKILLS_SOURCE` overrides still work.
+Codex and Pi share skill discovery: installing or uninstalling their shared
+links affects both, even when only one target is selected. Extensions are only
+managed with the Pi target. See the [Codex skill documentation](https://learn.chatgpt.com/docs/build-skills),
+[Claude skill documentation](https://code.claude.com/docs/en/skills), and
+[Pi skill documentation](https://github.com/badlogic/pi-mono/blob/main/packages/coding-agent/docs/skills.md).
 
-## Skill provenance
+The installer links individual resources to this checkout. It refuses existing
+conflicting paths before writing any links. Reinstalling removes stale links to
+resources deleted from this checkout. Uninstall only removes links pointing
+into this checkout, including broken links; unrelated resources are preserved.
+Keep the checkout at a stable path and uninstall before moving it.
 
-External skills are copied into `source/skills` manually. When adding a copied skill, add a `SOURCE.toml` file beside its `SKILL.md` with:
+An empty collection creates no harness directories. The installer does not
+change settings, instructions, credentials, or install harness executables. It
+uses the current user's standard home paths; use the Home Manager options below
+for custom resource locations. Existing sessions may need a reload or restart.
 
-- source repository URL
-- source path inside that repository
-- original commit SHA
-- original URL to that exact commit and path
+## External skills
 
-Example:
-
-```text
-source/skills/example-skill/
-  SKILL.md
-  SOURCE.toml
-```
-
-Example `SOURCE.toml`:
+Copy the complete skill directory, including its references, scripts, and
+required license notices, into `skills/<name>/`. Add `SOURCE.toml` beside
+`SKILL.md`:
 
 ```toml
-kind = "copied-skill"
-source_name = "pstack"
-source_repository = "https://github.com/cursor/plugins"
-source_path = "pstack/skills/example-skill"
-original_commit = "60c641e4fad674784b30abcf9f8915dea39df38d"
-original_url = "https://github.com/cursor/plugins/tree/60c641e4fad674784b30abcf9f8915dea39df38d/pstack/skills/example-skill"
+repository = "https://github.com/cursor/plugins"
+path = "pstack/skills/architect"
+commit = "60c641e4fad674784b30abcf9f8915dea39df38d"
 ```
 
-`SOURCE.toml` is the provenance record. It replaces the old external-skill manager and `skills-lock.json` workflow.
+Use a full upstream commit SHA. `path` is relative to the repository root.
+`commit` records the upstream version last integrated into your skill. Skills
+you write yourself do not need a source record. Edit imported files directly and
+commit your changes normally.
+
+Upstream diff/check/update commands are the next implementation step; this
+scaffold does not provide them yet. The planned updater will reconstruct the
+recorded version in an external cache and merge it with your files and a new
+upstream version. It will advance the pin after conflicts are resolved. Neither
+upstream snapshots nor manually maintained patch files belong in this repo.
+
+## Pi extensions
+
+Put a standalone `.ts` or `.js` extension in `pi/extensions/`, or use
+`pi/extensions/<name>/index.ts` (or `index.js`) for a multi-file extension. The
+installer ignores dotfiles and TypeScript declaration files. Add runtime npm
+dependencies only when needed; keep Pi host modules in `peerDependencies` as
+specified in the [Pi package documentation](https://github.com/badlogic/pi-mono/blob/main/packages/coding-agent/docs/packages.md).
+
+Pi can create and test extensions in this writable checkout. Try one without
+installing it globally with `pi --extension ./pi/extensions/<name>.ts`. Commit the
+extension and dependency lock changes when you want to keep it. On NixOS, keep
+experiments in a writable checkout, outside the Nix store.
+
+The root is also a native Pi package for extensions. As an alternative to the
+extension links, use `pi install /absolute/path/to/spellbook`. Use one extension
+loading method at a time. The package declares no skills, prompts, or themes;
+the shared skill installation above remains their source of skills.
+
+External prepackaged extensions can be tried with Pi's native `pi install`
+command using an exact npm version or Git commit. Those declarations live in
+Pi's settings and are not yet managed by Spellbook. Reproducible adoption of
+external packages and Nix packaging of extension dependencies are future work.
+No external Pi packages are installed by this scaffold.
 
 ## Home Manager
 
-This flake exposes a Home Manager module as both `default` and `pi-spellbook`.
-
-Example flake usage:
+Add Spellbook as a flake input and import its module:
 
 ```nix
 {
-  inputs.spellbook.url = "github:YOUR_USER/spellbook";
+  imports = [ inputs.spellbook.homeManagerModules.default ];
 
-  outputs = { home-manager, spellbook, ... }: {
-    homeConfigurations.YOUR_USER = home-manager.lib.homeManagerConfiguration {
-      modules = [
-        spellbook.homeManagerModules.pi-spellbook
-        {
-          programs.pi-spellbook.enable = true;
-        }
-      ];
-    };
-  };
-}
-```
-
-Available options:
-
-```nix
-{
-  programs.pi-spellbook = {
+  programs.spellbook = {
     enable = true;
-
-    # Install pi-coding-agent via Home Manager when available.
-    installPackage = true;
-
-    # Override if your nixpkgs does not provide pkgs.pi-coding-agent,
-    # or set installPackage = false if pi is installed another way.
-    package = pkgs.pi-coding-agent;
-
-    # Pi config directory, relative to $HOME.
-    piDir = ".pi/agent";
-
-    # Resource groups can be enabled or disabled independently.
-    sources.extensions.enable = true;
-    sources.skills.enable = true;
-    sources.prompts.enable = true;
-    sources.themes.enable = true;
+    targets = [ "codex" "claude" "pi" ];
+    # Defaults, relative to your home directory:
+    # agentSkillsDir = ".agents/skills";
+    # claudeDir = ".claude";
+    # piDir = ".pi/agent";
   };
 }
 ```
 
-The module creates Home Manager file links from this repository's `source/` tree into pi's normal additive resource directories, under a `spellbook` namespace. For example, with the default `piDir`, resources are linked to:
+`homeManagerModules.spellbook` is an alias of `default`. The module installs
+individual resource links from the pinned flake source. It does not install
+harness executables or manage their settings. Use Home Manager or the checkout
+installer to own a destination, not both. The module currently exposes source
+files; extensions requiring npm dependencies need packaging before deployment
+through Nix.
 
-```text
-~/.pi/agent/extensions/spellbook
-~/.pi/agent/skills/spellbook
-~/.pi/agent/prompts/spellbook
-~/.pi/agent/themes/spellbook
-```
+For T3 remote development, configure the remote execution account. Ensure the
+T3 backend can find the required executables; a local development shell does
+not configure the remote service environment.
 
-It does not manage `settings.json`, `keybindings.json`, `models.json`, `AGENTS.md`, `SYSTEM.md`, or `APPEND_SYSTEM.md`.
+## Moving from the previous layout
 
-## Design notes
+The `source/` layout, bundled content, shell/PowerShell installers, module-shim
+script, and `programs.pi-spellbook` module have been removed. Switch Nix
+configuration to `programs.spellbook` and the new module export.
 
-- Resources are additive and namespaced under `spellbook`.
-- Existing pi settings, keybindings, models, and agent/system files are not managed.
-- Installs should be conservative and avoid overwriting user configuration.
-
-## External skill sources
-
-- [pstack](https://github.com/cursor/plugins/tree/main/pstack)
-- [Matt Pocock](https://github.com/mattpocock/skills)
+Before installing, inspect old links created by Spellbook. These may include
+`~/.codex/skills`, `~/.codex/AGENTS.md`, `~/.pi/agent/AGENTS.md`, the Pi
+`*/spellbook` resource links, and individual Claude skill links. Remove or
+replace a link only after verifying that it points into the old `source/` tree.
+The new installer deliberately does not claim those legacy links. No changes
+to your existing home configuration are made by this repository rewrite.
