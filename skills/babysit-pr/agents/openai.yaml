@@ -1,0 +1,3 @@
+interface:
+  display_name: "Babysit PR"
+  short_description: "Monitor PR reviews and CI until ready"

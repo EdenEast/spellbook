@@ -18,7 +18,8 @@ Understand the context:
 These determine which approach to use and what to emphasize.
 Reference Materials
 
-    Load summary-templates.md for ready-to-use templates for each summary type (Executive, Technical, Meeting, Research, Changelog). Use these as starting structures and adapt to the specific content.
+Read [references/summary-templates.md](references/summary-templates.md) when a structured template would help
+(Executive, Technical, Meeting, Research, Changelog). Adapt it to the content; short summaries do not require a template.
 
 Summarization Approaches
 

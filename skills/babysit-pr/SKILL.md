@@ -1,6 +1,6 @@
 ---
 name: babysit-pr
-description: Monitor a pull request though review and CI. Use when the user asks to monitor, watch or babysit a PR.
+description: Monitor a pull request through review and CI. Use when the user asks to monitor, watch or babysit a PR.
 ---
 
 # Babysit PR
