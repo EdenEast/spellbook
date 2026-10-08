@@ -4,9 +4,11 @@ Personal global skills for Codex, Claude Code, and Pi, plus Pi extensions.
 
 The shared skill collection contains six personal skills restored from the
 previous layout: `babysit-pr`, `commit`, `file-pr`, `html-communication`,
-`postplan-read`, and `summarization`. It also includes five adapted external
-skills: `diagnosing-bugs`, `writing-for-agents`, `unslop`, `retro`, and
-`blast-radius`. Supporting files and imported license notices are included.
+`postplan-read`, and `summarization`. It also includes 13 adapted external
+skills: `diagnosing-bugs`, `writing-for-agents`, `unslop`, `retro`,
+`blast-radius`, `grill-me`, `grilling`, `grill-with-docs`, `domain-modeling`,
+`how`, `why`, `teach`, and `bro`.
+Supporting files and imported license notices are included.
 Pi extensions remain empty; other previous content is in Git history.
 
 See the [skill catalog](skills/README.md) for invocation groups, descriptions,
