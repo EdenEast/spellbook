@@ -2,21 +2,22 @@
 
 ## Rule
 
-Compare structurally different alternatives when a consequential design choice
-remains uncertain.
+Before implementing a novel design whose answer is unclear, compare two or
+three structurally different prototypes or sketches side by side.
 
 ## When to use
 
 A novel interaction or architecture has multiple viable shapes and no
-established answer.
+established answer, or a product decision depends on the feel of the experience.
 
 ## How to apply
 
 1. Name the uncertainty, constraints, and criteria that distinguish a good result.
 2. Sketch or prototype two or three meaningfully different alternatives at the
    cheapest fidelity that can answer the question.
-3. Compare them against the same scenarios. Record the tradeoff behind the
-   choice before expensive implementation.
+3. Compare them side by side against the same scenarios before committing to
+   implementation. A second stylistic variation of the same shape is not a
+   distinct alternative. Record the tradeoff behind the choice.
 
 ## Boundaries
 

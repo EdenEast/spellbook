@@ -5,7 +5,7 @@ instructions supply the loading triggers; these files are read on demand.
 
 | Collection | Description | Use cases |
 | --- | --- | --- |
-| [Principles](principles/README.md) | All 24 pstack principles adapted as decision rules with triggers, boundaries, and checks. | Design, implementation, debugging, substantive review, or a principle named by the user. |
+| [Principles](principles/README.md) | All 24 pstack principles with concrete application guidance, triggers, checks, and documented Spellbook boundaries. | Design, implementation, debugging, substantive review, or a principle named by the user. |
 
 The installers expose this directory at `~/.agents/references/spellbook/` for
 Codex, Claude Code, and Pi. Relative links within the library work through that

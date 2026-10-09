@@ -7,16 +7,18 @@ then deliver the justified change incrementally.
 
 ## When to use
 
-A requirement strains an abstraction or would create another special path.
+Integrating a new requirement into an existing design, especially when it strains
+an abstraction or would create another special path.
 
 ## How to apply
 
-1. Read the affected design and contracts. Sketch the shape you would choose
-   with the new requirement as an original constraint.
+1. Read all affected files and contracts. Sketch the shape you would choose
+   from scratch with the new requirement as an original constraint.
 2. Compare that shape with a local extension, accounting for migration cost,
    compatibility, and authorized scope.
-3. Choose the smallest coherent route to the justified target. Update affected
-   callers, types, documentation, and examples together.
+3. Think through the whole redesign, then deliver the smallest coherent route
+   to the justified target incrementally. Propagate the change through every
+   affected reference: callers, types, documentation, examples, and rationale.
 
 ## Boundaries
 

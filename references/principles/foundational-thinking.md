@@ -2,19 +2,30 @@
 
 ## Rule
 
-Choose the data shape and establish prerequisites that make later work easier.
+Choose structures that preserve future design choices, keep local code simple,
+and establish prerequisites before their consumers.
 
 ## When to use
 
-Planning dependent phases, shared types, or infrastructure used by later steps.
+Before writing logic, choosing core types, planning dependent phases, or deciding
+what concurrent actors share.
 
 ## How to apply
 
-1. Identify invariants and access patterns using [Model the domain](model-the-domain.md).
-2. Order dependencies before consumers. Establish a verification path before a
-   risky migration or fix.
-3. Build the minimum prerequisite for the next useful increment. Keep each
-   increment coherent and checkable.
+1. Remove dead code before laying foundations. Identify invariants, define core
+   types early, and trace access patterns using [Model the domain](model-the-domain.md).
+2. Consolidate types and data models without abstracting every repeated line.
+   Three similar statements can be simpler than a premature abstraction.
+   Prefer explicit code and test behavior and edge cases.
+3. Before sharing state, ask what another actor's concurrent modification would
+   change. Isolate actors when sharing is unnecessary.
+4. Order prerequisites before consumers: setup before features, regression
+   checks before fixes. Establish CI, linting, tests, or shared types first when
+   every later phase benefits from them.
+5. Build the minimum prerequisite for the next useful increment. Each increment
+   should establish or deepen a coherent abstraction, rather than spread a
+   capability across callers as special-case coordination. Keep commits small
+   and single-purpose when commits are in scope.
 
 ## Boundaries
 
