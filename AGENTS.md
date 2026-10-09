@@ -21,6 +21,16 @@ integrated upstream version, not the current Spellbook commit.
 Keep customized files directly in the skill directory. Upstream snapshots and
 generated patches do not belong in this repository.
 
+## Shared references
+
+Keep guidance shared across workflows in `references/`. Maintain
+`references/README.md` and each collection's index when changing its inventory
+or loading triggers. Keep skill-specific supporting files with their skill.
+
+For adapted external references, follow the reference guidance in
+[EXTERNAL_SKILLS.md](EXTERNAL_SKILLS.md). Keep provenance and applicable license
+notices beside the adapted documents.
+
 ## Pi extensions
 
 Keep maintained extensions in `pi/extensions/`. Add dependencies only when an

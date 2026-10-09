@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Personal agent skills and Pi extensions for Codex, Claude Code, and Pi.",
+  "description": "Personal agent instructions, references, skills, and Pi extensions for Codex, Claude Code, and Pi.",
   "engines": {
     "node": ">=24.2"
   },

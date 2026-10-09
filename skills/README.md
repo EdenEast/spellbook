@@ -8,6 +8,11 @@ also be requested by name. Invocation syntax depends on the harness.
 Model invocation does not override a skill's requirement for a user request or
 authorization to perform an action.
 
+Shared decision guidance lives in the [reference catalog](../references/README.md).
+Its [principles](../references/principles/README.md) are loaded through global
+instructions and can be named by the user during any task. They are ordinary
+reference documents, separate from skill invocation and discovery.
+
 The six authored skills (`babysit-pr`, `commit`, `file-pr`, `html-communication`,
 `postplan-read`, and `summarization`) include `agents/openai.yaml` display names
 and short descriptions for Codex. They retain default implicit invocation;

@@ -8,6 +8,10 @@
   skillRoot = cfg.source + "/skills";
   extensionRoot = cfg.source + "/pi/extensions";
   instructionSource = cfg.source + "/instructions/AGENTS.md";
+  referenceSource = cfg.source + "/references";
+  referenceLinks = lib.optionalAttrs (builtins.pathExists referenceSource) {
+    ".agents/references/spellbook".source = referenceSource;
+  };
   instructionLinks = destination: lib.optionalAttrs (builtins.pathExists instructionSource) {
     "${destination}".source = instructionSource;
   };
@@ -31,11 +35,11 @@
   }) extensions;
 in {
   options.programs.spellbook = {
-    enable = lib.mkEnableOption "Spellbook instructions, skills, and Pi extensions";
+    enable = lib.mkEnableOption "Spellbook instructions, references, skills, and Pi extensions";
     source = lib.mkOption {
       type = lib.types.path;
       default = self;
-      description = "Spellbook source tree containing instructions/, skills/, and pi/extensions/.";
+      description = "Spellbook source tree containing instructions/, references/, skills/, and pi/extensions/.";
     };
     targets = lib.mkOption {
       type = lib.types.listOf (lib.types.enum ["codex" "claude" "pi"]);
@@ -66,6 +70,7 @@ in {
 
   config = lib.mkIf cfg.enable {
     home.file = lib.mkMerge [
+      (lib.mkIf (cfg.targets != []) referenceLinks)
       (lib.mkIf (enabled "codex") (instructionLinks "${cfg.codexDir}/AGENTS.md"))
       (lib.mkIf (enabled "claude") (instructionLinks "${cfg.claudeDir}/CLAUDE.md"))
       (lib.mkIf (enabled "pi") (instructionLinks "${cfg.piDir}/AGENTS.md"))

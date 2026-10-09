@@ -96,8 +96,24 @@ async function instructionLinks({ root, home, targets }: Options): Promise<Link[
   return links;
 }
 
+async function referenceLinks({ root, home, targets }: Options): Promise<Link[]> {
+  if (!targets.length) return [];
+  const source = resolve(root, "references");
+  const destination = join(home, ".agents/references/spellbook");
+  const available = (await stat(source))?.isDirectory();
+  const owned = (await linkTarget(destination)) === source;
+  if (!available && !owned) return [];
+  const parent = await stat(dirname(destination));
+  if (parent && !parent.isDirectory()) {
+    throw new Error(`Expected a real resource directory: ${dirname(destination)}. Resolve the existing file or directory symlink first.`);
+  }
+  const state = owned ? (available ? "installed" : "stale")
+    : (await stat(destination)) ? "conflict" : "missing";
+  return [{ source, destination, state }];
+}
+
 export async function plan(options: Options): Promise<Link[]> {
-  const links = await instructionLinks(options);
+  const links = [...await instructionLinks(options), ...await referenceLinks(options)];
   for (const collection of collections(options)) {
     const destinationStat = await stat(collection.destination);
     if (destinationStat && !destinationStat.isDirectory()) {
@@ -133,7 +149,7 @@ export async function run(action: Action, options: Options): Promise<void> {
   if (action === "install" && conflicts.length) {
     throw new Error(`Existing paths conflict with installation:\n${conflicts.map((link) => link.destination).join("\n")}`);
   }
-  if (!links.length) log("No instructions, skills, or extensions to manage.");
+  if (!links.length) log("No instructions, references, skills, or extensions to manage.");
   for (const link of links) {
     const remove = (action === "uninstall" && link.state === "installed") || (action !== "status" && link.state === "stale");
     const add = action === "install" && link.state === "missing";

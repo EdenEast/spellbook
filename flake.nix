@@ -1,5 +1,5 @@
 {
-  description = "Personal agent skills and Pi extensions";
+  description = "Personal agent instructions, references, skills, and Pi extensions";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";

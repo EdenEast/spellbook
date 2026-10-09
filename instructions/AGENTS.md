@@ -11,6 +11,16 @@
 - Be careful with destructive actions that are not explicitly requested by the user.
 - Keep comments up to date! When making changes, it is important to keep things in sync.
 
+## Principles
+
+- Before design, implementation, debugging, or substantive review, read
+  `~/.agents/references/spellbook/principles/README.md` once per session. Read the full documents whose triggers match
+  the current task, including a principle the user names. Apply their boundaries within the authorized task scope.
+- When a principle materially changes a decision, explain the choice it changed.  Only attribute a decision to a
+  principle you read this session.
+- If the installed index is missing, continue with available instructions and mention the missing library when relevant.
+  When working in Spellbook, use `references/principles/README.md` in the checkout.
+
 ## Questions are read-only
 
 - A question is a request for an answer, not for changes. If the message opens with with "how hard would it be", "how

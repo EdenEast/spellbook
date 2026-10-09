@@ -5,6 +5,32 @@ Spellbook has no automated upstream updater yet. Keep the editable skill in
 `skills/<name>/` and reconstruct upstream versions in a temporary directory or
 an external cache.
 
+## External references
+
+This workflow also applies to adapted external documents in `references/`.
+Keep a collection's `SOURCE.toml` and license notices beside its documents.
+Record `repository`, repository-relative `path`, and the full integrated
+`commit`. For a collection adapted from selected upstream files, add a `[files]`
+table mapping local filenames to repository-relative upstream files. Only those
+mapped files are integrated; the containing upstream directory is not imported
+in full. Authored indexes and other local-only documents have no upstream entry.
+
+Reconstruct each mapped upstream file at base and target, including its original
+frontmatter, supporting dependencies, and applicable license notices. Compare
+the full sources before deciding which changes affect the adapted reference.
+Account for format transformations separately: principles use ordinary Markdown
+with triggers, application guidance, boundaries, checks, and related links.
+Skill frontmatter and invocation metadata belong to upstream skill packaging;
+they do not belong in the reference document. Resolve upstream companion links
+to adopted references or incorporate the necessary guidance within scope.
+
+Preserve intentional local changes, such as scoped authorization and exceptions
+to broad upstream rules. Review semantic changes even when different formats
+prevent a useful textual merge. Validate the mapped inventory, relative links,
+loading pointers, and license notices before advancing the pin. Update
+`references/README.md`, the collection's index, and installation documentation
+when affected. The remaining sections describe the same process for skills.
+
 ## Establish the versions
 
 1. Read the skill's `SOURCE.toml`, `SKILL.md`, supporting files, and catalog

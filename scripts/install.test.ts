@@ -32,6 +32,83 @@ async function instructions(options: Options) {
   return source;
 }
 
+async function references(options: Options) {
+  const source = join(options.root, "references");
+  await mkdir(join(source, "principles"), { recursive: true });
+  await writeFile(join(source, "README.md"), "[Principles](principles/README.md)\n");
+  await writeFile(join(source, "principles/README.md"), "[Prove it works](prove-it-works.md)\n");
+  await writeFile(join(source, "principles/prove-it-works.md"), "Check the actual result.\n");
+  return source;
+}
+
+test("each target shares readable references without discovering them as skills", async (t) => {
+  for (const target of ["codex", "claude", "pi"] as const) {
+    const options = { ...await fixture(t), targets: [target, target] };
+    const source = await references(options);
+    const destination = join(options.home, ".agents/references/spellbook");
+    await run("install", { ...options, dryRun: true });
+    assert.deepEqual(await readdir(options.home), []);
+    await run("install", options);
+    await run("install", options);
+    assert.equal(await readlink(destination), source);
+    assert.equal(await readFile(join(destination, "principles/prove-it-works.md"), "utf8"), "Check the actual result.\n");
+    assert.deepEqual(await plan(options), [{ source, destination, state: "installed" }]);
+    await run("status", options);
+    assert.deepEqual(await readdir(join(options.home, ".agents")), ["references"]);
+    await run("uninstall", options);
+    assert.deepEqual(await readdir(join(options.home, ".agents/references")), []);
+  }
+});
+
+test("reference conflicts prevent all writes and preserve foreign resources", async (t) => {
+  const options = await fixture(t);
+  await references(options);
+  await instructions(options);
+  await skill(options);
+  const parent = join(options.home, ".agents/references");
+  const destination = join(parent, "spellbook");
+  await mkdir(parent, { recursive: true });
+  await writeFile(destination, "personal reference");
+  await assert.rejects(run("install", options), /conflict/);
+  assert.deepEqual(await readdir(options.home), [".agents"]);
+  await run("uninstall", options);
+  assert.equal(await readFile(destination, "utf8"), "personal reference");
+  await rm(destination);
+  const foreign = join(options.root, "foreign-references");
+  await symlink(foreign, destination, "dir");
+  await assert.rejects(run("install", options), /conflict/);
+  await run("uninstall", options);
+  assert.equal(await readlink(destination), foreign);
+});
+
+test("deleted reference directories leave owned links that install and uninstall remove", async (t) => {
+  for (const action of ["install", "uninstall"] as const) {
+    const options = await fixture(t);
+    const source = await references(options);
+    await run("install", options);
+    await rm(source, { recursive: true });
+    assert.deepEqual(await plan(options), [{
+      source,
+      destination: join(options.home, ".agents/references/spellbook"),
+      state: "stale",
+    }]);
+    await run(action, options);
+    assert.deepEqual(await plan(options), []);
+    assert.deepEqual(await readdir(join(options.home, ".agents/references")), []);
+  }
+});
+
+test("references respect empty target selection and reject a symlinked parent", async (t) => {
+  const options = await fixture(t);
+  const source = await references(options);
+  await run("install", { ...options, targets: [] });
+  assert.deepEqual(await readdir(options.home), []);
+  await mkdir(join(options.home, ".agents"));
+  await symlink(source, join(options.home, ".agents/references"), "dir");
+  await assert.rejects(run("install", options), /real resource directory/);
+  assert.deepEqual((await readdir(source)).sort(), ["README.md", "principles"]);
+});
+
 test("global instructions follow target selection and support dry run, status, and uninstall", async (t) => {
   const options = await fixture(t);
   const source = await instructions(options);

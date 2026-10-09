@@ -1,6 +1,7 @@
 # Spellbook
 
-Personal global instructions and skills for Codex, Claude Code, and Pi, plus Pi extensions.
+Personal global instructions, references, and skills for Codex, Claude Code,
+and Pi, plus Pi extensions.
 
 The shared skill collection contains six personal skills restored from the
 previous layout: `babysit-pr`, `commit`, `file-pr`, `html-communication`,
@@ -14,12 +15,16 @@ installation. Supporting files and imported license notices are included.
 Pi extensions remain empty; other previous content is in Git history.
 
 See the [skill catalog](skills/README.md) for invocation groups, descriptions,
-and use cases.
+and use cases. The [reference catalog](references/README.md) contains all 24
+adapted pstack principles used across workflows.
 
 ## Layout
 
 ```text
 instructions/AGENTS.md   Shared global instructions restored from source/AGENTS.md
+references/              Shared documents loaded on demand
+  README.md              Reference catalog
+  principles/            Index, decision rules, provenance, and license
 skills/                  Globally installed skills, regardless of origin
   <name>/
     SKILL.md
@@ -75,6 +80,7 @@ All three targets are selected by default. Select a subset with repeatable
 | Codex global instructions | `~/.codex/AGENTS.md` |
 | Claude Code global instructions | `~/.claude/CLAUDE.md` |
 | Pi global instructions | `~/.pi/agent/AGENTS.md` |
+| Shared references for any selected target | `~/.agents/references/spellbook/` |
 | Codex and Pi skills | `~/.agents/skills/<name>` |
 | Claude Code skills | `~/.claude/skills/<name>` |
 | Pi extensions | `~/.pi/agent/extensions/spellbook-<name>` |
@@ -95,6 +101,12 @@ Repository-only skills live in `.agents/skills/<name>/`, with
 `.claude/skills/<name>` linking to that directory. Both global installers read
 only `skills/`, so repository-only skills stay local.
 
+References use one shared location for all three harnesses. Installing or
+uninstalling with any selected target manages that shared link and therefore
+affects every harness using it. The installer requires the containing
+`~/.agents/references/` to be a real directory and preserves conflicting files
+and foreign links.
+
 The installer links individual resources to this checkout. It refuses existing
 conflicting paths before writing any links. Reinstalling removes stale links to
 resources deleted from this checkout. Uninstall only removes links pointing
@@ -105,6 +117,34 @@ When no resources exist, the installer creates no harness directories. It
 manages instruction links but does not change settings, credentials, or install
 harness executables. It uses the current user's standard home paths; use the Home Manager options below
 for custom resource locations. Existing sessions may need a reload or restart.
+
+## Shared references
+
+Keep documents used across workflows in `references/`. The global instructions
+direct agents to read the [principles index](references/principles/README.md)
+before design, implementation, debugging, or substantive review, then read the
+full documents whose triggers match the task. You can steer a task by naming a
+principle, such as "prove it works" or "subtract before you add". Agents explain
+the choice a principle changed when that explanation helps assess the work.
+
+The library uses ordinary Markdown. Each principle contains its rule, triggers,
+application guidance, boundaries, check, and related references. It does not
+add skill invocation entries. A skill that needs shared guidance can point to
+`~/.agents/references/spellbook/principles/<name>.md` at the relevant step;
+supporting material unique to that skill stays in its own directory.
+
+The shared destination is fixed so the same instruction file works for all
+harnesses, including when their configuration directories are customized.
+When using the checkout directly, the index is `references/principles/README.md`.
+If installation is missing, agents continue with available instructions and
+report the gap when relevant.
+
+Adapted documents retain a collection-level `SOURCE.toml`, mapping each local
+document to its upstream file, and the applicable license. Follow the
+[external reference workflow](EXTERNAL_SKILLS.md#external-references) when
+checking or updating them. The collection adapts all 24 principles at
+`ccb5507cec1546dc88135c1139c811e6c59115ba`, with scope boundaries and verification
+guidance suited to Spellbook.
 
 ## External skills
 
@@ -173,7 +213,8 @@ Add Spellbook as a flake input and import its module:
 ```
 
 `homeManagerModules.spellbook` is an alias of `default`. The module installs
-individual resource links from the pinned flake source. It does not install
+individual resource links from the pinned flake source, including the shared
+reference directory whenever at least one target is selected. It does not install
 harness executables or manage their settings. Use Home Manager or the checkout
 installer to own a destination, not both. The module currently exposes source
 files; extensions requiring npm dependencies need packaging before deployment
