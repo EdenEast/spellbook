@@ -1,3 +1,4 @@
 node_modules/
 .direnv/
-source/skills/.system/
+result
+result-*
