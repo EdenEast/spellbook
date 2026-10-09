@@ -2,8 +2,8 @@
 
 ## Rule
 
-Choose the result for the people who use and maintain the work, accounting for
-implementation cost.
+When implementation convenience conflicts with the consumer's experience,
+prefer the experience within the agreed constraints.
 
 ## When to use
 
@@ -14,10 +14,16 @@ usability.
 
 1. Identify the consumer and central task: an end user, API caller, operator,
    or future maintainer.
-2. Compare observable outcomes, including feedback, error recovery,
-   accessibility, and maintenance effort.
-3. Prefer a smaller complete experience when extra features dilute the core task.
-   Prototype uncertain interactions before costly implementation.
+2. Justify every feature, control, and option by how it serves the central task.
+   Prefer fewer polished features over a larger rough experience.
+3. Prototype uncertain interactions before committing to production code.
+   Compare outcomes from the consumer's perspective, including accessibility,
+   error recovery, and maintenance effort.
+4. Get the details right: transitions, alignment, spacing, feedback, and error
+   states. Every feature should support the central workflow or get out of its way.
+5. Give future maintainers and API callers the same consideration as end users.
+   Foundations determine the sequence of work; the experience determines its
+   target.
 
 ## Boundaries
 

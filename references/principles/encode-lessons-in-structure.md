@@ -11,13 +11,20 @@ callers despite documented guidance.
 
 ## How to apply
 
-1. Identify the recurring failure and the rule that would prevent it.
+1. Capture each error, human correction, and unexpected outcome. Decide whether
+   it is a one-off or a recurring failure, and identify the rule that would
+   prevent the pattern.
 2. Prefer a representation that makes the error impossible. Otherwise choose a
    compiler check, lint rule, canonical helper, runtime check, or script that
    catches it at the appropriate boundary.
 3. Verify the mechanism rejects a concrete violation and accepts a valid case.
-4. Replace duplicated instructions with a pointer to the authoritative mechanism.
-   When judgment remains necessary, document the trigger and a failure example.
+4. Delete redundant instructions once the structural fix enforces the rule.
+   Keep a loading pointer only when needed to find the mechanism. When judgment
+   remains necessary, make the instruction prominent and add a failure example.
+5. Route a one-off to a task note, a recurring correction to a skill or check,
+   and a systemic issue to a principle. Apply the fix within scope or record a
+   concrete follow-up. Acknowledgment without recording, recording without
+   action, and fixing one instance while leaving the pattern do not close the loop.
 
 For example, derive generated types from an authoritative schema instead of
 repeatedly reminding authors to synchronize duplicate definitions.

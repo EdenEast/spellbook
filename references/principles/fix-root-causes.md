@@ -12,11 +12,15 @@ fixes only moved or concealed the symptom.
 ## How to apply
 
 1. Reproduce the symptom on the affected system or the closest available case.
-2. Trace the input, state, and ownership that produce it. Write down competing
-   explanations and choose an observation that distinguishes them.
-3. Inspect persistent state for restart failures. Instrument when the cause is
-   unclear rather than stacking speculative fixes.
-4. Fix the verified cause and inspect related instances within scope. Keep a
+2. Ask why until the explanation reaches the cause. Trace the input, state, and
+   ownership that produce it. Write down competing explanations and choose an
+   observation that distinguishes them.
+3. For restart failures, suspect persistent state before code: configuration,
+   caches, lock files, and serialized state. If clearing state restores behavior,
+   investigate validation and recovery. Instrument when the cause is unclear.
+4. Do not add a nil check merely to silence a crash. A workaround needing a long
+   justification is a reason to revisit the design and fix the cause.
+5. Search for the pattern and fix related instances within scope. Keep a
    regression check that detects the original failure.
 
 For example, if a restart reuses a stale lock, test ownership and recovery

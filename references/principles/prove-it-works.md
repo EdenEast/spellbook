@@ -14,9 +14,17 @@ Before reporting a change, task, diagnosis, or generated artifact as successful.
 2. Choose a check that observes that result. Run a feature to establish runtime
    behavior, inspect the generated file to establish its contents, or evaluate
    configuration to establish the resulting resource mapping.
-3. Use existing repeatable checks where they fit. Report what you observed and
-   the limits of the check.
-4. If the result fails, investigate the check and system before claiming success.
+3. Check process liveness directly and read actual values. File timestamps,
+   output freshness, cached screenshots, and agent self-reports are not proof
+   of current behavior.
+4. Script the check when possible. Reuse an existing deterministic check or
+   write a small one, run it, and keep its output and command visible so a
+   reviewer can repeat the comparison.
+5. For large or complex work, keep a reviewable trail of decisions, reasons,
+   evidence pointers, and results with the deliverable when later review needs
+   it. Report what you observed and the limits of the check.
+6. If verification fails, check the observation method before assuming the
+   system is wrong. Investigate both before claiming success.
 
 For example, type checking an installer establishes static consistency. Installing
 into a temporary home and reading its links establishes installation behavior.

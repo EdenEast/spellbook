@@ -13,8 +13,10 @@ Concurrent actors may write the same file, branch, key, or mutable object.
 1. Identify writers, ownership, and the invariant that supposedly needs sharing.
 2. If actors publish independent facts, give each an owned target and combine
    results at the read or reporting boundary.
-3. For necessary sharing, enforce coordination through a transaction, single
-   writer, lock, or compare-and-swap mechanism suited to the system.
+3. Treat a proposed lock as a reason to recheck whether sharing is necessary.
+   When one shared target is a real invariant, enforce coordination through a
+   transaction, sequential phases, exclusive ownership, a single writer, a lock,
+   or compare-and-swap. Instructions and conventions are not concurrency control.
 4. Exercise competing writes and interruption recovery for the chosen design.
 
 ## Boundaries

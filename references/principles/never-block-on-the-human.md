@@ -16,8 +16,11 @@ requested task.
 2. Resolve observable facts through inspection or proportionate experiments.
    Choose reasonable defaults for routine implementation details.
 3. Continue independent work while a genuine missing requirement or preference
-   is pending. Present concrete results and material assumptions.
-4. Obtain required approval before dependent actions that exceed authorization
+   is pending. Proceed, then present concrete results and material assumptions
+   so the human can supervise asynchronously and course-correct.
+4. When you notice a problem, record it and fix it in the next appropriate unit
+   within scope. Do not leave a recurring problem at acknowledgment alone.
+5. Obtain required approval before dependent actions that exceed authorization
    or require confirmation under active instructions.
 
 ## Boundaries

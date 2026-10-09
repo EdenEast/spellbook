@@ -18,7 +18,11 @@ useful information.
 3. Keep universally needed guidance near its loading point. Disclose
    branch-specific detail through precise pointers.
 4. If delegation is permitted and worthwhile, assign bounded reading tasks and
-   request cited findings rather than raw payloads.
+   route verbose output, screenshots, and long documents there. Request cited
+   findings rather than raw payloads in the main thread.
+5. Size phases and cap scope. Limit files per phase, set working turn budgets
+   where useful, and account for the context cost of tools, coordination, and
+   repeated loading.
 
 ## Boundaries
 

@@ -11,14 +11,23 @@ Designing types, function signatures, or variant handling in a typed language.
 
 ## How to apply
 
-1. Represent mutually exclusive states with variants. Choose constructions that
-   preserve invariants, such as a head plus a tail for a non-empty sequence.
-2. Distinguish semantic identifiers when accidental interchange is plausible.
-3. Parse external data at boundaries. Narrow or validate rather than asserting
-   an unproved fact to the compiler.
-4. Make variant handling exhaustive and derive types from authoritative schemas.
-5. Strengthen types where operations otherwise have unhandled cases. Keep
-   simple types for operations that already handle every valid input.
+1. Represent mutually exclusive states with variants, not contradictory bags
+   of optional fields. Derive a completion flag from its timestamp or use open
+   and completed variants when completion requires a timestamp.
+2. Construct valid values instead of restricting a loose representation with
+   checks. Use a head plus a tail for a non-empty sequence, a start plus a
+   duration for an ordered time range, or pairs for an even-length collection.
+3. Brand semantic identifiers such as `UserId` and `OrderId` when accidental
+   interchange is plausible. Validate at construction and use the type downstream.
+4. Treat RPC, JSON, IPC, CLI, configuration, environment, and database input as
+   untyped until parsed. Narrow, validate, or refine the model rather than use
+   casts or assertions to tell the compiler an unproved fact.
+5. Make the compiler reject unhandled variants when a new case is added. Derive
+   types from authoritative protocol, API, database, or design-system schemas.
+6. Strengthen types where operations otherwise have unhandled cases or can
+   panic. Prefer total functions: a sum can accept an empty list and return zero;
+   taking its head needs a non-empty list. Stop strengthening once every valid
+   input is handled.
 
 ## Boundaries
 
@@ -29,8 +38,10 @@ justification.
 
 ## Check
 
-Can contradictory states be constructed? Will adding a variant expose unhandled
-cases? Which defect does each stronger type prevent?
+Can contradictory states be constructed? Do same-typed arguments mean different
+things? Where did each `any`, cast, or non-null assertion originate? Will adding
+a variant expose unhandled cases at compile time? Is a type duplicating a schema
+another file owns? Which defect does each stronger type prevent?
 
 ## Related references
 

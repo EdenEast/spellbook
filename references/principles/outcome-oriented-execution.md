@@ -17,7 +17,9 @@ boundaries.
    creating a second permanent implementation by accident.
 3. Allow intermediate breakage only in an isolated, authorized work area with
    a recovery path and a declared verification boundary.
-4. Restore required checks before handing off or publishing completed work.
+4. Keep high-signal checks running for actively touched areas during migration.
+   At completion, verify the full result with applicable static and runtime
+   checks before handing off or publishing. Report unavailable checks as gaps.
 
 ## Boundaries
 
