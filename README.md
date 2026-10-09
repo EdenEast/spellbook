@@ -4,11 +4,13 @@ Personal global instructions and skills for Codex, Claude Code, and Pi, plus Pi 
 
 The shared skill collection contains six personal skills restored from the
 previous layout: `babysit-pr`, `commit`, `file-pr`, `html-communication`,
-`postplan-read`, and `summarization`. It also includes 13 adapted external
+`postplan-read`, and `summarization`. It also includes 16 adapted external
 skills: `diagnosing-bugs`, `writing-for-agents`, `unslop`, `retro`,
 `blast-radius`, `grill-me`, `grilling`, `grill-with-docs`, `domain-modeling`,
-`how`, `why`, `teach`, and `bro`.
-Supporting files and imported license notices are included.
+`how`, `why`, `teach`, `bro`, `technical-writing`, `create-verification-skill`,
+and `maintain-verification-skill`.
+The adapted `automate-me` skill is repository-only and excluded from global
+installation. Supporting files and imported license notices are included.
 Pi extensions remain empty; other previous content is in Git history.
 
 See the [skill catalog](skills/README.md) for invocation groups, descriptions,
@@ -18,11 +20,13 @@ and use cases.
 
 ```text
 instructions/AGENTS.md   Shared global instructions restored from source/AGENTS.md
-skills/                  All skills, regardless of origin
+skills/                  Globally installed skills, regardless of origin
   <name>/
     SKILL.md
     SOURCE.toml          Only for skills imported from elsewhere
     references/          Optional supporting files
+.agents/skills/          Canonical repository-only skills for Codex and Pi
+.claude/skills/          Links to .agents/skills/ for Claude Code
 pi/
   extensions/            Pi extension files or directories with index.ts/index.js
 scripts/                 Installation tooling and tests
@@ -86,6 +90,10 @@ links affects both, even when only one target is selected. Extensions are only
 managed with the Pi target. See the [Codex skill documentation](https://learn.chatgpt.com/docs/build-skills),
 [Claude skill documentation](https://code.claude.com/docs/en/skills), and
 [Pi skill documentation](https://github.com/badlogic/pi-mono/blob/main/packages/coding-agent/docs/skills.md).
+
+Repository-only skills live in `.agents/skills/<name>/`, with
+`.claude/skills/<name>` linking to that directory. Both global installers read
+only `skills/`, so repository-only skills stay local.
 
 The installer links individual resources to this checkout. It refuses existing
 conflicting paths before writing any links. Reinstalling removes stale links to

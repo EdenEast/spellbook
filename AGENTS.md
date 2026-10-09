@@ -6,7 +6,9 @@ When checking or updating an external skill, follow
 [EXTERNAL_SKILLS.md](EXTERNAL_SKILLS.md) for upstream reconstruction, merging
 local adaptations, validation, and advancing provenance.
 
-All skills live in `skills/<name>/`, regardless of their origin.
+Globally installed skills live in `skills/<name>/`, regardless of their origin.
+Repository-only skills live in `.agents/skills/<name>/`, with
+`.claude/skills/<name>` symlinked to that directory.
 
 Keep `skills/README.md` updated when adding, removing, or changing a skill. List
 each skill with a relative link, description, and use cases, grouped by its
