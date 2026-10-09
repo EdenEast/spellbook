@@ -3,7 +3,7 @@ set positional-arguments
 _default:
     @just --list
 
-# Install skills and Pi extensions; pass --target codex|claude|pi or --dry-run.
+# Install global instructions, skills, and Pi extensions; pass --target codex|claude|pi or --dry-run.
 install *args:
     node scripts/install.ts install "$@"
 

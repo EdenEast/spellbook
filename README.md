@@ -1,6 +1,6 @@
 # Spellbook
 
-Personal global skills for Codex, Claude Code, and Pi, plus Pi extensions.
+Personal global instructions and skills for Codex, Claude Code, and Pi, plus Pi extensions.
 
 The shared skill collection contains six personal skills restored from the
 previous layout: `babysit-pr`, `commit`, `file-pr`, `html-communication`,
@@ -17,6 +17,7 @@ and use cases.
 ## Layout
 
 ```text
+instructions/AGENTS.md   Shared global instructions restored from source/AGENTS.md
 skills/                  All skills, regardless of origin
   <name>/
     SKILL.md
@@ -67,9 +68,18 @@ All three targets are selected by default. Select a subset with repeatable
 
 | Resource | Destination |
 | --- | --- |
+| Codex global instructions | `~/.codex/AGENTS.md` |
+| Claude Code global instructions | `~/.claude/CLAUDE.md` |
+| Pi global instructions | `~/.pi/agent/AGENTS.md` |
 | Codex and Pi skills | `~/.agents/skills/<name>` |
 | Claude Code skills | `~/.claude/skills/<name>` |
 | Pi extensions | `~/.pi/agent/extensions/spellbook-<name>` |
+
+The editable global instruction file lives at `instructions/AGENTS.md`; the root
+`AGENTS.md` contains instructions for maintaining this repository. All selected
+targets link to the same global file, with Claude using its `CLAUDE.md` filename.
+See the [Codex instruction documentation](https://learn.chatgpt.com/docs/agent-configuration/agents-md)
+and [Claude instruction documentation](https://code.claude.com/docs/en/memory).
 
 Codex and Pi share skill discovery: installing or uninstalling their shared
 links affects both, even when only one target is selected. Extensions are only
@@ -83,9 +93,9 @@ resources deleted from this checkout. Uninstall only removes links pointing
 into this checkout, including broken links; unrelated resources are preserved.
 Keep the checkout at a stable path and uninstall before moving it.
 
-An empty collection creates no harness directories. The installer does not
-change settings, instructions, credentials, or install harness executables. It
-uses the current user's standard home paths; use the Home Manager options below
+When no resources exist, the installer creates no harness directories. It
+manages instruction links but does not change settings, credentials, or install
+harness executables. It uses the current user's standard home paths; use the Home Manager options below
 for custom resource locations. Existing sessions may need a reload or restart.
 
 ## External skills
@@ -147,6 +157,7 @@ Add Spellbook as a flake input and import its module:
     targets = [ "codex" "claude" "pi" ];
     # Defaults, relative to your home directory:
     # agentSkillsDir = ".agents/skills";
+    # codexDir = ".codex";
     # claudeDir = ".claude";
     # piDir = ".pi/agent";
   };
@@ -174,5 +185,6 @@ Before installing, inspect old links created by Spellbook. These may include
 `~/.codex/skills`, `~/.codex/AGENTS.md`, `~/.pi/agent/AGENTS.md`, the Pi
 `*/spellbook` resource links, and individual Claude skill links. Remove or
 replace a link only after verifying that it points into the old `source/` tree.
-The new installer deliberately does not claim those legacy links. No changes
-to your existing home configuration are made by this repository rewrite.
+The new installer does not claim legacy links. Legacy instruction links at the
+managed destinations must be resolved before installation. No changes to your
+existing home configuration are made by this repository rewrite.

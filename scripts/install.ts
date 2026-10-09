@@ -75,8 +75,29 @@ async function linkTarget(path: string): Promise<string | undefined> {
   return resolve(dirname(path), await readlink(path));
 }
 
-export async function plan(options: Options): Promise<Link[]> {
+async function instructionLinks({ root, home, targets }: Options): Promise<Link[]> {
+  const source = resolve(root, "instructions/AGENTS.md");
+  const available = (await stat(source))?.isFile();
+  const destinations: Record<Target, string> = {
+    codex: ".codex/AGENTS.md",
+    claude: ".claude/CLAUDE.md",
+    pi: ".pi/agent/AGENTS.md",
+  };
   const links: Link[] = [];
+  for (const target of new Set(targets)) {
+    const destination = join(home, destinations[target]);
+    const owned = (await linkTarget(destination)) === source;
+    if (available || owned) {
+      const state = owned ? (available ? "installed" : "stale")
+        : (await stat(destination)) ? "conflict" : "missing";
+      links.push({ source, destination, state });
+    }
+  }
+  return links;
+}
+
+export async function plan(options: Options): Promise<Link[]> {
+  const links = await instructionLinks(options);
   for (const collection of collections(options)) {
     const destinationStat = await stat(collection.destination);
     if (destinationStat && !destinationStat.isDirectory()) {
@@ -112,7 +133,7 @@ export async function run(action: Action, options: Options): Promise<void> {
   if (action === "install" && conflicts.length) {
     throw new Error(`Existing paths conflict with installation:\n${conflicts.map((link) => link.destination).join("\n")}`);
   }
-  if (!links.length) log("No skills or extensions to manage.");
+  if (!links.length) log("No instructions, skills, or extensions to manage.");
   for (const link of links) {
     const remove = (action === "uninstall" && link.state === "installed") || (action !== "status" && link.state === "stale");
     const add = action === "install" && link.state === "missing";

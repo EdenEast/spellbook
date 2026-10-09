@@ -25,6 +25,64 @@ async function skill(options: Options, name = "example") {
   return directory;
 }
 
+async function instructions(options: Options) {
+  const source = join(options.root, "instructions/AGENTS.md");
+  await mkdir(join(options.root, "instructions"));
+  await writeFile(source, "Global preferences\n");
+  return source;
+}
+
+test("global instructions follow target selection and support dry run, status, and uninstall", async (t) => {
+  const options = await fixture(t);
+  const source = await instructions(options);
+  await run("install", { ...options, dryRun: true });
+  assert.deepEqual(await readdir(options.home), []);
+  for (const [target, destination] of [
+    ["codex", ".codex/AGENTS.md"],
+    ["claude", ".claude/CLAUDE.md"],
+    ["pi", ".pi/agent/AGENTS.md"],
+  ] as const) {
+    const selected = { ...options, targets: [target, target] };
+    await run("install", selected);
+    await run("install", selected);
+    assert.equal(await readlink(join(options.home, destination)), source);
+    assert.deepEqual(await plan(selected), [{ source, destination: join(options.home, destination), state: "installed" }]);
+    await run("status", selected);
+    await run("uninstall", selected);
+    assert.deepEqual(await readdir(join(options.home, destination, "..")), []);
+  }
+});
+
+test("instruction conflicts preflight all resources and preserve existing files and foreign links", async (t) => {
+  const options = await fixture(t);
+  await instructions(options);
+  await skill(options);
+  await mkdir(join(options.home, ".pi/agent"), { recursive: true });
+  const destination = join(options.home, ".pi/agent/AGENTS.md");
+  await writeFile(destination, "personal instructions");
+  await assert.rejects(run("install", options), /conflict/);
+  assert.deepEqual(await readdir(options.home), [".pi"]);
+  await run("uninstall", options);
+  assert.equal(await readFile(destination, "utf8"), "personal instructions");
+  await rm(destination);
+  await symlink(join(options.root, "source/AGENTS.md"), destination);
+  await assert.rejects(run("install", options), /conflict/);
+  await run("uninstall", options);
+  assert.equal(await readlink(destination), join(options.root, "source/AGENTS.md"));
+});
+
+test("deleted global instructions leave stale links that install and uninstall remove", async (t) => {
+  const options = await fixture(t);
+  const source = await instructions(options);
+  await run("install", options);
+  await rm(source);
+  assert.equal((await plan(options)).length, 3);
+  assert.ok((await plan(options)).every((link) => link.state === "stale"));
+  await run("install", { ...options, targets: ["codex"] });
+  await run("uninstall", options);
+  assert.deepEqual(await plan(options), []);
+});
+
 test("empty collections do not create harness configuration", async (t) => {
   const options = await fixture(t);
   await writeFile(join(options.root, "skills/.gitkeep"), "");
