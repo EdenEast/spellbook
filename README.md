@@ -46,3 +46,10 @@ maintenance guides, and reference pages. Start with the relevant guide:
 - [Install with Home Manager](docs/home-manager.md).
 - [Develop Spellbook](docs/development.md).
 - [Migrate from the previous layout](docs/migration.md).
+
+## Credits
+
+Spellbook includes adapted skills and references from
+[pstack](https://github.com/cursor/plugins) by Lauren Tan and
+[Matt Pocock's skills](https://github.com/mattpocock/skills). Each adapted
+item records its upstream source in `SOURCE.toml` and includes its license.
