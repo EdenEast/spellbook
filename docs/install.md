@@ -13,7 +13,7 @@ installed resources link to it.
    ```
 
 2. Resolve any conflicting paths listed in the preview. If you used the old
-   `source/` layout, follow [Migrate from the previous layout](migration.md).
+   `source/` layout, inspect existing links before replacing them.
 
 3. Create the links:
 

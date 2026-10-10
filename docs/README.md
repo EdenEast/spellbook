@@ -12,7 +12,6 @@ Choose the guide for your task:
 - [Develop Spellbook](development.md): set up the environment and run checks.
 - [Maintain skills and references](maintenance.md): add resources and track upstream versions.
 - [Create and load Pi extensions](pi-extensions.md): test local extensions or use the native Pi package.
-- [Migrate from the previous layout](migration.md): resolve legacy links and update Nix configuration.
 
 ## Reference
 

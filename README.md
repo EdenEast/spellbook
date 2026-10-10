@@ -45,7 +45,6 @@ maintenance guides, and reference pages. Start with the relevant guide:
 - [Install from a checkout](docs/install.md), including uninstall and shared paths.
 - [Install with Home Manager](docs/home-manager.md).
 - [Develop Spellbook](docs/development.md).
-- [Migrate from the previous layout](docs/migration.md).
 
 ## Credits
 
