@@ -38,7 +38,7 @@ also request them by name.
 | [domain-modeling](domain-modeling/SKILL.md) | Define domain terms and document design decisions. | Maintain `GLOSSARY.md` and ADRs. |
 | [file-pr](file-pr/SKILL.md) | Create a PR with a concise title and description. | Submit completed work for review. |
 | [grilling](grilling/SKILL.md) | Test a plan through rounds of questions. | Clarify designs; support `grill-me` and `grill-with-docs`. |
-| [html-communication](html-communication/SKILL.md) | Create and publish HTML documents through Postplan. | Plans, specifications, reports, comparisons, and UI mock variants. |
+| [html-communication](html-communication/SKILL.md) | Create and publish HTML documents through Postplan with adjustable reading controls. | Plans, specifications, reports, comparisons, and UI mock variants. |
 | [postplan-read](postplan-read/SKILL.md) | Fetch and read a Postplan document. | Review or summarize a `postplan.dev` URL. |
 | [summarization](summarization/SKILL.md) | Summarize content while preserving facts and uncertainty. | Technical overviews, meeting recaps, research summaries, and changelogs. |
 | [unslop](unslop/SKILL.md) | Remove filler, vague claims, and unnecessary jargon. | Revise documentation, explanations, and PR or commit text. |

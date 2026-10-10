@@ -16,8 +16,7 @@ Do not use it for HTML that ships as part of the product or project.
 
 Create one self-contained HTML file, capped at 512 KB.
 
-- Write it like a spec, not a landing page: dense and scannable, without hero sections, decorative chrome, marketing voice or em dashes.
-- Default to dark mode
+- Write it like a spec, not a landing page: clear and scannable, without hero sections, decorative chrome, marketing voice or em dashes.
 - Make it mobile-readable with responsive viewport and no fixed-width layout.
 - Use semantic HTML, inline CSS, inline SVG, and https or data-URL images.
 - Use an inline classic script only when interactivity materially helps. Keep scripted pages useful without JavaScript;
@@ -27,6 +26,28 @@ Create one self-contained HTML file, capped at 512 KB.
 
 Never include external or module scripts, inline event handlers, `javascript:` URLs, forms, frames, embeds, objects,
 applets, meta refresh, linked stylesheets, secrets, private URLs, or local filesystem paths.
+
+## Reading accessibility
+
+For communication documents, including reports accompanying UI mocks:
+
+- Start with a brief overview. Use short paragraphs, descriptive headings, flat lists, and numbered steps.
+  Keep essential outcomes, risks, and decisions visible; place supporting detail in native `details`/`summary`
+  sections. Use semantic headings and lists, selectable text, and text explanations for diagrams.
+- Use one left-aligned text column, roughly `65ch` wide, that shrinks on mobile. Start with a system sans-serif
+  font at `1.125rem`, line height `1.6`, and clear paragraph spacing. Allow browser zoom and reflow at 200%;
+  wrap prose while keeping long code or tables in their own scrollable containers.
+- Provide labelled controls for text size, line spacing, and light/dark appearance. Respect the system colour
+  preference initially. Maintain readable contrast in both themes and visible keyboard focus.
+- Implement controls with native buttons or labelled inputs outside forms and an inline classic script using
+  `addEventListener`. Expose current values or states accessibly. Keep adjustments in memory; storage is blocked.
+  With scripts disabled, retain readable defaults and working disclosure sections; hide inactive controls.
+- Keep the reading order useful for screen readers and read-aloud tools. Use ordinary text and selective bold;
+  offer specialist fonts or word-by-word emphasis only when requested.
+
+UI mock designs retain their intended layout and typography; apply these defaults to the surrounding report.
+Before publishing, check the controls, keyboard access, narrow layout, zoom, and script-free fallback where
+permitted. Report any checks not performed; browser verification still requires a user request.
 
 ## UI Mocks
 

@@ -11,6 +11,16 @@
 - Be careful with destructive actions that are not explicitly requested by the user.
 - Keep comments up to date! When making changes, it is important to keep things in sync.
 
+## Readable responses
+
+- The user is dyslexic. Lead with the answer; use plain language, complete sentences, and one idea per sentence.
+- Keep paragraphs to one or two short sentences, with blank lines between blocks. Use flat bullets for points,
+  numbered steps for procedures, and descriptive headings for longer replies. Bold sparingly.
+- Summarize before detail. Surface essential risks, failures, and decisions early; explain necessary jargon.
+  Prefer lists over wide tables. Keep exact commands and code in fenced blocks.
+- Keep progress updates brief. Adapt to requests for shorter replies, more detail, or steps without reducing
+  the work performed.
+
 ## Principles
 
 - Before design, implementation, debugging, or substantive review, read
