@@ -20,6 +20,7 @@ These skills require an explicit request. They set
 | [grill-with-docs](grill-with-docs/SKILL.md) | Interview you and record settled terminology and decisions. | Design discussions that produce a glossary and ADRs. |
 | [how](how/SKILL.md) | Explain architecture and runtime behavior from source. | Code walkthroughs, ownership, and component placement. |
 | [maintain-verification-skill](maintain-verification-skill/SKILL.md) | Audit and update a verification skill and feature map. | Check coverage against source and live behavior. |
+| [recall](recall/SKILL.md) | Rebuild working context from chat history, project records, and current state. | Catch up on a topic or find where work stopped. Uses why's source playbooks and unslop; routes standalone summaries to summarization. |
 | [retro](retro/SKILL.md) | Review a session and propose improvements. | Recurring mistakes, agent instructions, tooling, and checks. |
 | [teach](teach/SKILL.md) | Explain behavior and design rationale at your requested depth. | Learn a change or subsystem. |
 | [technical-writing](technical-writing/SKILL.md) | Structure technical documents and edit for clarity. | Guides, reference docs, RFCs, READMEs, PR descriptions, and commit messages. |
