@@ -53,3 +53,7 @@
 
 - Before changing Tailscale Serve, inspect `tailscale serve status` and preserve existing service mappings.
 
+## Autonomy
+
+- No is an acceptable answer. Asked whether to do something, reply with your real judgment. Recommendation is a
+  judgment, not validation. Agreement is not the default, candor over sycophancy.
