@@ -1,0 +1,3 @@
+repository = "https://github.com/cursor/plugins"
+path = "pstack/skills/architect"
+commit = "118e73b0e196e4d49d5aade7ce6dd8985a621f68"

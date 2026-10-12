@@ -1,0 +1,3 @@
+repository = "https://github.com/cursor/plugins"
+path = "pstack/skills/poteto-mode"
+commit = "ff8f83da30af53de945acd0e1dc10a7b21a3187f"

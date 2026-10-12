@@ -12,6 +12,7 @@ These skills require an explicit request. They set
 
 | Skill | Description | Use cases |
 | --- | --- | --- |
+| [architect](architect/SKILL.md) | Ground a problem, compare design sketches, and implement the chosen shape. | Types, signatures, module boundaries, and architecture redesign. Uses how and why; includes fallbacks for arena, interrogate, and unavailable delegation. |
 | [automate-me](../.agents/skills/automate-me/SKILL.md) | Mine scoped history, interview, and iterate on a personal mode skill. | Capture working conventions with evidence, guardrails, and user review. Repository-only. |
 | [blast-radius](blast-radius/SKILL.md) | Check what a change could break beyond its diff. | Cross-service contracts, ports, secrets, and generated configuration. |
 | [bro](bro/SKILL.md) | Restate the last assistant message in plain language. | Dense or jargon-heavy explanations. |
@@ -20,6 +21,7 @@ These skills require an explicit request. They set
 | [grill-with-docs](grill-with-docs/SKILL.md) | Interview you and record settled terminology and decisions. | Design discussions that produce a glossary and ADRs. |
 | [how](how/SKILL.md) | Explore and explain architecture using separate evidence and explanation passes. | Code walkthroughs, ownership, and component placement; parallel exploration when permitted. |
 | [maintain-verification-skill](maintain-verification-skill/SKILL.md) | Audit and update a verification skill and feature map. | Check coverage against source and live behavior. |
+| [poteto-mode](poteto-mode/SKILL.md) | Apply pstack's working style through task-specific playbooks. | Investigations, features, fixes, prototypes, verification, and authorized PR workflows. Includes Bun-based helpers and fallbacks for unavailable pstack companions. |
 | [recall](recall/SKILL.md) | Rebuild working context from chat history, project records, and current state. | Catch up on a topic or find where work stopped. Uses why's source playbooks and unslop; routes standalone summaries to summarization. |
 | [retro](retro/SKILL.md) | Review a session and propose improvements. | Recurring mistakes, agent instructions, tooling, and checks. |
 | [teach](teach/SKILL.md) | Combine how and why into a plain explanation at your pace. | Learn a change or subsystem with cumulative diagrams and concrete examples. Requires how, why, and unslop. |
