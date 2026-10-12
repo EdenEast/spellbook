@@ -1,69 +1,52 @@
 ---
 name: blast-radius
-description: Find what a change could break beyond its diff and verify the conditions its safety depends on.
+description: "Find what a change could break somewhere else before it ships, beyond the diff, and prove the one fact it's safe because of by running real code instead of writing it up. Use for 'blast radius of X', 'what could this break', or reviewing a small diff you don't trust."
 disable-model-invocation: true
 ---
 
 # Blast radius
 
-Use when asked what a change could break, to review its blast radius, or to check
-a small diff with potentially wider effects. Follow the change beyond direct
-callers into configuration, runtime behavior, and external consumers.
+Use the active harness's skill mechanism for companions, or read the linked files directly. See [how](../how/SKILL.md), [why](../why/SKILL.md), and [unslop](../unslop/SKILL.md). Checks stay within the user's authorized repositories and environments. Review alone does not authorize deployment, production mutations, or failure injection. Mark a proof outside scope unproven. For infrastructure, trace service units, ports, identities, secret recipients, storage permissions, and generated configuration when touched. Distinguish evaluation and build evidence from activation and live behavior.
 
-## Inspect the change and its boundaries
+Find what a change breaks somewhere else, before it ships. Use for "blast radius of X", "what could this break", or reviewing a small diff you don't trust yet.
 
-Read the diff and relevant source history using available Git or PR tools.
-Identify changed behavior, not just edited symbols. Inspect the pinned version
-and local patches of relevant dependencies. Trace contracts a symbol search can
-miss: serialized values, database columns, wire formats, feature flags, lifecycle
-timing, generated files, and consumers in other languages or services.
+Companion to `how` and `why`. `how` tells you what the code does. `why` tells you why it's shaped that way. Blast radius tells you what it breaks somewhere else.
 
-For infrastructure, include service units, ports, identities, secret recipients,
-storage permissions, and generated configuration where the change touches them.
-Read other repositories or hosts when the user has included them in scope. If a
-necessary consumer is inaccessible, record the gap instead of inventing it.
+Listing the callers is not the job. The agent can grep those in a second. The job is the breakage grep won't show you.
 
-The related `how` and `why` skills can help when installed and appropriate, but
-are optional. Direct source and history inspection is sufficient. Multi-agent
-review is optional and requires available, authorized delegation; no model
-routing file or `arena` skill is required.
+## Don't trust your own writeup
 
-## Identify and prove the safety conditions
+A blast-radius writeup that sounds right is worthless. It reads as convincing whether or not it's true. So don't hand back the writeup. Find the one or two facts the whole thing depends on and prove them by running code.
 
-Find the few facts that decide whether the change is safe. Often there is one;
-sometimes several independent conditions matter. For each, state the failure
-if it is false and choose the strongest proportionate evidence:
+### How sure are you
 
-1. A claim without supporting evidence remains unproven.
-2. Source or configuration establishes the intended behavior at a cited location.
-3. A traced failure path shows why a specific bad case can or cannot happen.
-4. A bounded script, existing test, or configuration evaluation exercises the
-   relevant real behavior and reports a result.
-5. A check in the running system establishes that behavior in that environment.
+For each fact the change's safety depends on, get it as far down this list as is cheap, and say where it stopped.
 
-Name what each check proves and where it stops. Configuration evaluation and a
-successful build do not prove activation, connectivity, decryption, or recovery.
-Use the repo's existing verification tools where possible. Exercise the specific
-condition, not merely a command that exits successfully.
+1. You said so. Worthless on its own.
+2. You pointed at the line. A real `file:line`, or the library's own source.
+3. You showed the bad case can't happen. You walked the failure step by step and it doesn't reach.
+4. You ran it. A script or test that calls the real code and fails loud if you're wrong.
+5. You reproduced it in the running app.
 
-On live infrastructure, prefer bounded read-only checks. Run mutations,
-deployments, stress tests, and failure injection only within the user's existing
-authorization and an appropriate environment. Review alone does not authorize
-deployment. If executing the necessary check is outside scope, describe it and
-mark the condition unproven; continue the rest of the review.
+Step 4 is usually one small script that imports the same library the app ships and calls the exact function you're worried about.
 
-## Report the result
+## Steps
 
-Lead with what changed and the material risk. Include:
+1. Read the change. The diff, the symbols it adds, changes, and deletes, and what it now does differently, including the part the diff doesn't spell out. Use `why` step 2 to pull the PR and commits.
+2. Find the one fact it's safe because of. Most changes that look risky are safe because of a single fact, like "this call only drops already-dead cache entries and does nothing else". Find that fact. If it holds, most risky cases are cleared at once. Spend your time here, not on a long list of maybes.
+3. Look where grep stops. Read the source of the library you call, and check its pinned version and any local patch. Work out when things run: microtasks, unmount and teardown, Solid versus React. Follow what a symbol search misses: the JSON an API returns, a DB column, a wire format, another language reading the same bytes, a feature flag, code three hops downstream.
+4. Be honest about each risk. Give it a real chance of happening and a real cost if it does. Keep the risks you confirmed. List the ones you checked and cleared separately. Same rules as `why`. Cite a real `file:line`, a search that finds nothing is still an answer, and never make up a caller or an API.
+5. Prove the one fact. Write a script or test that runs the real code, run it, and paste what happened.
+6. For a big or wide change, use an available `arena` workflow or independent reviewers when delegation is supported and permitted. Ask the same question and merge the answers. Use configured, supported models; different models can catch different real bugs. If unavailable, review the independent risk angles directly and report the lack of independent review.
 
-- The safety conditions, supporting source locations, checks performed, and
-  observed results. Label assumptions and unproven conditions explicitly.
-- Confirmed risks: how the failure occurs, who or what it affects, likely cost,
-  and the cheapest useful check. Describe likelihood from evidence rather than
-  inventing percentages.
-- Risks checked and cleared, with the evidence that cleared them.
-- Any remaining verification needed before shipping.
+## What to hand back
 
-Load `unslop` for the wording, or read [../unslop/SKILL.md](../unslop/SKILL.md)
-when the harness has no skill invocation tool. Cite real code or configuration
-and redact private information before sharing evidence.
+- **What it does.** What changed, including the part that isn't obvious.
+- **The one fact it's safe because of.** State it, say which step you got it to, and show the proof. If you couldn't prove it, write unproven.
+- **Risks.** Each names how it breaks, the `file:line`, how likely and how bad, and how to check. Paste the proof for the ones that matter.
+- **Cleared.** What you checked and why it's fine.
+- **Before you merge.** The cheapest test or repro that catches the real bug, including the script you wrote.
+
+Write it through `unslop`, cite real code, and strip anything private before it goes anywhere public.
+
+**Reply:** the writeup above, with the one safety fact either proven or marked unproven.

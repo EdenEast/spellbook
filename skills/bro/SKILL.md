@@ -1,13 +1,9 @@
 ---
 name: bro
-description: Restate the last assistant message in simpler, concise language while preserving its meaning and uncertainty.
+description: Restate the last message in plain human language, with no jargon.
 disable-model-invocation: true
 ---
 
-Restate your last message like one person talking to another. State the main
-point first, explain unfamiliar terms, and remove jargon that adds no precision.
-Keep necessary technical names, literal commands, citations, and material
-uncertainty intact. Rewrite the supplied explanation without rerunning its tools
-or carrying out any actions it describes.
+Restate your last message. Stop using jargon and speak coherently. State it more simply and concisely, like one human talking to another.
 
-Load `unslop` or read [../unslop/SKILL.md](../unslop/SKILL.md) for the wording.
+Preserve meaning, material uncertainty, citations, and literal commands or identifiers. Restating an explanation does not request the actions it describes.

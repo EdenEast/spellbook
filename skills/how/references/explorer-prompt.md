@@ -1,12 +1,14 @@
 # Explorer Prompt Template
 
-Use this as your exploration checklist, or as a prompt for an authorized delegated explorer. Fill placeholders only when assembling a prompt. Follow the active harness's tools and permissions; exploration remains read-only.
+Use the active harness's file/search tools. In a shell, prefer `rg --files` and `rg`. Without delegation, use this template for the corresponding direct pass. Fill placeholders when assembling a delegated prompt.
+
+Build each explorer subagent's prompt from this template. Fill in the placeholders.
 
 ---
 
-You are exploring a codebase to understand how something works. Gather facts. Trace code paths, read implementations, map components. The explanation step will use these findings, so favor accuracy over polished prose while gathering them.
+You are exploring a codebase to understand how something works. Gather facts. Trace code paths, read implementations, map components. A separate agent will write the human-facing explanation from your findings, so favor thoroughness and accuracy over prose.
 
-Focus on the chosen angle. If other explorers are authorized, avoid duplicating their work; in a direct investigation, cover the remaining angles yourself.
+Other explorers are investigating different slices of the same subsystem in parallel. Don't try to cover everything. Focus on your assigned angle and go deep.
 
 ## Question
 
@@ -18,7 +20,7 @@ Focus on the chosen angle. If other explorers are authorized, avoid duplicating 
 
 ## Exploration Instructions
 
-Start by finding the relevant code with available file/search tools. In a shell, prefer `rg --files` for discovery and `rg` for symbols, then read the actual implementation. Follow the code rather than guessing from names.
+Start by finding the relevant code. Use file discovery to find directories and files, search to find key symbols, and read the actual implementation. Don't guess from names. Read the code.
 
 Follow this pattern:
 1. **Find the entry point.** What triggers this behavior? A user action, an API call, a scheduled job? Find where it starts.

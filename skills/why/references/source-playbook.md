@@ -1,8 +1,10 @@
 # Source playbooks
 
-The why skill reads the playbooks matching the question and accessible evidence. Investigate directly, or delegate by source when authorized and useful. These provider-specific tool names are examples: inspect the actual callable schema and adapt to the available connector, API, CLI, or local record. Use read-only operations; source access is not permission to change external state.
+Use the same per-source passes directly when delegation is unavailable or disallowed. Tools below are provider examples; inspect actual schemas and use bounded read-only access. A missing connector does not rule out relevant local or CLI records.
 
-| Category | Playbook | Example access |
+The why skill spawns one investigator per available evidence category, each reading a single source-specific playbook below. The playbooks are concrete examples for common MCPs. Adapt them for a different MCP in the same category.
+
+| Category | Playbook | Example MCP it documents |
 |---|---|---|
 | Source control history | [`code-archaeology.md`](./sources/code-archaeology.md) | git, `gh` |
 | Issue / ticket tracker | [`linear.md`](./sources/linear.md) | Linear (adapt for Jira, GitHub Issues, Plane, Shortcut) |
@@ -11,7 +13,7 @@ The why skill reads the playbooks matching the question and accessible evidence.
 | Infrastructure observability | [`datadog.md`](./sources/datadog.md) | Datadog (adapt for New Relic, Honeycomb, Grafana, Splunk) |
 | Error / exception tracking | [`sentry.md`](./sources/sentry.md) | Sentry (adapt for Rollbar, Bugsnag, Airbrake) |
 | Product analytics warehouse | [`databricks.md`](./sources/databricks.md) | Databricks SQL (adapt for Snowflake, BigQuery, ClickHouse, dbt) |
-| Agent session history | [`t3-history.md`](./sources/t3-history.md) | Current conversation, supplied handoff, scoped T3 SQLite history |
+| Agent session history (when relevant) | [`t3-history.md`](./sources/t3-history.md) | Current conversation, supplied handoff, scoped T3 SQLite history |
 
 Cross-cutting:
 

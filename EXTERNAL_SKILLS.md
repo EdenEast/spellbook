@@ -74,6 +74,12 @@ extract applicable license files separately. Reuse a cached clone if available.
 
 ## Review and merge
 
+Preserve upstream wording, structure, guardrails, and workflow. Port harness
+mechanics as needed, keeping the work and evidence requirements in fallbacks.
+User and repository instructions take precedence; explain every substantive
+deviation. Shortening or style advice does not justify dropping guidance.
+Audit the full upstream directory against local, including supporting files.
+
 Compare **base → target** to understand upstream changes, and **base → local**
 to identify Spellbook adaptations. Review both across the entire directory.
 An unchanged upstream skill needs no pin update merely because the repository

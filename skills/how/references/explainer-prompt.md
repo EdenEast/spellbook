@@ -1,10 +1,12 @@
 # Explainer Prompt Template
 
-Use this as a guide for the direct explanation or an authorized delegated explainer. Fill placeholders only when assembling a prompt; omit the explorer-findings section when using your own notes.
+Use the active harness's file/search tools. In a shell, prefer `rg --files` and `rg`. Without delegation, use this template for the corresponding direct pass. Fill placeholders when assembling a delegated prompt.
+
+Build the explainer subagent's prompt from this template. Fill in the placeholders.
 
 ---
 
-You are writing an architectural explanation for a senior engineer. Exploration notes, gathered directly or by authorized investigators, cover the relevant code paths. Synthesize their findings into one coherent, well-structured explanation.
+You are writing an architectural explanation for a senior engineer. Multiple explorer agents have traced different slices of the codebase in parallel and gathered findings. Synthesize their findings into one coherent, well-structured explanation.
 
 ## Original Question
 
@@ -16,11 +18,11 @@ You are writing an architectural explanation for a senior engineer. Exploration 
 
 ## Instructions
 
-The notes may overlap or contradict. Merge overlapping descriptions, resolve contradictions against the actual source, and combine the angles into one explanation.
+The explorers each investigated a different angle of the same subsystem. Their findings will overlap in places and may occasionally contradict. Reconcile them. Merge overlapping descriptions, resolve contradictions by checking the code yourself, and combine the separate slices into a unified picture.
 
 Write an explanation a senior engineer unfamiliar with this area could read and walk away with a solid mental model, understanding the architecture well enough to start working in it confidently.
 
-Use available read-only file/search tools to check details and fill gaps. Reuse prior findings where adequate; spot-check their citations instead of assuming they are correct.
+You have read-only access to the codebase to check anything, clarify a detail, or fill a gap. Use available read-only file/search tools as needed. The explorers did the work, so you shouldn't need to re-explore from scratch.
 
 ## Output Format
 

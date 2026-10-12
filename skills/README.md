@@ -12,19 +12,19 @@ These skills require an explicit request. They set
 
 | Skill | Description | Use cases |
 | --- | --- | --- |
-| [automate-me](../.agents/skills/automate-me/SKILL.md) | Draft or update a personal mode skill. | Capture preferences and working conventions. Repository-only. |
+| [automate-me](../.agents/skills/automate-me/SKILL.md) | Mine scoped history, interview, and iterate on a personal mode skill. | Capture working conventions with evidence, guardrails, and user review. Repository-only. |
 | [blast-radius](blast-radius/SKILL.md) | Check what a change could break beyond its diff. | Cross-service contracts, ports, secrets, and generated configuration. |
 | [bro](bro/SKILL.md) | Restate the last assistant message in plain language. | Dense or jargon-heavy explanations. |
 | [create-verification-skill](create-verification-skill/SKILL.md) | Create and validate a project-local verification skill and feature map. | App, CLI, service, library, or infrastructure verification. |
 | [grill-me](grill-me/SKILL.md) | Interview you to test a plan or decision. | Clarify an idea without producing domain documentation. |
 | [grill-with-docs](grill-with-docs/SKILL.md) | Interview you and record settled terminology and decisions. | Design discussions that produce a glossary and ADRs. |
-| [how](how/SKILL.md) | Explain architecture and runtime behavior from source. | Code walkthroughs, ownership, and component placement. |
+| [how](how/SKILL.md) | Explore and explain architecture using separate evidence and explanation passes. | Code walkthroughs, ownership, and component placement; parallel exploration when permitted. |
 | [maintain-verification-skill](maintain-verification-skill/SKILL.md) | Audit and update a verification skill and feature map. | Check coverage against source and live behavior. |
 | [recall](recall/SKILL.md) | Rebuild working context from chat history, project records, and current state. | Catch up on a topic or find where work stopped. Uses why's source playbooks and unslop; routes standalone summaries to summarization. |
 | [retro](retro/SKILL.md) | Review a session and propose improvements. | Recurring mistakes, agent instructions, tooling, and checks. |
-| [teach](teach/SKILL.md) | Explain behavior and design rationale at your requested depth. | Learn a change or subsystem. |
+| [teach](teach/SKILL.md) | Combine how and why into a plain explanation at your pace. | Learn a change or subsystem with cumulative diagrams and concrete examples. Requires how, why, and unslop. |
 | [technical-writing](technical-writing/SKILL.md) | Structure technical documents and edit for clarity. | Guides, reference docs, RFCs, READMEs, PR descriptions, and commit messages. |
-| [why](why/SKILL.md) | Investigate design rationale with cited evidence and explicit uncertainty. | Design history, constraints, and reasons for defensive code. |
+| [why](why/SKILL.md) | Investigate design rationale across all seven evidence categories by default. | Design history, constraints, and defensive code; cited confidence, null results, and justified skips. |
 
 ## Model-invokable
 

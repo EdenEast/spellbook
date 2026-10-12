@@ -1,118 +1,37 @@
 ---
 name: recall
-description: Reconstruct recent working context from chat history, project records, and current state. Use for recall my work on X, catch me up, what have I been working on, or where did I leave off before resuming work.
+description: "Reconstruct your recent working context from your own chat history, live state, and the shared record (user reports, prior fixes, incidents), then hand back a tight current-state brief. Use for 'recall my work on X', 'catch me up', 'what have I been working on', 'where did I leave off', before starting or resuming work."
 disable-model-invocation: true
 ---
 
 # Recall
 
-Rebuild the user's working context and return a short brief of where things
-stand and what to do next. Combine the user's chat history with the shared
-record of prior fixes, reversions, incidents, and unresolved reports.
+Use the active harness's delegation tools only when available and permitted by the user or applicable instructions. Inherit the current model unless a supported model is specified by those instructions. If delegation is unavailable or disallowed, perform the same exploration and synthesis passes directly, keeping their evidence contracts and coverage intact. Read-only recall suggests a next action; it does not itself request implementation or external mutations. Use [why](../why/SKILL.md) and [unslop](../unslop/SKILL.md) through the harness or read them directly.
 
-Recall is read-only. Suggest the next action; starting or resuming implementation
-requires a request that authorizes it.
+**Before you start or resume work, you rebuild the user's recent working context and hand back a tight capsule of where things stand now and what to do next.**
 
-## Establish scope
+Keep it tight and on-topic. Read only what the in-scope threads need, then stop.
 
-Use a supplied state capsule first. If it already covers the request, skip
-history mining and verify only the current-state claims that matter.
+Your context lives in two records. Your own chat history holds what you did and decided. The shared record holds everything that happened around the same code under other names: the symptoms users keep reporting, the fixes that shipped and got reverted, the errors still firing in prod. That second record is what the **why** skill searches, across source control, the issue tracker, chat and issue channels, long-form docs, and error tracking. A feature with a long bug tail keeps most of its story there, so don't reconstruct it from your transcripts alone.
 
-Pin the topic, workspace, and time window before searching. Default to the
-active workspace and the last seven days, stating the actual date range.
-Honor a requested full-history search; never silently replace all history with
-a recent sample. Read another project's history only when asked.
+Locate history through the active harness's exposed history tools, supplied transcripts, or configured session directory (Codex, Claude Code, or Pi). Filter workspace/date metadata before reading message bodies. For T3, read [the history guide](../why/references/sources/t3-history.md) and use read-only database access. Cursor's layout is `~/.cursor/projects/<slug>/agent-transcripts/<uuid>/<uuid>.jsonl`, with the workspace path's leading slash dropped and `/` replaced by `-`. Report unavailable history; do not infer that no work happened.
 
-A request to resume one specific chat needs that chat and its artifacts, rather
-than a sweep across recent work. A request to capture habits belongs to
-`automate-me` when available. A standalone summary belongs to
-[../summarization/SKILL.md](../summarization/SKILL.md).
+1. Classify, then route. For one specific prior chat to resume, read that chat and its artifacts directly instead of sweeping the corpus; use a `session-pickup` playbook if available. Turning habits into a durable skill is `automate-me`. A human-readable summary of your work belongs to [summarization](../summarization/SKILL.md). Recall loads working context across recent chats before you act. If the user already gave you a full state capsule (paths, branch, the change), use it and skip the mining.
+2. Lock the scope before searching. Pin the window ("recent" is a real range, default the last 7 days), the topic if named, and the workspace (default the active one. Never read another project's transcripts without being asked). State the scope back. Never quietly turn "all" into "recent N".
+3. Fan out across your chat history. When delegation is supported and permitted, spawn parallel subagents using supported configured models, each taking a slice of the corpus. Tell every subagent to order candidates by real modification time (`ls -t`) and never by UUID name, grep the topic first and then read only the matching chats and only their relevant regions, and skip the current chat plus obvious noise (subagent, eval, and test chats). Each returns the same schema, one block per chat: topic, the user's goal, decisions, open threads, struggles and corrections, and artifacts (PRs, tickets, branches), each citing the chat UUID. For one or two chats, skip the fan-out and search directly. The raw transcripts stay in the subagents, or in scratch artifacts outside the repository during direct investigation. Keep only cited findings in the active context. Deduplicate continuing threads and copies of the same conversation. Prefer recorded activity time when available, falling back to real modification time.
+4. Sweep the shared record whenever the topic names a feature, file, subsystem, area, or bug. This is the default, not a judgment call, and "my work on X" does not exempt it. Hand it to the **why** skill's source investigators, but steer their question from "why was this built this way" to "what's the current state, what's been tried and didn't hold, and what are users still reporting". Reuse its per-source playbooks, run the investigators in parallel with the chat-history mining, and inherit its posture: one investigator per source, null results are findings, skip an unavailable MCP and say so. Fold what comes back into the brief. Skip this step only for pure activity recall with no named target ("what did I do this week"), where your own history and live state are the entire answer.
+5. Verify against live state. Take the PRs, branches, and tickets that the mining and the sweep surfaced and check them with `git` and `gh`. When the answer hinges on what an agent actually did (the tools it ran, files it read, errors it hit), read the full transcript, not just a trimmed local copy.
+6. Write the brief to the contract below. Group by thread. Stay on the named topic.
 
-## Find and search chat history
+## Output contract
 
-Identify the executing harness, host, and history sources. Prefer exposed
-history tools or supplied transcripts. Inspect available configuration and
-session metadata to locate records; formats and roots can differ by installation.
+Lead with the capsule, then the thread status, then the problems, then the next move. Deeper detail goes below or gets cut.
 
-- For Codex, check the configured Codex data directory for session records.
-- For Claude Code, check its configured project history directory.
-- For Pi, check its configured agent session directory.
-- For T3 history, read
-  [../why/references/sources/t3-history.md](../why/references/sources/t3-history.md).
-  Use read-only database access and inspect the schema before querying.
-- Cursor commonly stores transcripts at
-  `~/.cursor/projects/<slug>/agent-transcripts/<uuid>/<uuid>.jsonl`.
-  Its workspace slug drops the leading slash and replaces `/` with `-`.
+- **Capsule.** At most 5 bullets. What this work is and where it stands overall.
+- **Threads.** One line each, prefixed with exactly one status tag: `[merged #N]`, `[open PR #N]`, `[in flight <branch>]`, `[verified, uncommitted]`, `[reverted #N]`, or `[planned, not started]`. Use `[unverified]` and name the missing check when evidence cannot establish any of these states. A thread with no tag is not done yet, so tag it.
+- **Problems.** At most 5, the recurring ones. Include the symptoms users keep reporting and any fix that shipped and was reverted, so the next attempt starts where the last one failed.
+- **Next move.** The single most useful next action, concrete.
 
-Filter by workspace and date using metadata before reading message bodies.
-Order candidates by recorded activity time, falling back to real modification
-time; UUID names do not establish chronology. Exclude the current conversation
-from historical mining, plus identifiable subagent, evaluation, and test chats.
-Search the topic first, then read matching regions with enough surrounding
-context to preserve decisions and corrections. Report missing history or
-incomplete coverage; neither proves there was no work.
+An adjacent feature or ticket stays out unless it blocks this one. When the capsule and thread lines outgrow a screen, cut detail before you cut threads. Write the brief through the **unslop** skill, cite chat findings by UUID and shared-record findings by their source (PR #, ticket ID, chat permalink, error-tracker issue), and sanitize private context before any public output.
 
-For each relevant chat, collect the topic, user's goal, decisions, open threads,
-struggles and corrections, and artifacts such as PRs, tickets, and branches.
-Cite the session or thread ID, date, and message or transcript location.
-Distinguish user decisions from assistant claims. Deduplicate continuing threads
-and copies of the same conversation.
-
-Search directly by default. For a large corpus, delegate independent slices
-only when available, authorized, and useful. Give each investigator a distinct
-slice, the scope, exclusions, and the same findings contract above. Inherit the
-current model unless another supported model is explicitly requested. Keep raw
-transcripts out of the main context and return cited findings instead.
-
-## Sweep the shared record
-
-When the topic names a feature, file, subsystem, or bug, also search the relevant
-project records. Ask: what is the current state, what was tried and failed or
-was reverted, and what are users still reporting? Chat history alone can miss
-work done by other people.
-
-Use the evidence-source guidance in [../why/SKILL.md](../why/SKILL.md) and its
-[source playbooks](../why/references/source-playbook.md), reading only the
-playbooks relevant to this topic. This reuses investigation guidance, rather
-than starting a separate rationale report. Check source control, linked PRs and
-tickets, and relevant incident, document, chat, or error records that are
-accessible within scope. Query independent sources concurrently when useful.
-Record empty results and unavailable sources as coverage limits.
-
-Skip this sweep for pure activity recall with no named target, such as
-what did I do this week. History and current project state are enough for that
-request. Use bounded read-only access; recall does not authorize external
-messages, ticket changes, or production access.
-
-## Verify current state
-
-Check the surfaced branches, commits, PRs, tickets, and local changes using
-`git`, authenticated `gh`, or available read-only host tools. Establish whether
-changes are merged, open, reverted, or still local. Historical success claims
-do not prove current behavior. Label uncommitted work as verified only when
-there is evidence for the relevant checks and no later changes invalidate it.
-
-When a conclusion hinges on tools an agent ran, files it read, or errors it hit,
-consult the full relevant transcript and tool outputs. A projected or trimmed
-chat may omit them. Report the gap if the full record is unavailable.
-
-## Return the brief
-
-Group by thread and stay on the named topic. Include adjacent work only when it
-blocks this work. Lead with the state capsule, then thread status, problems, and
-the next move. Cut detail before dropping relevant threads.
-
-- Capsule: at most five bullets describing the work and its overall state.
-- Threads: one line each with an evidence-backed tag: `[merged #N]`,
-  `[open PR #N]`, `[in flight <branch>]`, `[verified, uncommitted]`,
-  `[reverted #N]`, or `[planned, not started]`. Use `[unverified]` when evidence
-  cannot establish one of these states, and name the missing check.
-- Problems: at most five recurring issues, including reported symptoms and
-  fixes that failed or were reverted. Include material coverage gaps.
-- Next move: the single most useful concrete action, accounting for blockers.
-
-Cite chat findings by their session or thread identifiers and shared-record
-findings by PR, ticket, document, or incident link. Apply
-[../unslop/SKILL.md](../unslop/SKILL.md) to the wording. Keep private context in
-the current conversation unless sharing is requested; sanitize it before any
-public output.
+**Reply:** the brief, to the contract above.
