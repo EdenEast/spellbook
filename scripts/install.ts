@@ -1,6 +1,7 @@
 import { lstat, mkdir, readdir, readlink, symlink, unlink } from "node:fs/promises";
 import { homedir } from "node:os";
 import { basename, dirname, join, resolve } from "node:path";
+import { selectSkills } from "./select-skills.ts";
 
 export type Target = "codex" | "claude" | "pi";
 type Action = "install" | "uninstall" | "status";
@@ -13,6 +14,7 @@ export type Options = {
   home: string;
   targets: Target[];
   dryRun?: boolean;
+  skills?: readonly string[];
   log?: (message: string) => void;
 };
 
@@ -70,6 +72,10 @@ async function discover(collection: Collection): Promise<string[]> {
   return names.sort();
 }
 
+export function availableSkills(root: string): Promise<string[]> {
+  return discover({ source: join(root, "skills"), destination: "", kind: "skills" });
+}
+
 async function linkTarget(path: string): Promise<string | undefined> {
   if (!(await stat(path))?.isSymbolicLink()) return undefined;
   return resolve(dirname(path), await readlink(path));
@@ -114,13 +120,17 @@ async function referenceLinks({ root, home, targets }: Options): Promise<Link[]>
 
 export async function plan(options: Options): Promise<Link[]> {
   const links = [...await instructionLinks(options), ...await referenceLinks(options)];
+  const selected = options.skills === undefined ? undefined : new Set(options.skills);
   for (const collection of collections(options)) {
+    const names = await discover(collection);
+    const includes = (name: string) => collection.kind !== "skills" || selected === undefined || selected.has(name);
+    if (collection.kind === "skills" && selected?.size === 0) continue;
     const destinationStat = await stat(collection.destination);
     if (destinationStat && !destinationStat.isDirectory()) {
       throw new Error(`Expected a real resource directory: ${collection.destination}. Resolve the existing file or directory symlink first.`);
     }
     const wanted = new Set<string>();
-    for (const name of await discover(collection)) {
+    for (const name of names.filter(includes)) {
       const source = resolve(collection.source, name);
       const destination = join(collection.destination, installedName(collection, name));
       wanted.add(destination);
@@ -133,6 +143,7 @@ export async function plan(options: Options): Promise<Link[]> {
       const destination = join(collection.destination, entry.name);
       if (wanted.has(destination)) continue;
       const source = await linkTarget(destination);
+      if (source && !includes(basename(source))) continue;
       if (source && dirname(source) === resolve(collection.source) && entry.name === installedName(collection, basename(source))) {
         links.push({ source, destination, state: "stale" });
       }
@@ -166,28 +177,40 @@ export async function run(action: Action, options: Options): Promise<void> {
   }
 }
 
-if (import.meta.main) {
+export async function cli(args = process.argv.slice(2)): Promise<void> {
   try {
-    const [action, ...args] = process.argv.slice(2);
-    if (action === "--help" || action === "-h") {
-      console.log("Usage: node scripts/install.ts install|uninstall|status [--target codex|claude|pi]... [--dry-run]");
+    const [action, ...flags] = args;
+    if (action === "--help" || action === "-h" || flags.includes("--help") || flags.includes("-h")) {
+      console.log("Usage: spellbook install|uninstall|status [--target codex|claude|pi]... [--dry-run]\n       spellbook install --select [--target codex|claude|pi]... [--dry-run]\n\n--select opens a skill checklist. Unchecked skills are left untouched.");
     } else {
       if (action !== "install" && action !== "uninstall" && action !== "status") throw new Error("Expected install, uninstall, or status. Use --help for usage.");
       const targets: Target[] = [];
       let dryRun = false;
-      for (let index = 0; index < args.length; index++) {
-        const arg = args[index];
+      let select = false;
+      for (let index = 0; index < flags.length; index++) {
+        const arg = flags[index];
         if (arg === "--dry-run") dryRun = true;
-        else if (arg === "--target") {
-          const target = args[++index];
+        else if (arg === "--select") {
+          if (action !== "install") throw new Error("--select is only supported by install.");
+          select = true;
+        } else if (arg === "--target") {
+          const target = flags[++index];
           if (target !== "codex" && target !== "claude" && target !== "pi") throw new Error(`Unknown target: ${target}`);
           targets.push(target);
         } else throw new Error(`Unknown argument: ${arg}`);
       }
-      await run(action, { root: resolve(import.meta.dirname, ".."), home: homedir(), targets: targets.length ? targets : ["codex", "claude", "pi"], dryRun });
+      const root = resolve(import.meta.dirname, "..");
+      const skills = select ? await selectSkills(await availableSkills(root)) : undefined;
+      if (select && skills === undefined) {
+        console.log("Installation cancelled.");
+        return;
+      }
+      await run(action, { root, home: homedir(), targets: targets.length ? targets : ["codex", "claude", "pi"], dryRun, skills });
     }
   } catch (error) {
     console.error(error instanceof Error ? error.message : error);
     process.exitCode = 1;
   }
 }
+
+if (import.meta.main) await cli();

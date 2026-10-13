@@ -11,25 +11,28 @@ Browse the [skill catalog](skills/README.md) for available workflows and the
 Keep the checkout at a stable path. Install on the machine and account where
 your agents run. Choose one of these options.
 
-### Just
+### Command line
 
-With Just and Node.js 24.2 or newer installed, run:
-
-```sh
-just install --dry-run
-just install
-just status
-```
-
-### Node.js
-
-With Node.js 24.2 or newer, run these commands from the checkout:
+With Node.js 24.2 or newer, register the command from this checkout:
 
 ```sh
-node scripts/install.ts install --dry-run
-node scripts/install.ts install
-node scripts/install.ts status
+npm link
+spellbook install --dry-run
+spellbook install
+spellbook status
 ```
+
+To choose skills from a checklist, run:
+
+```sh
+spellbook install --select
+```
+
+Only checked skills are synced in that run. Unchecked skills stay untouched.
+Instructions, references, and Pi extensions still follow the selected targets.
+
+You can also run `./scripts/spellbook.ts` directly from the checkout.
+The existing Just and npm shortcuts remain available.
 
 To manage installation through Nix configuration, use the [Home Manager module](docs/home-manager.md) instead.
 

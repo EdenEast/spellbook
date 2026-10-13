@@ -6,6 +6,7 @@ import { test } from "node:test";
 import type { TestContext } from "node:test";
 import { plan, run } from "./install.ts";
 import type { Options } from "./install.ts";
+import { spawnSync } from "node:child_process";
 
 async function fixture(t: TestContext): Promise<Options> {
   const directory = await mkdtemp(join(tmpdir(), "spellbook-test-"));
@@ -40,6 +41,62 @@ async function references(options: Options) {
   await writeFile(join(source, "principles/prove-it-works.md"), "Check the actual result.\n");
   return source;
 }
+
+test("selected skills sync across targets while unchecked conflicts and stale links stay untouched", async (t) => {
+  const options = await fixture(t);
+  const checked = await skill(options, "checked");
+  await skill(options, "unchecked");
+  const stale = await skill(options, "deleted");
+  await run("install", options);
+  await rm(stale, { recursive: true });
+  const conflict = join(options.home, ".claude/skills/unchecked");
+  await rm(conflict);
+  await writeFile(conflict, "personal skill");
+  for (const destination of [".agents/skills/checked", ".claude/skills/checked"]) await rm(join(options.home, destination));
+  await run("install", { ...options, skills: ["checked"], dryRun: true });
+  await assert.rejects(readlink(join(options.home, ".agents/skills/checked")), { code: "ENOENT" });
+  await run("install", { ...options, skills: ["checked"] });
+  await run("install", { ...options, skills: ["checked"] });
+  assert.equal(await readlink(join(options.home, ".agents/skills/checked")), checked);
+  assert.equal(await readlink(join(options.home, ".claude/skills/checked")), checked);
+  assert.equal(await readFile(conflict, "utf8"), "personal skill");
+  assert.equal(await readlink(join(options.home, ".agents/skills/deleted")), stale);
+  assert.deepEqual((await plan({ ...options, skills: ["checked"] })).map((link) => link.state), ["installed", "installed"]);
+});
+
+test("empty skill selection still installs other resources and leaves skill containers untouched", async (t) => {
+  const options = await fixture(t);
+  await skill(options);
+  const source = await instructions(options);
+  const refs = await references(options);
+  await writeFile(join(options.root, "pi/extensions/hello.ts"), "export default () => {};\n");
+  await run("install", { ...options, skills: [] });
+  assert.equal(await readlink(join(options.home, ".codex/AGENTS.md")), source);
+  assert.equal(await readlink(join(options.home, ".agents/references/spellbook")), refs);
+  assert.equal(await readlink(join(options.home, ".pi/agent/extensions/spellbook-hello.ts")), join(options.root, "pi/extensions/hello.ts"));
+  await assert.rejects(readdir(join(options.home, ".agents/skills")), { code: "ENOENT" });
+  await assert.rejects(readdir(join(options.home, ".claude/skills")), { code: "ENOENT" });
+});
+
+test("CLI exposes help and rejects invalid selection modes without writing", async (t) => {
+  const options = await fixture(t);
+  const executable = join(import.meta.dirname, "spellbook.ts");
+  const invoke = (args: string[]) => spawnSync(process.execPath, [executable, ...args], {
+    env: { ...process.env, HOME: options.home }, encoding: "utf8",
+  });
+  const help = invoke(["install", "--help"]);
+  assert.equal(help.status, 0);
+  assert.match(help.stdout, /spellbook install --select/);
+  for (const action of ["status", "uninstall"]) {
+    const result = invoke([action, "--select"]);
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /only supported by install/);
+  }
+  const result = invoke(["install", "--select"]);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /interactive terminal/);
+  assert.deepEqual(await readdir(options.home), []);
+});
 
 test("each target shares readable references without discovering them as skills", async (t) => {
   for (const target of ["codex", "claude", "pi"] as const) {

@@ -27,6 +27,19 @@ Codex and Pi share skill discovery. Installing or uninstalling their shared
 links affects both. The reference destination is also shared by all three agents
 and remains fixed even when Home Manager customizes their configuration paths.
 
+## Command options
+
+`spellbook` accepts `install`, `uninstall`, and `status`. The repeatable
+`--target codex|claude|pi` option selects agents. Without it, all three are
+selected. `--dry-run` reports planned operations without changing links.
+
+`install --select` opens an interactive skill checklist. Only checked skills
+are managed during that run. Unchecked skills, including stale links and
+conflicting paths, are left untouched. Instructions, references, and Pi
+extensions follow the normal target rules. Selections are not saved.
+Cancellation changes no resources. `--select` is rejected for other commands
+and when input or output is not an interactive terminal.
+
 ## Link handling
 
 The checkout installer links individual instructions, skills, and extensions.
