@@ -42,6 +42,42 @@ before adding a field or claiming that a skill can invoke another skill. Phrase
 portable instructions in terms of reading material or using available
 capabilities. Refer to another skill only when it is needed and available.
 
+## OpenAI metadata: agents/openai.yaml
+
+For OpenAI UI metadata, invocation policy, or tool dependencies, add
+`agents/openai.yaml` beside `SKILL.md`. This is an optional harness extension,
+separate from the portable frontmatter. OpenAI plugin validation requires an
+`interface` mapping with non-empty `display_name` and `short_description` when
+the file is included.
+
+| Field | Purpose and constraints |
+| --- | --- |
+| `interface.display_name` | User-facing skill title. |
+| `interface.short_description` | Concise UI blurb; use 25–64 characters. |
+| `interface.default_prompt` | Optional invocation prompt; include `$skill-name` explicitly. |
+| `interface.icon_small`, `interface.icon_large` | Optional paths relative to the skill directory, such as `./assets/icon.svg`; include the referenced files. |
+| `interface.brand_color` | Optional six-digit hex color, such as `#3B82F6`. |
+| `policy.allow_implicit_invocation` | Boolean; defaults to `true`. Set `false` only for requested explicit-only invocation. |
+| `dependencies.tools` | Optional list of actual MCP dependencies, using `type: "mcp"`, `value`, and applicable `description`, `transport`, and `url`. |
+
+Use a YAML mapping, snake_case keys, and quoted string values. Keep UI text
+consistent with the capability and discovery description. Preserve existing
+policy and dependency fields when editing presentation metadata. Add icons,
+branding, prompts, or dependencies only when requested or needed by the workflow.
+
+Minimal example:
+
+```yaml
+interface:
+  display_name: "Writing for agents"
+  short_description: "Write clear instructions and references for agents"
+```
+
+Check the YAML structure, required interface strings, boolean policy, and any
+declared asset paths or dependencies. A passing SKILL.md validator may not check
+this file; validate it separately. Tool declarations retain session authorization
+boundaries.
+
 ## Supporting resources
 
 Start with `SKILL.md`; add resources for concrete needs:

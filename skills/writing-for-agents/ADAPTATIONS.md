@@ -99,11 +99,31 @@ state, verification, and unresolved decisions.
 - MCP product recommendations and process supervision: keep these outside the
   writing workflow.
 
+### OpenAI: skill metadata and validation
+
+Reviewed the skill-building documentation and the skill metadata section of the
+plugin validation reference. Incorporated `agents/openai.yaml` as an optional
+OpenAI extension with UI metadata, invocation policy, and actual MCP dependencies.
+The local mechanics reference includes field guidance and a compact example.
+The skill includes its own UI metadata with automatic invocation preserved.
+
+**Declined**
+
+- OpenAI metadata as a universal Agent Skills requirement: keep the portable
+  format distinct from harness extensions and plugin validation requirements.
+- Icons, branding, or tool dependencies without a concrete need: this workflow
+  uses text metadata and has no required MCP integration.
+- Explicit-only invocation based on packaging examples: preserve automatic
+  discovery unless the user requests otherwise.
+- Plugin publication procedures as part of writing: packaging metadata does not
+  authorize submission or deployment.
+
 ## Web retrieval limitations
 
-The Anthropic digests identify the downloaded HTML bytes, including page markup.
-The specification digest identifies the downloaded Markdown response at
-`snapshot_url`. These live URLs are retrieval locations, not immutable archives.
+The Anthropic and OpenAI validation digests identify downloaded HTML bytes,
+including page markup. The specification and OpenAI skill-building digests
+identify the downloaded Markdown responses at `snapshot_url`. These live URLs
+are retrieval locations, not immutable archives.
 Their content and rendering may change independently of substantive guidance.
 
 Downloads were retained temporarily for this review, not bundled into the skill.

@@ -43,3 +43,18 @@ url = "https://github.com/addyosmani/agent-skills"
 path = "skills/context-engineering/SKILL.md"
 reviewed_revision = "aeac41d4d005999432bb7312f7ff06383a91d59d"
 incorporated = "Selective context loading, ambiguity handling, and durable session handoffs; see ADAPTATIONS.md."
+
+[[sources]]
+id = "openai-skills"
+url = "https://learn.chatgpt.com/docs/build-skills"
+snapshot_url = "https://learn.chatgpt.com/docs/build-skills.md"
+reviewed_at = "2026-10-14"
+content_sha256 = "ed6e324f747d47adf6f60ee1fca13ba469b3671f55f58c3a78f35947af6919d5"
+incorporated = "OpenAI agents/openai.yaml metadata, invocation policy, and MCP dependencies; see ADAPTATIONS.md."
+
+[[sources]]
+id = "openai-skill-validation"
+url = "https://developers.openai.com/plugins/deploy/submission-errors"
+reviewed_at = "2026-10-14"
+content_sha256 = "fbbe3e446bd1b81f2e4ecfaaa947d52ebc4f9a7236287708ee0e8520798d899f"
+incorporated = "Required interface fields when OpenAI metadata is included and asset validation constraints; see ADAPTATIONS.md."
