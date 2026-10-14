@@ -51,4 +51,4 @@ The module links individual resources from the pinned source. It does not instal
 agent executables or manage their settings. Extensions that require npm
 dependencies need packaging before deployment through Nix.
 
-The implementation is in [home-manager-module.nix](../nix/home-manager-module.nix).
+The implementation is in [home-manager-module.nix](../../nix/home-manager-module.nix).

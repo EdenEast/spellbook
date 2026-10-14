@@ -29,10 +29,10 @@ active agent configuration.
 
 Choose the guide for the resource you want to change:
 
-- [Maintain skills](skills.md), including source metadata and update workflows.
-- [Maintain shared references](maintenance.md).
+- [Maintain skills](../agents/skills.md), including source metadata and update workflows.
+- [Maintain shared references](../agents/maintenance.md).
 - [Create and load Pi extensions](pi-extensions.md).
-- [Repository layout](layout.md).
+- [Repository layout](../agents/layout.md).
 
 Edit global agent instructions in `instructions/AGENTS.md`. Follow the root
-[AGENTS.md](../AGENTS.md) when maintaining this repository.
+[AGENTS.md](../../AGENTS.md) when maintaining this repository.

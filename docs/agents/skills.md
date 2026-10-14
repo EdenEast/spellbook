@@ -1,5 +1,8 @@
 # Maintain skills
 
+Use the [domain glossary](../GLOSSARY.md) for shared terminology, including the
+distinction between a reviewed version and an upstream baseline.
+
 Keep active skills in `skills/<name>/`, with a `SKILL.md` entry point whose
 frontmatter contains `name` and `description`. Use lowercase letters, digits,
 and hyphens for directory names. Preserve an adopted skill's upstream name and
@@ -82,6 +85,6 @@ active skills for selected targets. `spellbook status` reports link state, not
 whether upstream versions are current. Content updates are agent-assisted
 repository work; installation never fetches or merges upstream material.
 
-See [installation paths](installation-reference.md) for targets, T3 Code,
+See [installation paths](../user/installation-reference.md) for targets, T3 Code,
 conflicts, and Pi package alternatives. The [worked examples](skill-examples.md)
 show both relationships without installing example skills.

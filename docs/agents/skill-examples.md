@@ -1,12 +1,12 @@
 # Worked skill examples
 
 These examples use original synthetic material under
-[`scripts/tests/fixtures/`](../scripts/tests/fixtures/). They are not active skills
+[`scripts/tests/fixtures/`](../../scripts/tests/fixtures). They are not active skills
 and are never discovered by the installer from this checkout.
 
 ## Adapt multiple sources
 
-The [adapted-checks skill](../scripts/tests/fixtures/skills/adapted-checks/SKILL.md)
+The [adapted-checks skill](../../scripts/tests/fixtures/skills/adapted-checks/SKILL.md)
 combines two short source documents: outcome-based verification and environment
 selection. Its `SOURCE.toml` identifies both reviewed sources with content
 digests. Relative source locators resolve from the skill directory. Its
@@ -20,7 +20,7 @@ review record. The skill's behavior remains a local decision.
 
 ## Adopt and update
 
-The [lifecycle test](../scripts/tests/skills.test.ts) creates a temporary Git
+The [lifecycle test](../../scripts/tests/skills.test.ts) creates a temporary Git
 upstream from the example skill and its helper. It copies the skill into a
 separate checkout, records the actual upstream repository and full baseline SHA,
 and changes the harness instruction locally while preserving identity.
