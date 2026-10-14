@@ -16,10 +16,12 @@ The repository uses these paths:
 | `skills/<name>/SKILL.md` | Globally installed skill instructions. |
 | `skills/<name>/SOURCE.toml` | Provenance for an imported skill. |
 | `skills/<name>/references/` | Optional supporting files for a skill. |
+| `skills/<name>/scripts/` | Executable helpers shipped with a skill. |
 | `.agents/skills/` | Repository-only skills for Codex and Pi. |
 | `.claude/skills/` | Links to repository-only skills for Claude Code. |
 | `pi/extensions/` | Pi extension files or directories with `index.ts` or `index.js`. |
-| `scripts/` | Installer and tests. |
+| `scripts/` | Command-line entry points and installer tooling. |
+| `scripts/tests/` | Script tests and their fixtures. |
 | `nix/` | Home Manager integration. |
 | `package.json` | Pi extension package declaration and Node tooling. |
 | `flake.nix` | Development environment, checks, and module exports. |

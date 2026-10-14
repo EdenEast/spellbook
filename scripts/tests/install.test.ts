@@ -4,8 +4,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 import type { TestContext } from "node:test";
-import { plan, run } from "./install.ts";
-import type { Options } from "./install.ts";
+import { plan, run } from "../install.ts";
+import type { Options } from "../install.ts";
 import { spawnSync } from "node:child_process";
 
 async function fixture(t: TestContext): Promise<Options> {
@@ -80,7 +80,7 @@ test("empty skill selection still installs other resources and leaves skill cont
 
 test("CLI exposes help and rejects invalid selection modes without writing", async (t) => {
   const options = await fixture(t);
-  const executable = join(import.meta.dirname, "spellbook.ts");
+  const executable = join(import.meta.dirname, "..", "spellbook.ts");
   const invoke = (args: string[]) => spawnSync(process.execPath, [executable, ...args], {
     env: { ...process.env, HOME: options.home }, encoding: "utf8",
   });

@@ -9,7 +9,7 @@
   },
   "scripts": {
     "check": "tsc --noEmit",
-    "test": "node --test scripts/*.test.ts",
+    "test": "node --test scripts/tests/*.test.ts",
     "skills:install": "node scripts/install.ts install",
     "skills:uninstall": "node scripts/install.ts uninstall",
     "status": "node scripts/install.ts status"

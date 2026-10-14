@@ -9,5 +9,5 @@
     "verbatimModuleSyntax": true,
     "types": ["node"]
   },
-  "include": ["scripts/**/*.ts", "pi/extensions/**/*.ts"]
+  "include": ["scripts/**/*.ts", "pi/extensions/**/*.ts", "skills/babysit-pr/scripts/**/*.ts"]
 }

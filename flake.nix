@@ -24,7 +24,7 @@
       installer = pkgs.runCommand "spellbook-installer-tests" {
         nativeBuildInputs = [pkgs.nodejs_24];
       } ''
-        node --test ${self}/scripts/*.test.ts
+        node --test ${self}/scripts/tests/*.test.ts
         touch "$out"
       '';
     });

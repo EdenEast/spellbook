@@ -17,7 +17,8 @@ npm run check
 npm test
 ```
 
-`just check` runs both checks. `nix flake check` runs the installer tests.
+`just check` runs both checks. `nix flake check` runs the script tests in
+`scripts/tests/`.
 Node executes the TypeScript scripts directly; no build step is required.
 
 After changing TypeScript tooling, run both `npm run check` and `npm test`.
