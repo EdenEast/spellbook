@@ -22,8 +22,8 @@ completion criteria, and removal of stale or redundant guidance.
   to evaluate.
 - Required sequence splitting or delegation to hide later steps: first improve
   completion criteria.
-- Claude-specific invocation fields and router restrictions as portable rules:
-  use controls supported by the target harness.
+- Claude-specific router restrictions as universal rules: verify cross-skill
+  routing in the target harness.
 - Explicit-only invocation as the default: retain automatic discovery unless
   the user requests otherwise.
 
@@ -118,22 +118,25 @@ This skill omits the optional UI metadata file and retains automatic invocation.
 - Plugin publication procedures as part of writing: packaging metadata does not
   authorize submission or deployment.
 
-### Claude Code: invocation metadata
+### Claude Code and Pi: invocation metadata
 
-Reviewed the frontmatter and invocation-control sections of the skill reference.
+Reviewed the frontmatter and invocation-control sections of Claude Code's skill
+reference and Pi's skill documentation.
 Incorporated `disable-model-invocation` into the compact metadata reference,
-including its boolean default, manual invocation behavior, and discovery effect.
+including its boolean default, explicit invocation behavior, and discovery
+effect. The field is documented as shared invocation metadata, with command
+syntax left to the harness.
 
 **Declined**
 
-- `disable-model-invocation` as a portable or Codex field: label it as a Claude
-  Code extension and distinguish Codex's optional policy control.
+- Claude-only labeling and hardcoded explicit-command syntax: document the
+  common behavior and use the target harness's invocation syntax.
 - Explicit-only invocation as a universal default: preserve automatic discovery
   unless the user requests otherwise.
 
 ## Web retrieval limitations
 
-The Anthropic, OpenAI validation, and Claude Code digests identify downloaded
+The Anthropic, OpenAI validation, Claude Code, and Pi digests identify downloaded
 HTML bytes, including page markup. The specification and OpenAI skill-building digests
 identify the downloaded Markdown responses at `snapshot_url`. These live URLs
 are retrieval locations, not immutable archives.
