@@ -1,10 +1,9 @@
 # Spellbook
 
-Personal agent instructions, skills, and shared references for Codex, Claude
+Personal agent instructions and shared references for Codex, Claude
 Code, and Pi, plus Pi extensions.
 
-Browse the [skill catalog](skills/README.md) for available workflows and the
-[reference catalog](references/README.md) for shared guidance.
+Browse the [reference catalog](references/README.md) for shared guidance.
 
 ## Get started
 
@@ -21,16 +20,6 @@ spellbook install --dry-run
 spellbook install
 spellbook status
 ```
-
-To choose skills from a checklist, run:
-
-```sh
-spellbook install --select
-```
-
-Installed skills start checked. Check a skill to add it; uncheck one to remove
-this checkout's links from the selected targets. Foreign paths stay untouched.
-Instructions, references, and Pi extensions still follow the selected targets.
 
 You can also run `./scripts/spellbook.ts` directly from the checkout.
 The existing Just and npm shortcuts remain available.
@@ -52,7 +41,6 @@ maintenance guides, and reference pages. Start with the relevant guide:
 
 ## Credits
 
-Spellbook includes adapted skills and references from
-[pstack](https://github.com/cursor/plugins) by Lauren Tan and
-[Matt Pocock's skills](https://github.com/mattpocock/skills). Each adapted
-item records its upstream source in `SOURCE.toml` and includes its license.
+Spellbook includes adapted references from
+[pstack](https://github.com/cursor/plugins) by Lauren Tan. Each adapted
+collection records its upstream source in `SOURCE.toml` and includes its license.

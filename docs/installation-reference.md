@@ -13,19 +13,13 @@ The selected targets determine which links the installer manages:
 | Claude Code global instructions | `~/.claude/CLAUDE.md` | Claude Code |
 | Pi global instructions | `~/.pi/agent/AGENTS.md` | Pi |
 | Shared references | `~/.agents/references/spellbook/` | Any target |
-| Codex and Pi skills | `~/.agents/skills/<name>` | Codex or Pi |
-| Claude Code skills | `~/.claude/skills/<name>` | Claude Code |
 | Pi extensions | `~/.pi/agent/extensions/spellbook-<name>` | Pi |
 
 All instruction links point to `instructions/AGENTS.md`. The root `AGENTS.md`
 contains repository maintenance instructions.
 
-Both installers discover global skills in `skills/`. Repository-only skills in
-`.agents/skills/` stay local; `.claude/skills/` contains links to those skills.
-
-Codex and Pi share skill discovery. Installing or uninstalling their shared
-links affects both. The reference destination is also shared by all three agents
-and remains fixed even when Home Manager customizes their configuration paths.
+The reference destination is shared by all three agents and remains fixed even
+when Home Manager customizes their configuration paths.
 
 ## Command options
 
@@ -33,18 +27,9 @@ and remains fixed even when Home Manager customizes their configuration paths.
 `--target codex|claude|pi` option selects agents. Without it, all three are
 selected. `--dry-run` reports planned operations without changing links.
 
-`install --select` opens an interactive skill checklist. Skills installed from
-this checkout in any selected target start checked. Checked skills are installed
-in all selected targets; unchecked skills have this checkout's links removed
-from those targets. Foreign files and links stay untouched. Stale links are
-removed as in a normal install. Instructions, references, and Pi extensions
-follow the normal target rules. The next checklist reads the current links.
-Cancellation changes no resources. `--select` is rejected for other commands
-and when input or output is not an interactive terminal.
-
 ## Link handling
 
-The checkout installer links individual instructions, skills, and extensions.
+The checkout installer links individual instructions and extensions.
 It links the shared reference directory as one resource.
 
 The installer checks all selected destinations for conflicts before creating
@@ -64,7 +49,4 @@ not change settings or credentials, and it does not install agent executables.
 These upstream pages describe instruction files and skill discovery:
 
 - [Codex instructions](https://learn.chatgpt.com/docs/agent-configuration/agents-md).
-- [Codex skills](https://learn.chatgpt.com/docs/build-skills).
 - [Claude Code instructions](https://code.claude.com/docs/en/memory).
-- [Claude Code skills](https://code.claude.com/docs/en/skills).
-- [Pi skills](https://github.com/badlogic/pi-mono/blob/main/packages/coding-agent/docs/skills.md).

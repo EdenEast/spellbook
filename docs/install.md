@@ -53,32 +53,7 @@ By default, the installer selects Codex, Claude Code, and Pi. Use repeatable
 spellbook install --target codex --target claude
 ```
 
-Codex and Pi use the same skill links. Changing those links affects both agents,
-even when you select only one. Any selected agent also manages the shared
-reference link used by all three agents.
-
-## Select skills
-
-Open the optional checklist:
-
-```sh
-spellbook install --select --target codex
-```
-
-Use the arrow keys to move and Space to check or uncheck a skill. Press A to
-toggle all skills. Press Enter to sync the checked skills. Press Q, Esc, or Ctrl+C
-to cancel before any links change. Skills installed from this checkout in any
-selected target start checked.
-
-Checking a skill installs it in all selected targets. Unchecking a skill removes
-this checkout's links from those targets. Foreign files and links stay untouched.
-Instructions, shared references, and extensions still follow `--target`.
-An empty selection removes all of this checkout's skill links in the selected
-targets. Selections apply to the current run.
-Running `install` without `--select` manages all skills again.
-
-The checklist requires an interactive terminal. Combine it with `--dry-run`
-to preview additions and removals without writing them.
+Any selected agent also manages the shared reference link used by all three agents.
 
 ## Refresh or remove links
 
@@ -103,11 +78,11 @@ just status
 just uninstall
 ```
 
-The npm shortcuts are `npm run skills:install`, `npm run status`, and
-`npm run skills:uninstall`. Pass installer flags after `--`:
+The npm shortcuts are `npm run resources:install`, `npm run status`, and
+`npm run resources:uninstall`. Pass installer flags after `--`:
 
 ```sh
-npm run skills:install -- --target codex
+npm run resources:install -- --target codex
 ```
 
 `npm install` installs development dependencies. It does not install agent

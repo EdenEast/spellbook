@@ -33,7 +33,7 @@ pi install /absolute/path/to/spellbook
 ```
 
 Use one extension loading method at a time. The package declares no skills,
-prompts, or themes. Install skills through the shared resource installer.
+prompts, or themes.
 
 ## Try an external Pi package
 

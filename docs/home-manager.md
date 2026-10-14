@@ -11,7 +11,6 @@ Manager configuration:
     enable = true;
     targets = [ "codex" "claude" "pi" ];
     # Defaults, relative to your home directory:
-    # agentSkillsDir = ".agents/skills";
     # codexDir = ".codex";
     # claudeDir = ".claude";
     # piDir = ".pi/agent";
@@ -37,7 +36,6 @@ These options live under `programs.spellbook`:
 | `enable` | `false` | Enable resource links. |
 | `source` | Spellbook flake source | Source tree containing the resources. |
 | `targets` | `[ "codex" "claude" "pi" ]` | Agents to configure. |
-| `agentSkillsDir` | `".agents/skills"` | Shared Codex and Pi skill directory. |
 | `codexDir` | `".codex"` | Codex configuration directory. |
 | `claudeDir` | `".claude"` | Claude Code configuration directory. |
 | `piDir` | `".pi/agent"` | Pi agent directory. |

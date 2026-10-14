@@ -29,7 +29,7 @@ active agent configuration.
 
 Choose the guide for the resource you want to change:
 
-- [Maintain skills and references](maintenance.md).
+- [Maintain shared references](maintenance.md).
 - [Create and load Pi extensions](pi-extensions.md).
 - [Repository layout](layout.md).
 
