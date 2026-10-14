@@ -13,6 +13,7 @@ when an action is authorized.
 | [html-communication](html-communication/SKILL.md) | Creating and publishing readable HTML communication documents through Postplan. |
 | [postplan-read](postplan-read/SKILL.md) | Reading a supplied `postplan.dev` URL using `curl`. |
 | [summarization](summarization/SKILL.md) | Summarizing documents, conversations, research, or technical content. |
+| [unslop](unslop/SKILL.md) | Drafting or editing prose to remove AI writing patterns while preserving meaning and voice. |
 | [writing-for-agents](writing-for-agents/SKILL.md) | Authoring or reviewing skills and other agent instructions. |
 
 Locally authored skills do not need external source records.
