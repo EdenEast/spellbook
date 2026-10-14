@@ -6,7 +6,7 @@ export type Target = "codex" | "claude" | "pi";
 type Action = "install" | "uninstall" | "status";
 type State = "installed" | "missing" | "conflict" | "stale";
 type Link = { source: string; destination: string; state: State };
-type Collection = { source: string; destination: string };
+type Collection = { source: string; destination: string; kind: "skill" | "extension" };
 
 export type Options = {
   root: string;
@@ -35,9 +35,16 @@ async function entries(path: string) {
 }
 
 function collections({ root, home, targets }: Options): Collection[] {
-  const result: Collection[] = [];
+  const skillDestinations: Record<Target, string> = {
+    codex: ".agents/skills",
+    claude: ".claude/skills",
+    pi: ".agents/skills",
+  };
+  const result: Collection[] = [...new Set(targets.map((target) => skillDestinations[target]))].map((destination) => ({
+    source: join(root, "skills"), destination: join(home, destination), kind: "skill",
+  }));
   if (targets.includes("pi")) {
-    result.push({ source: join(root, "pi/extensions"), destination: join(home, ".pi/agent/extensions") });
+    result.push({ source: join(root, "pi/extensions"), destination: join(home, ".pi/agent/extensions"), kind: "extension" });
   }
   return result;
 }
@@ -51,6 +58,10 @@ async function discover(collection: Collection): Promise<string[]> {
   for (const entry of await entries(collection.source)) {
     if (entry.name.startsWith(".")) continue;
     const path = join(collection.source, entry.name);
+    if (collection.kind === "skill") {
+      if (entry.isDirectory() && (await stat(join(path, "SKILL.md")))?.isFile()) names.push(entry.name);
+      continue;
+    }
     if (
       (entry.isFile() && /\.(ts|js)$/.test(entry.name) && !entry.name.endsWith(".d.ts")) ||
       (entry.isDirectory() && ((await stat(join(path, "index.ts")))?.isFile() || (await stat(join(path, "index.js")))?.isFile()))
@@ -111,10 +122,11 @@ export async function plan(options: Options): Promise<Link[]> {
     if (destinationStat && !destinationStat.isDirectory()) {
       throw new Error(`Expected a real resource directory: ${collection.destination}. Resolve the existing file or directory symlink first.`);
     }
+    const nameAtDestination = (name: string) => collection.kind === "skill" ? name : installedName(name);
     const wanted = new Set<string>();
     for (const name of names) {
       const source = resolve(collection.source, name);
-      const destination = join(collection.destination, installedName(name));
+      const destination = join(collection.destination, nameAtDestination(name));
       wanted.add(destination);
       const state = (await linkTarget(destination)) === source ? "installed"
         : (await stat(destination)) ? "conflict" : "missing";
@@ -125,7 +137,7 @@ export async function plan(options: Options): Promise<Link[]> {
       const destination = join(collection.destination, entry.name);
       if (wanted.has(destination)) continue;
       const source = await linkTarget(destination);
-      if (source && dirname(source) === resolve(collection.source) && entry.name === installedName(basename(source))) {
+      if (source && dirname(source) === resolve(collection.source) && entry.name === nameAtDestination(basename(source))) {
         links.push({ source, destination, state: "stale" });
       }
     }
@@ -141,7 +153,7 @@ export async function run(action: Action, options: Options): Promise<void> {
   if (action === "install" && conflicts.length) {
     throw new Error(`Existing paths conflict with installation:\n${conflicts.map((link) => link.destination).join("\n")}`);
   }
-  if (!links.length) log("No instructions, references, or extensions to manage.");
+  if (!links.length) log("No instructions, skills, references, or extensions to manage.");
   for (const link of links) {
     const remove = (action === "uninstall" && link.state === "installed") || (action !== "status" && link.state === "stale");
     const add = action === "install" && link.state === "missing";

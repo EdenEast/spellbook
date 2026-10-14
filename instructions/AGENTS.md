@@ -29,7 +29,6 @@
 - When a principle materially changes a decision, explain the choice it changed.  Only attribute a decision to a
   principle you read this session.
 - If the installed index is missing, continue with available instructions and mention the missing library when relevant.
-  When working in Spellbook, use `references/principles/README.md` in the checkout.
 
 ## Questions are read-only
 

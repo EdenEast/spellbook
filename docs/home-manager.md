@@ -43,6 +43,10 @@ These options live under `programs.spellbook`:
 Directory options are relative to your home directory. Shared references always
 use `.agents/references/spellbook` when at least one target is selected.
 
+Skills use the same discovery rules and names as the checkout installer.
+Codex and Pi share `.agents/skills/`; Claude uses `${claudeDir}/skills/`.
+The shared skill directory is fixed, like the shared reference location.
+
 The module links individual resources from the pinned source. It does not install
 agent executables or manage their settings. Extensions that require npm
 dependencies need packaging before deployment through Nix.

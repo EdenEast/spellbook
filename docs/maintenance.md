@@ -30,4 +30,4 @@ If the installed library is missing, agents continue with available instructions
 and report the gap when relevant. Agents explain a principle's effect on a
 decision when that explanation helps assess the work.
 
-For upstream updates, follow [Updating external references](../EXTERNAL_REFERENCES.md).
+For upstream updates, follow [external-source guidance](external-sources.md).

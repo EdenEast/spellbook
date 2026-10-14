@@ -25,15 +25,18 @@ lock changes when you want to keep them.
 
 ## Install the native Pi package
 
-The repository root is also a native Pi package for extensions. As an alternative
+The repository root is also a native Pi package for extensions and skills. As an alternative
 to the [checkout installer's extension links](install.md), run:
 
 ```sh
 pi install /absolute/path/to/spellbook
 ```
 
-Use one extension loading method at a time. The package declares no skills,
-prompts, or themes.
+Use one loading method per resource at a time; avoid loading the same skills
+through both package installation and installer links. The package declares
+`./skills` and `./pi/extensions`, with no prompts or themes. Package loading does
+not install the shared reference library or global instructions; use the checkout
+installer or Home Manager for those resources.
 
 ## Try an external Pi package
 

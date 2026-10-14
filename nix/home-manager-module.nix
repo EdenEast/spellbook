@@ -5,6 +5,7 @@
 }: let
   cfg = config.programs.spellbook;
   enabled = target: builtins.elem target cfg.targets;
+  skillRoot = cfg.source + "/skills";
   extensionRoot = cfg.source + "/pi/extensions";
   instructionSource = cfg.source + "/instructions/AGENTS.md";
   referenceSource = cfg.source + "/references";
@@ -15,6 +16,14 @@
     "${destination}".source = instructionSource;
   };
   visible = name: !(lib.hasPrefix "." name);
+  skills = lib.filterAttrs (name: type:
+    visible name && type == "directory"
+    && ((builtins.readDir (skillRoot + "/${name}"))."SKILL.md" or null) == "regular"
+  ) (if builtins.pathExists skillRoot then builtins.readDir skillRoot else {});
+  skillLinks = directory: lib.mapAttrs' (name: _: {
+    name = "${directory}/skills/${name}";
+    value.source = skillRoot + "/${name}";
+  }) skills;
   extensions = lib.filterAttrs (name: type:
     visible name && (
       (type == "regular" && (lib.hasSuffix ".ts" name || lib.hasSuffix ".js" name) && !(lib.hasSuffix ".d.ts" name))
@@ -27,11 +36,11 @@
   }) extensions;
 in {
   options.programs.spellbook = {
-    enable = lib.mkEnableOption "Spellbook instructions, references, and Pi extensions";
+    enable = lib.mkEnableOption "Spellbook instructions, skills, references, and Pi extensions";
     source = lib.mkOption {
       type = lib.types.path;
       default = self;
-      description = "Spellbook source tree containing instructions/, references/, and pi/extensions/.";
+      description = "Spellbook source tree containing instructions/, skills/, references/, and pi/extensions/.";
     };
     targets = lib.mkOption {
       type = lib.types.listOf (lib.types.enum ["codex" "claude" "pi"]);
@@ -61,6 +70,8 @@ in {
       (lib.mkIf (enabled "codex") (instructionLinks "${cfg.codexDir}/AGENTS.md"))
       (lib.mkIf (enabled "claude") (instructionLinks "${cfg.claudeDir}/CLAUDE.md"))
       (lib.mkIf (enabled "pi") (instructionLinks "${cfg.piDir}/AGENTS.md"))
+      (lib.mkIf (enabled "codex" || enabled "pi") (skillLinks ".agents"))
+      (lib.mkIf (enabled "claude") (skillLinks cfg.claudeDir))
       (lib.mkIf (enabled "pi") extensionLinks)
     ];
   };

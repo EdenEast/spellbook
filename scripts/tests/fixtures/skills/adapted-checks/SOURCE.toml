@@ -1,0 +1,16 @@
+schema_version = 1
+mode = "adapt"
+
+[[sources]]
+id = "outcomes"
+url = "../../sources/outcomes.md"
+reviewed_at = "2026-10-14"
+content_sha256 = "3be82441d100e1918f1ac2d9564d5f9fe0757a7e737004953b17b5f118524d64"
+incorporated = "Combined into the local verification workflow; see ADAPTATIONS.md."
+
+[[sources]]
+id = "environments"
+url = "../../sources/environments.md"
+reviewed_at = "2026-10-14"
+content_sha256 = "8ac85301d0edcdb066a08bb9c3f4aa01b8b930e9dd2b944a8290a41fb8e2ba5a"
+incorporated = "Combined into the local verification workflow; see ADAPTATIONS.md."

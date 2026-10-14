@@ -6,6 +6,7 @@ The repository uses these paths:
 | --- | --- |
 | `AGENTS.md` | Repository maintenance instructions. |
 | `instructions/AGENTS.md` | Shared global agent instructions. |
+| `skills/` | Active skills with adapt/adopt provenance and optional supporting files. |
 | `docs/` | Project guides and reference pages. |
 | `references/` | Shared documents loaded on demand. |
 | `references/README.md` | Reference catalog. |
@@ -14,5 +15,5 @@ The repository uses these paths:
 | `scripts/` | Command-line entry points and installer tooling. |
 | `scripts/tests/` | Script tests and their fixtures. |
 | `nix/` | Home Manager integration. |
-| `package.json` | Pi extension package declaration and Node tooling. |
+| `package.json` | Pi skill and extension package declaration and Node tooling. |
 | `flake.nix` | Development environment, checks, and module exports. |

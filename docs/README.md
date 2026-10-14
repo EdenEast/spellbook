@@ -1,6 +1,6 @@
 # Spellbook documentation
 
-Spellbook stores agent instructions, shared references, and Pi extensions
+Spellbook stores agent instructions, skills, shared references, and Pi extensions
 in one repository. Use these pages to install or maintain them.
 
 ## Guides
@@ -10,6 +10,9 @@ Choose the guide for your task:
 - [Install from a checkout](install.md): select agents, inspect links, and uninstall.
 - [Install with Home Manager](home-manager.md): configure the Nix module and resource locations.
 - [Develop Spellbook](development.md): set up the environment and run checks.
+- [Maintain skills](skills.md): adapt, adopt, update, and install skills.
+- [External sources](external-sources.md): provenance contracts and licensing.
+- [Worked skill examples](skill-examples.md): multi-source adaptation and upstream merging.
 - [Maintain shared references](maintenance.md): add resources and track upstream versions.
 - [Create and load Pi extensions](pi-extensions.md): test local extensions or use the native Pi package.
 

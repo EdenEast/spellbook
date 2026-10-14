@@ -1,7 +1,9 @@
 # Spellbook
 
-Personal agent instructions and shared references for Codex, Claude
+Personal agent instructions, skills, and shared references for Codex, Claude
 Code, and Pi, plus Pi extensions.
+
+See [skill authoring and updates](docs/skills.md).
 
 Browse the [reference catalog](references/README.md) for shared guidance.
 
