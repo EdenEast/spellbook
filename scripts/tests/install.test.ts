@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 import type { TestContext } from "node:test";
-import { plan, run } from "../install.ts";
+import { installedSkills, plan, run } from "../install.ts";
 import type { Options } from "../install.ts";
 import { spawnSync } from "node:child_process";
 
@@ -42,7 +42,7 @@ async function references(options: Options) {
   return source;
 }
 
-test("selected skills sync across targets while unchecked conflicts and stale links stay untouched", async (t) => {
+test("skill selection adds checked links, removes unchecked owned links, and preserves conflicts", async (t) => {
   const options = await fixture(t);
   const checked = await skill(options, "checked");
   await skill(options, "unchecked");
@@ -55,13 +55,45 @@ test("selected skills sync across targets while unchecked conflicts and stale li
   for (const destination of [".agents/skills/checked", ".claude/skills/checked"]) await rm(join(options.home, destination));
   await run("install", { ...options, skills: ["checked"], dryRun: true });
   await assert.rejects(readlink(join(options.home, ".agents/skills/checked")), { code: "ENOENT" });
+  assert.equal(await readlink(join(options.home, ".agents/skills/unchecked")), join(options.root, "skills/unchecked"));
+  assert.equal(await readlink(join(options.home, ".agents/skills/deleted")), stale);
   await run("install", { ...options, skills: ["checked"] });
   await run("install", { ...options, skills: ["checked"] });
   assert.equal(await readlink(join(options.home, ".agents/skills/checked")), checked);
   assert.equal(await readlink(join(options.home, ".claude/skills/checked")), checked);
   assert.equal(await readFile(conflict, "utf8"), "personal skill");
-  assert.equal(await readlink(join(options.home, ".agents/skills/deleted")), stale);
+  await assert.rejects(readlink(join(options.home, ".agents/skills/unchecked")), { code: "ENOENT" });
+  await assert.rejects(readlink(join(options.home, ".agents/skills/deleted")), { code: "ENOENT" });
   assert.deepEqual((await plan({ ...options, skills: ["checked"] })).map((link) => link.state), ["installed", "installed"]);
+});
+
+test("initial selection reflects owned skills in any selected target", async (t) => {
+  const options = await fixture(t);
+  await skill(options, "shared");
+  await skill(options, "claude-only");
+  await skill(options, "missing");
+  await skill(options, "foreign");
+  await run("install", { ...options, targets: ["codex"], skills: ["shared"] });
+  await run("install", { ...options, targets: ["claude"], skills: ["claude-only"] });
+  await symlink(join(options.root, "elsewhere"), join(options.home, ".agents/skills/foreign"));
+  assert.deepEqual(await installedSkills(options), ["claude-only", "shared"]);
+  assert.deepEqual(await installedSkills({ ...options, targets: ["pi"] }), ["shared"]);
+  assert.deepEqual(await installedSkills({ ...options, targets: ["claude"] }), ["claude-only"]);
+  await run("install", { ...options, skills: await installedSkills(options) });
+  assert.equal(await readlink(join(options.home, ".agents/skills/claude-only")), join(options.root, "skills/claude-only"));
+  assert.equal(await readlink(join(options.home, ".claude/skills/shared")), join(options.root, "skills/shared"));
+  assert.equal(await readlink(join(options.home, ".agents/skills/foreign")), join(options.root, "elsewhere"));
+});
+
+test("clearing the selection removes owned skills only in selected targets", async (t) => {
+  const options = await fixture(t);
+  const source = await skill(options);
+  await run("install", options);
+  await run("install", { ...options, targets: ["claude"], skills: [] });
+  assert.equal(await readlink(join(options.home, ".agents/skills/example")), source);
+  assert.deepEqual(await readdir(join(options.home, ".claude/skills")), []);
+  await run("install", { ...options, skills: [] });
+  assert.deepEqual(await readdir(join(options.home, ".agents/skills")), []);
 });
 
 test("empty skill selection still installs other resources and leaves skill containers untouched", async (t) => {

@@ -67,15 +67,18 @@ spellbook install --select --target codex
 
 Use the arrow keys to move and Space to check or uncheck a skill. Press A to
 toggle all skills. Press Enter to sync the checked skills. Press Q, Esc, or Ctrl+C
-to cancel before any links change. The checklist starts with no skills checked.
+to cancel before any links change. Skills installed from this checkout in any
+selected target start checked.
 
-Unchecked skills are left untouched, including existing links and conflicts.
+Checking a skill installs it in all selected targets. Unchecking a skill removes
+this checkout's links from those targets. Foreign files and links stay untouched.
 Instructions, shared references, and extensions still follow `--target`.
-An empty selection installs no skills. Selections apply to the current run.
+An empty selection removes all of this checkout's skill links in the selected
+targets. Selections apply to the current run.
 Running `install` without `--select` manages all skills again.
 
 The checklist requires an interactive terminal. Combine it with `--dry-run`
-to preview the selected links without writing them.
+to preview additions and removals without writing them.
 
 ## Refresh or remove links
 

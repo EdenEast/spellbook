@@ -33,10 +33,12 @@ and remains fixed even when Home Manager customizes their configuration paths.
 `--target codex|claude|pi` option selects agents. Without it, all three are
 selected. `--dry-run` reports planned operations without changing links.
 
-`install --select` opens an interactive skill checklist. Only checked skills
-are managed during that run. Unchecked skills, including stale links and
-conflicting paths, are left untouched. Instructions, references, and Pi
-extensions follow the normal target rules. Selections are not saved.
+`install --select` opens an interactive skill checklist. Skills installed from
+this checkout in any selected target start checked. Checked skills are installed
+in all selected targets; unchecked skills have this checkout's links removed
+from those targets. Foreign files and links stay untouched. Stale links are
+removed as in a normal install. Instructions, references, and Pi extensions
+follow the normal target rules. The next checklist reads the current links.
 Cancellation changes no resources. `--select` is rejected for other commands
 and when input or output is not an interactive terminal.
 

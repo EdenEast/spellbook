@@ -76,6 +76,12 @@ export function availableSkills(root: string): Promise<string[]> {
   return discover({ source: join(root, "skills"), destination: "", kind: "skills" });
 }
 
+export async function installedSkills(options: Options): Promise<string[]> {
+  const links = await plan({ ...options, skills: undefined });
+  return [...new Set(links.filter((link) => link.state === "installed" && dirname(link.source) === resolve(options.root, "skills"))
+    .map((link) => basename(link.source)))].sort();
+}
+
 async function linkTarget(path: string): Promise<string | undefined> {
   if (!(await stat(path))?.isSymbolicLink()) return undefined;
   return resolve(dirname(path), await readlink(path));
@@ -123,19 +129,18 @@ export async function plan(options: Options): Promise<Link[]> {
   const selected = options.skills === undefined ? undefined : new Set(options.skills);
   for (const collection of collections(options)) {
     const names = await discover(collection);
-    const includes = (name: string) => collection.kind !== "skills" || selected === undefined || selected.has(name);
-    if (collection.kind === "skills" && selected?.size === 0) continue;
     const destinationStat = await stat(collection.destination);
     if (destinationStat && !destinationStat.isDirectory()) {
       throw new Error(`Expected a real resource directory: ${collection.destination}. Resolve the existing file or directory symlink first.`);
     }
     const wanted = new Set<string>();
-    for (const name of names.filter(includes)) {
+    for (const name of names) {
       const source = resolve(collection.source, name);
       const destination = join(collection.destination, installedName(collection, name));
       wanted.add(destination);
       const state = (await linkTarget(destination)) === source ? "installed"
         : (await stat(destination)) ? "conflict" : "missing";
+      if (collection.kind === "skills" && selected !== undefined && !selected.has(name) && state !== "installed") continue;
       links.push({ source, destination, state });
     }
     // Inspect link text, so deleted source files can still be uninstalled.
@@ -143,7 +148,6 @@ export async function plan(options: Options): Promise<Link[]> {
       const destination = join(collection.destination, entry.name);
       if (wanted.has(destination)) continue;
       const source = await linkTarget(destination);
-      if (source && !includes(basename(source))) continue;
       if (source && dirname(source) === resolve(collection.source) && entry.name === installedName(collection, basename(source))) {
         links.push({ source, destination, state: "stale" });
       }
@@ -162,7 +166,9 @@ export async function run(action: Action, options: Options): Promise<void> {
   }
   if (!links.length) log("No instructions, references, skills, or extensions to manage.");
   for (const link of links) {
-    const remove = (action === "uninstall" && link.state === "installed") || (action !== "status" && link.state === "stale");
+    const deselected = action === "install" && options.skills !== undefined
+      && dirname(link.source) === resolve(options.root, "skills") && !options.skills.includes(basename(link.source));
+    const remove = ((action === "uninstall" || deselected) && link.state === "installed") || (action !== "status" && link.state === "stale");
     const add = action === "install" && link.state === "missing";
     log(`${options.dryRun ? "DRY RUN " : ""}${remove ? "remove" : add ? "link" : link.state}: ${link.destination} -> ${link.source}`);
     if (options.dryRun) continue;
@@ -181,7 +187,7 @@ export async function cli(args = process.argv.slice(2)): Promise<void> {
   try {
     const [action, ...flags] = args;
     if (action === "--help" || action === "-h" || flags.includes("--help") || flags.includes("-h")) {
-      console.log("Usage: spellbook install|uninstall|status [--target codex|claude|pi]... [--dry-run]\n       spellbook install --select [--target codex|claude|pi]... [--dry-run]\n\n--select opens a skill checklist. Unchecked skills are left untouched.");
+      console.log("Usage: spellbook install|uninstall|status [--target codex|claude|pi]... [--dry-run]\n       spellbook install --select [--target codex|claude|pi]... [--dry-run]\n\n--select starts with installed skills checked. Unchecking removes this checkout's skill links from the selected targets.");
     } else {
       if (action !== "install" && action !== "uninstall" && action !== "status") throw new Error("Expected install, uninstall, or status. Use --help for usage.");
       const targets: Target[] = [];
@@ -200,12 +206,13 @@ export async function cli(args = process.argv.slice(2)): Promise<void> {
         } else throw new Error(`Unknown argument: ${arg}`);
       }
       const root = resolve(import.meta.dirname, "..");
-      const skills = select ? await selectSkills(await availableSkills(root)) : undefined;
+      const options: Options = { root, home: homedir(), targets: targets.length ? targets : ["codex", "claude", "pi"], dryRun };
+      const skills = select ? await selectSkills(await availableSkills(root), await installedSkills(options)) : undefined;
       if (select && skills === undefined) {
         console.log("Installation cancelled.");
         return;
       }
-      await run(action, { root, home: homedir(), targets: targets.length ? targets : ["codex", "claude", "pi"], dryRun, skills });
+      await run(action, { ...options, skills });
     }
   } catch (error) {
     console.error(error instanceof Error ? error.message : error);

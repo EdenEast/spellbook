@@ -28,7 +28,8 @@ To choose skills from a checklist, run:
 spellbook install --select
 ```
 
-Only checked skills are synced in that run. Unchecked skills stay untouched.
+Installed skills start checked. Check a skill to add it; uncheck one to remove
+this checkout's links from the selected targets. Foreign paths stay untouched.
 Instructions, references, and Pi extensions still follow the selected targets.
 
 You can also run `./scripts/spellbook.ts` directly from the checkout.
