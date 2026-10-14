@@ -58,3 +58,10 @@ url = "https://developers.openai.com/plugins/deploy/submission-errors"
 reviewed_at = "2026-10-14"
 content_sha256 = "fbbe3e446bd1b81f2e4ecfaaa947d52ebc4f9a7236287708ee0e8520798d899f"
 incorporated = "Required interface fields when OpenAI metadata is included and asset validation constraints; see ADAPTATIONS.md."
+
+[[sources]]
+id = "claude-code-skills"
+url = "https://code.claude.com/docs/en/skills"
+reviewed_at = "2026-10-14"
+content_sha256 = "146f3d1033d12d889f633bb49e5287fccc299657a05f63b59a773c3b30be1b1f"
+incorporated = "Claude Code disable-model-invocation frontmatter and its discovery behavior; see ADAPTATIONS.md."

@@ -15,12 +15,18 @@ A skill requires `SKILL.md` with YAML frontmatter containing `name` and
 | `compatibility` | No | 1–500 characters when present; environment requirements such as packages or network access. |
 | `metadata` | No | Mapping of string keys to string values. |
 | `allowed-tools` | No | Space-separated tool list; experimental, with support varying by harness. |
+| `disable-model-invocation` | No | Claude Code extension; boolean, default `false`. Set `true` for manual invocation with `/name`, preventing automatic loading and hiding the description from the model's discovery context. |
 
 The Markdown body has no required section layout. Supporting directories are
 optional. Add optional fields only for concrete needs, and keep detailed
 execution steps in the body. Harness extensions are separate from this format;
 a validator or harness may implement only part of it. Tool metadata does not
 expand the user's authorization.
+
+`disable-model-invocation` is Claude Code frontmatter, not a portable Agent Skills
+field or a Codex invocation control. Preserve automatic invocation unless the
+user requests explicit-only behavior. For Codex, the corresponding optional
+control is `policy.allow_implicit_invocation: false` in `agents/openai.yaml`.
 
 ## Discovery
 

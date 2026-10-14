@@ -105,23 +105,36 @@ Reviewed the skill-building documentation and the skill metadata section of the
 plugin validation reference. Incorporated `agents/openai.yaml` as an optional
 OpenAI extension with UI metadata, invocation policy, and actual MCP dependencies.
 The local mechanics reference includes field guidance and a compact example.
-The skill includes its own UI metadata with automatic invocation preserved.
+This skill omits the optional UI metadata file and retains automatic invocation.
 
 **Declined**
 
 - OpenAI metadata as a universal Agent Skills requirement: keep the portable
   format distinct from harness extensions and plugin validation requirements.
-- Icons, branding, or tool dependencies without a concrete need: this workflow
-  uses text metadata and has no required MCP integration.
+- UI metadata, icons, branding, or tool dependencies without a concrete need:
+  this workflow needs no separate presentation metadata or MCP integration.
 - Explicit-only invocation based on packaging examples: preserve automatic
   discovery unless the user requests otherwise.
 - Plugin publication procedures as part of writing: packaging metadata does not
   authorize submission or deployment.
 
+### Claude Code: invocation metadata
+
+Reviewed the frontmatter and invocation-control sections of the skill reference.
+Incorporated `disable-model-invocation` into the compact metadata reference,
+including its boolean default, manual invocation behavior, and discovery effect.
+
+**Declined**
+
+- `disable-model-invocation` as a portable or Codex field: label it as a Claude
+  Code extension and distinguish Codex's optional policy control.
+- Explicit-only invocation as a universal default: preserve automatic discovery
+  unless the user requests otherwise.
+
 ## Web retrieval limitations
 
-The Anthropic and OpenAI validation digests identify downloaded HTML bytes,
-including page markup. The specification and OpenAI skill-building digests
+The Anthropic, OpenAI validation, and Claude Code digests identify downloaded
+HTML bytes, including page markup. The specification and OpenAI skill-building digests
 identify the downloaded Markdown responses at `snapshot_url`. These live URLs
 are retrieval locations, not immutable archives.
 Their content and rendering may change independently of substantive guidance.
