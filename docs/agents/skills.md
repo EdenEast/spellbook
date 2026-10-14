@@ -32,7 +32,8 @@ external material, following [External sources](external-sources.md).
    to an upstream environment. Author a coherent skill rather than combining
    instructions mechanically.
 3. Record each source and its reviewed version in `SOURCE.toml`. Explain what
-   was incorporated and the local design decisions in `ADAPTATIONS.md`.
+   was incorporated and the local design decisions in `ADAPTATIONS.md`, following
+   the [adaptation note format](external-sources.md#adaptation-notes).
 4. Check realistic requests against the skill, its links, and any executable
    helpers. Install only after the repository changes are ready.
 

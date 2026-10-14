@@ -42,6 +42,18 @@ Record decisions per source in `ADAPTATIONS.md`; reviewed does not mean copied
 or fully incorporated. Preserve attribution and notices for copied or adapted
 material as required by its license.
 
+## Adaptation notes
+
+Organize `ADAPTATIONS.md` decisions by source. Briefly state what was reviewed
+and incorporated. Put declined decisions under a **Declined** label as a bullet
+list, with one decision per bullet and its reason or local replacement. Keep
+deferred decisions separately labeled so they cannot be mistaken for completed
+reviews. Apply the same list format when recording declined upstream changes
+for adopted material. Keep repository-specific maintenance rules here rather
+than in globally used skill instructions.
+
+## Adopted source records
+
 An adopted skill has exactly one upstream baseline:
 
 ```toml

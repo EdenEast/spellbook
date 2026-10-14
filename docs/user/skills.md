@@ -20,6 +20,13 @@ Both produce repository changes you can inspect. See the [shared glossary](../GL
 for these distinctions and [agent maintenance procedures](../agents/skills.md)
 for the detailed workflow.
 
+## Available skills
+
+- [Writing for agents](../../skills/writing-for-agents/SKILL.md): create, edit, or
+  review agent-facing skills, project instructions, and supporting references.
+  It provides writing guidance with optional references for skill mechanics,
+  behavioral evaluation, and session context.
+
 ## Make skills available
 
 After adding skills to the checkout, preview and install their links:

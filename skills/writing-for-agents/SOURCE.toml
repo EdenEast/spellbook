@@ -1,0 +1,45 @@
+schema_version = 1
+mode = "adapt"
+
+[[sources]]
+id = "matt-pocock"
+url = "https://github.com/mattpocock/skills"
+path = "skills/productivity/writing-for-agents"
+reviewed_revision = "49dd158d1076134a641b33efb035946536778336"
+incorporated = "Loading pointers, information hierarchy, completion criteria, and pruning; see ADAPTATIONS.md."
+
+[[sources]]
+id = "superpowers"
+url = "https://github.com/obra/superpowers"
+path = "skills/writing-skills/SKILL.md"
+reviewed_revision = "bb92a77741419a4ab5f06e711a283343f1ada0c3"
+incorporated = "Behavioral baselines, failure-specific instruction forms, and evaluation scenarios; see ADAPTATIONS.md."
+
+[[sources]]
+id = "anthropic-overview"
+url = "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview"
+reviewed_at = "2026-10-14"
+content_sha256 = "c42cb1cb4020d6215e52bf6fa01ec16e3d99305885c42e3cfd0717c986b94e97"
+incorporated = "Metadata, instructions, and on-demand resources as distinct loading stages; see ADAPTATIONS.md."
+
+[[sources]]
+id = "anthropic-best-practices"
+url = "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices"
+reviewed_at = "2026-10-14"
+content_sha256 = "f205d990f34cfa13a0396d730e1679222c94a3fba74f7228eadacb2a1c761d42"
+incorporated = "Appropriate specificity, conditional resources, examples, and evaluation-driven iteration; see ADAPTATIONS.md."
+
+[[sources]]
+id = "agent-skills-specification"
+url = "https://agentskills.io/specification"
+snapshot_url = "https://agentskills.io/specification.md"
+reviewed_at = "2026-10-14"
+content_sha256 = "4c649bdf0e0a51c9e215d9f91009ecdca05ee9d073edb6f37c20265bbd829e11"
+incorporated = "Required skill format and optional resource conventions; see ADAPTATIONS.md."
+
+[[sources]]
+id = "addy-osmani"
+url = "https://github.com/addyosmani/agent-skills"
+path = "skills/context-engineering/SKILL.md"
+reviewed_revision = "aeac41d4d005999432bb7312f7ff06383a91d59d"
+incorporated = "Selective context loading, ambiguity handling, and durable session handoffs; see ADAPTATIONS.md."
