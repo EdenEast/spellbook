@@ -35,7 +35,7 @@ also request them by name.
 
 | Skill | Description | Use cases |
 | --- | --- | --- |
-| [babysit-pr](babysit-pr/SKILL.md) | Monitor a PR and address verified review or CI issues. | Use a quiet GitHub watcher with acknowledged feedback delivery. Finish when required checks and review automation are done; report human merge gates separately. Merging requires an explicit request. |
+| [babysit-pr](babysit-pr/SKILL.md) | Monitor a PR and address verified review or CI issues. | Use T3 Code's `watch_pull_request` or the bundled GitHub watcher; script usage is in a separate reference. Finish when required checks and review automation are done; report human merge gates separately. Merging requires an explicit request. |
 | [commit](commit/SKILL.md) | Create Git or Jujutsu commits, or draft commit messages. | Commit changes or suggest a message. |
 | [diagnosing-bugs](diagnosing-bugs/SKILL.md) | Diagnose failures with reproducible checks and competing hypotheses. | Bugs, slow operations, CI, and infrastructure failures. |
 | [domain-modeling](domain-modeling/SKILL.md) | Define domain terms and document design decisions. | Maintain `GLOSSARY.md` and ADRs. |
