@@ -3,9 +3,8 @@
 Active skills live in this directory. The installer discovers each `SKILL.md`
 and makes the skill and its supporting files available together. These skills
 allow model invocation by default; how, why, create-verification-skill,
-maintain-verification-skill, retro, and technical-writing require explicit invocation.
-Their task instructions still determine
-when an action is authorized.
+maintain-verification-skill, retro, teach, and technical-writing require explicit
+invocation. Their task instructions still determine when an action is authorized.
 
 | Skill | Use when |
 | --- | --- |
@@ -19,6 +18,7 @@ when an action is authorized.
 | [postplan-read](postplan-read/SKILL.md) | Reading a supplied `postplan.dev` URL using `curl`. |
 | [retro](retro/SKILL.md) | Reviewing a requested coding session to suggest improvements to the agent environment, ordered by severity. |
 | [summarization](summarization/SKILL.md) | Summarizing documents, conversations, research, or technical content. |
+| [teach](teach/SKILL.md) | Learning a change or subsystem through a plain explanation grounded in `how` and `why`, at the learner's pace. |
 | [technical-writing](technical-writing/SKILL.md) | Writing or reviewing docs, RFCs, READMEs, PR descriptions, or commit messages using pstack's layered writing standard. Uses the included unslop skill. |
 | [unslop](unslop/SKILL.md) | Drafting or editing prose to remove AI writing patterns while preserving meaning and voice. |
 | [why](why/SKILL.md) | Investigating historical rationale and tradeoffs with cited evidence, calibrated confidence, and explicit search coverage; investigates inline by default. |
