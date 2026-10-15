@@ -21,15 +21,24 @@
     "extensions": [
       "./pi/extensions"
     ],
-    "skills": ["./skills"],
+    "skills": [
+      "./skills"
+    ],
     "prompts": [],
     "themes": []
   },
   "devDependencies": {
+    "@earendil-works/pi-coding-agent": "1.2.0",
     "@types/node": "24.19.1",
     "typescript": "7.0.2"
   },
   "bin": {
     "spellbook": "scripts/spellbook.ts"
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "^1.2.0"
+  },
+  "dependencies": {
+    "typebox": "1.3.27"
   }
 }
