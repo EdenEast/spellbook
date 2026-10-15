@@ -1,3 +1,11 @@
-repository = "https://github.com/cursor/plugins"
+schema_version = 1
+mode = "adopt"
+
+[upstream]
+repository = "https://github.com/cursor/plugins.git"
 path = "pstack/skills/technical-writing"
-commit = "ea32d9562a1c9f077d7cdd3be53d07383eb18866"
+base_revision = "6ce45c59b9301a638c1fe1a7b8dc2a82b650898f"
+
+[upstream.files]
+"SKILL.md" = "pstack/skills/technical-writing/SKILL.md"
+"LICENSE" = "pstack/LICENSE"

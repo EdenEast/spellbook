@@ -1,3 +1,0 @@
-interface:
-  display_name: "Postplan Read"
-  short_description: "Read shared Postplan documents as context"

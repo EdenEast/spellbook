@@ -1,3 +1,74 @@
-repository = "https://github.com/mattpocock/skills"
+schema_version = 1
+mode = "adapt"
+
+[[sources]]
+id = "matt-pocock"
+url = "https://github.com/mattpocock/skills"
 path = "skills/productivity/writing-for-agents"
-commit = "b0618bc436ad893b3c5e84e55fba86586d34a404"
+reviewed_revision = "49dd158d1076134a641b33efb035946536778336"
+incorporated = "Loading pointers, information hierarchy, completion criteria, and pruning; see ADAPTATIONS.md."
+
+[[sources]]
+id = "superpowers"
+url = "https://github.com/obra/superpowers"
+path = "skills/writing-skills/SKILL.md"
+reviewed_revision = "bb92a77741419a4ab5f06e711a283343f1ada0c3"
+incorporated = "Behavioral baselines, failure-specific instruction forms, and evaluation scenarios; see ADAPTATIONS.md."
+
+[[sources]]
+id = "anthropic-overview"
+url = "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview"
+reviewed_at = "2026-10-14"
+content_sha256 = "c42cb1cb4020d6215e52bf6fa01ec16e3d99305885c42e3cfd0717c986b94e97"
+incorporated = "Metadata, instructions, and on-demand resources as distinct loading stages; see ADAPTATIONS.md."
+
+[[sources]]
+id = "anthropic-best-practices"
+url = "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices"
+reviewed_at = "2026-10-14"
+content_sha256 = "f205d990f34cfa13a0396d730e1679222c94a3fba74f7228eadacb2a1c761d42"
+incorporated = "Appropriate specificity, conditional resources, examples, and evaluation-driven iteration; see ADAPTATIONS.md."
+
+[[sources]]
+id = "agent-skills-specification"
+url = "https://agentskills.io/specification"
+snapshot_url = "https://agentskills.io/specification.md"
+reviewed_at = "2026-10-14"
+content_sha256 = "4c649bdf0e0a51c9e215d9f91009ecdca05ee9d073edb6f37c20265bbd829e11"
+incorporated = "Required skill format and optional resource conventions; see ADAPTATIONS.md."
+
+[[sources]]
+id = "addy-osmani"
+url = "https://github.com/addyosmani/agent-skills"
+path = "skills/context-engineering/SKILL.md"
+reviewed_revision = "aeac41d4d005999432bb7312f7ff06383a91d59d"
+incorporated = "Selective context loading, ambiguity handling, and durable session handoffs; see ADAPTATIONS.md."
+
+[[sources]]
+id = "openai-skills"
+url = "https://learn.chatgpt.com/docs/build-skills"
+snapshot_url = "https://learn.chatgpt.com/docs/build-skills.md"
+reviewed_at = "2026-10-14"
+content_sha256 = "ed6e324f747d47adf6f60ee1fca13ba469b3671f55f58c3a78f35947af6919d5"
+incorporated = "OpenAI agents/openai.yaml metadata, invocation policy, and MCP dependencies; see ADAPTATIONS.md."
+
+[[sources]]
+id = "openai-skill-validation"
+url = "https://developers.openai.com/plugins/deploy/submission-errors"
+reviewed_at = "2026-10-14"
+content_sha256 = "fbbe3e446bd1b81f2e4ecfaaa947d52ebc4f9a7236287708ee0e8520798d899f"
+incorporated = "Required interface fields when OpenAI metadata is included and asset validation constraints; see ADAPTATIONS.md."
+
+[[sources]]
+id = "claude-code-skills"
+url = "https://code.claude.com/docs/en/skills"
+reviewed_at = "2026-10-14"
+content_sha256 = "146f3d1033d12d889f633bb49e5287fccc299657a05f63b59a773c3b30be1b1f"
+incorporated = "disable-model-invocation semantics and explicit invocation behavior; see ADAPTATIONS.md."
+
+[[sources]]
+id = "pi-skills"
+url = "https://pi.dev/docs/latest/skills"
+reviewed_at = "2026-10-14"
+content_sha256 = "effcc349b0da9ade56db1ca8077c458843b76a0298a7620f3850b71a46b9f36f"
+incorporated = "Shared disable-model-invocation metadata and explicit invocation behavior; see ADAPTATIONS.md."

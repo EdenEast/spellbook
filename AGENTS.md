@@ -1,35 +1,30 @@
 # Agent instructions
 
-## External skills
+Keep repository maintenance guidance here and in `docs/agents/`, not in the global
+agent instructions at `instructions/AGENTS.md`.
 
-When checking or updating an external skill, follow
-[EXTERNAL_SKILLS.md](EXTERNAL_SKILLS.md) for upstream reconstruction, merging
-local adaptations, validation, and advancing provenance.
+Read [the glossary](docs/GLOSSARY.md) when discussing or changing domain concepts.
+Use its terms in documentation, code, tests, and proposals. Surface conflicting
+meanings and record resolved terminology there; keep procedures and
+implementation decisions in `docs/agents/`.
 
-Globally installed skills live in `skills/<name>/`, regardless of their origin.
-Repository-only skills live in `.agents/skills/<name>/`, with
-`.claude/skills/<name>` symlinked to that directory.
+Use the [agent documentation index](docs/agents/README.md) to find maintenance
+procedures. Keep user-facing setup and usage guides in `docs/user/`.
 
-Keep `skills/README.md` updated when adding, removing, or changing a skill. List
-each skill with a relative link, description, and use cases, grouped by its
-invocation settings.
-
-When adding or updating an external skill, update its `SOURCE.toml` with the
-upstream `repository`, `path`, and full `commit` SHA. The commit is the last
-integrated upstream version, not the current Spellbook commit.
-
-Keep customized files directly in the skill directory. Upstream snapshots and
-generated patches do not belong in this repository.
+For principles in this checkout, use `references/principles/README.md` and read
+the documents whose triggers match the task.
 
 ## Shared references
 
 Keep guidance shared across workflows in `references/`. Maintain
 `references/README.md` and each collection's index when changing its inventory
-or loading triggers. Keep skill-specific supporting files with their skill.
+or loading triggers.
 
-For adapted external references, follow the reference guidance in
-[EXTERNAL_SKILLS.md](EXTERNAL_SKILLS.md). Keep provenance and applicable license
-notices beside the adapted documents.
+Keep active skills in `skills/`; follow [skill maintenance](docs/agents/skills.md) for
+adapt/adopt ownership and updates. Keep installation separate from source updates.
+
+For external skills and references, follow [external-source guidance](docs/agents/external-sources.md).
+Keep provenance and applicable license notices beside the material.
 
 ## Pi extensions
 

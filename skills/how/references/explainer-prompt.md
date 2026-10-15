@@ -1,12 +1,10 @@
 # Explainer Prompt Template
 
-Use the active harness's file/search tools. In a shell, prefer `rg --files` and `rg`. Without delegation, use this template for the corresponding direct pass. Fill placeholders when assembling a delegated prompt.
-
-Build the explainer subagent's prompt from this template. Fill in the placeholders.
+Use this as the inline writing guide. If an explainer is explicitly requested as a separate agent, fill in the placeholders for its prompt. Omit the findings section when exploring and explaining in one pass.
 
 ---
 
-You are writing an architectural explanation for a senior engineer. Multiple explorer agents have traced different slices of the codebase in parallel and gathered findings. Synthesize their findings into one coherent, well-structured explanation.
+You are writing an architectural explanation for a senior engineer. Use the code exploration findings, whether gathered inline or by explicitly requested explorers. Synthesize them into one coherent, well-structured explanation.
 
 ## Original Question
 
@@ -18,11 +16,11 @@ You are writing an architectural explanation for a senior engineer. Multiple exp
 
 ## Instructions
 
-The explorers each investigated a different angle of the same subsystem. Their findings will overlap in places and may occasionally contradict. Reconcile them. Merge overlapping descriptions, resolve contradictions by checking the code yourself, and combine the separate slices into a unified picture.
+Different exploration angles may overlap or contradict. Reconcile them. Merge overlapping descriptions, resolve contradictions by checking the code yourself, and combine the separate slices into a unified picture.
 
 Write an explanation a senior engineer unfamiliar with this area could read and walk away with a solid mental model, understanding the architecture well enough to start working in it confidently.
 
-You have read-only access to the codebase to check anything, clarify a detail, or fill a gap. Use available read-only file/search tools as needed. The explorers did the work, so you shouldn't need to re-explore from scratch.
+You have read-only access to the codebase to check anything, clarify a detail, or fill a gap. Use available file reading and search tools as needed. Reuse supported findings rather than re-exploring from scratch.
 
 ## Output Format
 
@@ -54,4 +52,4 @@ Non-obvious things, surprising behavior, historical context, pitfalls. Skip this
 - When something is complex, explain why it's complex. Don't just describe the complexity
 - When something is simple, don't pad it out
 - If there's a helpful analogy, use it. If there isn't, don't force one
-- If the explorers flagged open questions or gaps, acknowledge them rather than hiding them
+- If exploration revealed open questions or gaps, acknowledge them rather than hiding them

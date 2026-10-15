@@ -13,7 +13,7 @@ Databricks is the product-analytics, data-pipeline, and warehouse-telemetry laye
 
 ## How to search it
 
-Use an available read-only warehouse connector or CLI. The example tool names are `execute_sql_read_only` and `poll_sql_result`; inspect the actual schema. If a query returns a statement ID, poll that result rather than submitting it again. Table names below are illustrative, not facts about the current environment.
+Use the Databricks SQL MCP. Primary tool: `execute_sql_read_only`. If it returns a `statement_id`, poll with `poll_sql_result` rather than re-running.
 
 **Orient before querying.** Schemas are company-specific. Probe before trusting a table name:
 
@@ -22,15 +22,15 @@ SHOW TABLES IN <your_analytics_db>.<schema> LIKE '*<keyword>*';
 DESCRIBE TABLE <your_analytics_db>.<schema>.stg_<event>;
 ```
 
-**Time-bound every query.** These tables are huge and unconstrained scans time out. Inspect the schema and filter on the actual timestamp column, such as `_timestamp` (events) or `start_time` (`system.query.history`) with a window bracketing the ship date, typically ~30 days before and after, wider only for strong reason.
+**Time-bound every query.** These tables are huge and unconstrained scans time out. Filter on `_timestamp` (events) or `start_time` (`system.query.history`) with a window bracketing the ship date, typically ~30 days before and after, wider only for strong reason.
 
-**Choose a validated data source.** Prefer a maintained, typed, deduplicated
-model when its freshness and semantics fit the question. Inspect its schema,
-lineage, refresh cadence, and uniqueness guarantees before trusting it. Raw events
-may need explicit deduplication and JSON extraction. Discover actual table and
-column names; `stg_*`, `_timestamp`, `_id`, `properties_*`, and `context_*` are
-example conventions, not guaranteed fields. Confirm the timestamp unit/timezone
-and event meaning before aggregating.
+**Prefer typed dbt models over the raw table.** `<your_analytics_db>.<schema>.<table>` is deduplicated, typed, and liquid-clustered. `your_warehouse.events.analytics_track_event` has duplicates and untyped `properties_json`. Model-name pattern: `stg_<source>_<event_name_with_underscores>`, where `<source>` is `app`, `backend`, `website`, or `cli`. Confirm the exact model name with `SHOW TABLES` when the pattern alone doesn't resolve it. Drop to the raw table only when there's no dbt model yet, or you need events from inside the dbt refresh lag.
+
+**Column conventions on the typed dbt models** (knowing these avoids a `DESCRIBE` round-trip):
+
+- `_timestamp`, `_id`, `_auth_id`, `_request_id`, `event_name`. Standard on every model
+- `properties_<name>`. Typed, underscore-cased event properties (`properties_entrypoint`, `properties_size_bytes`, …)
+- `context_team_id`, `context_client_version`, `context_country`, `context_client_os`. Pre-extracted client context
 
 ### Investigation patterns that tend to pay off
 
@@ -40,7 +40,7 @@ Pick the table + column combination that matches the target:
 2. **Guard-rail / defensive-check origin.** Distribution (median / p99 / max) of the relevant `properties_<name>` column in the 14 days *before* the PR. A p99 that matches the target's threshold constant suggests the number was chosen from data.
 3. **Experiment / feature-flag lookup.** `SHOW TABLES ... LIKE '*experiment*'` to find the exposure table, then pull exposure counts by variant for the relevant flag key near the PR date.
 4. **Query-history evidence for migrations, backfills, or perf rewrites.** `system.query.history` filtered by `statement_text ILIKE '%<table_or_symbol>%'` with a tight `start_time` window surfaces the expensive queries that likely motivated the change (sort by `total_duration_ms` or aggregate `SUM(read_bytes)`, `COUNT(*)`).
-5. **dbt lineage.** If the target reads from or writes into a `<your_analytics_db>.<schema>` model, the model's own git history (in this repo) often carries the rationale. Follow that lead directly, or pass it to an authorized source-control investigator if one is assigned.
+5. **dbt lineage.** If the target reads from or writes into a `<your_analytics_db>.<schema>` model, the model's own git history (in this repo) often carries the rationale. Follow relevant lineage into Git inline; if explicitly delegated to warehouse evidence only, return it as a lead instead.
 
 ## What good evidence looks like here
 
@@ -54,7 +54,7 @@ Beyond the pattern shapes above:
 - **Instrumented ≠ caused.** An event's existence means someone cared enough to log it, not that the target code exists *because* of it. Pair with a PR/commit citation from the git investigator before claiming causation.
 - **Silent instrumentation changes.** A step function in event volume may mean a new event started being logged, not that user behavior changed. Check for instrumentation PRs in the same window before reading the ramp as a feature-launch signal.
 - **Schema drift.** Event properties evolve. A column on the typed dbt model today may not have existed when the target was written. Older data may carry the property only inside raw `properties_json`.
-- **Refresh lag.** Check the model's actual refresh cadence. If recent data is missing, use a validated raw source and its real deduplication key, or report the lag as a coverage limit.
+- **dbt refresh lag.** `<your_analytics_db>.<schema>.*` is rebuilt on a schedule (often hourly/daily). For events from the last few hours, fall back to `your_warehouse.events.*` and deduplicate by `_id`.
 - **Company-specific tables.** Experiment, feature-flag, billing, and usage tables vary. Reporting a result from a table whose existence you never confirmed is a classic failure mode. Probe with `SHOW TABLES` / `DESCRIBE TABLE` first.
 - **Retention cliff.** If the relevant window predates the table's retention or the dbt model's creation date, that's a *gap*, not a null result. Name it explicitly so the synthesizer doesn't read "no results" as "no activity."
 - **Notebooks aren't queryable.** The SQL MCP can't see Databricks notebooks. If you suspect the rationale lives in one, return a gap.

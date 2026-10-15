@@ -52,7 +52,8 @@ Co-Authored-By: Model Name <noreply@provider.example>
 - Reference relevant issues, documents, prior commits, or pull requests when useful.
 - Wrap paragraphs at 72 characters.
 - Write the message through **unslop**, using the harness's skill mechanism or
-  reading [../unslop/SKILL.md](../unslop/SKILL.md) when no invocation tool is available.
+  reading its instructions when available. Otherwise, edit the message directly
+  to remove filler, vague claims, and unnecessary jargon.
 
 ### Co-author trailer
 

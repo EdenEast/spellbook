@@ -15,7 +15,7 @@ Notion is where "why" often lives in long-form before it becomes code. A signifi
 
 ## How to search it
 
-Use available Notion access, a documents connector/API, or local design records. Tool spellings below are examples; inspect the exposed schema before calling them.
+Use the Notion MCP.
 
 1. **Keyword searches with `notion-search`.** Try:
    - The feature name

@@ -1,12 +1,10 @@
 # Synthesizer Prompt Template
 
-Without permitted delegation, use this template for the corresponding direct pass with your own evidence notes. Keep the source boundaries and evidence contract. Use available read-only tools; no Cursor-specific task mode is required.
-
-Fill in the placeholders.
+Use this as the inline synthesis guide. The findings may be compact notes from your own investigation or results from explicitly requested investigators; a separate synthesizer agent is not required. Fill in placeholders only when passing this as a prompt.
 
 ---
 
-You are answering a "why" question about a piece of code by synthesizing findings from investigators who searched different historical sources (source control, issue / ticket tracker, long-form documents, real-time team chat, infrastructure observability, error / exception tracking, product analytics warehouse, and code comments). Produce a confidence-weighted, evidence-cited narrative that says honestly what the evidence supports, and just as honestly what it doesn't.
+You are answering a "why" question about a piece of code by synthesizing evidence from the historical sources actually searched (source control, issue / ticket tracker, long-form documents, real-time team chat, infrastructure observability, error / exception tracking, product analytics warehouse, and code comments). Produce a confidence-weighted, evidence-cited narrative that says honestly what the evidence supports, and just as honestly what it doesn't.
 
 ## The Question
 
@@ -28,7 +26,7 @@ You are answering a "why" question about a piece of code by synthesizing finding
 
 ## Epistemics Framework
 
-You MUST follow [epistemics.md](epistemics.md). Read it in full before writing. The key rules:
+You MUST follow `references/epistemics.md`. Read it in full before writing. The key rules:
 
 1. Every claim must sit in one tier: **Direct**, **Supported**, **Inferred**, **Speculative**, **Unknown**. The tier sets its section and its phrasing.
 2. Every Direct/Supported claim must have a citation (PR #, ticket ID, doc URL, chat permalink, commit hash, or file:line).
@@ -39,8 +37,8 @@ You MUST follow [epistemics.md](epistemics.md). Read it in full before writing. 
 
 ## Instructions
 
-1. **Read all investigator findings** and weigh the evidence yourself. Investigators gathered raw evidence, not conclusions.
-2. **Merge overlaps.** When several investigators cite the same PR, ticket, or doc, give it one authoritative reference.
+1. **Read all gathered evidence** and weigh it yourself. Keep evidence separate from conclusions, whether gathered inline or by investigators.
+2. **Merge overlaps.** When several findings cite the same PR, ticket, or doc, give it one authoritative reference.
 3. **Surface contradictions.** When two items disagree, show both. Don't pick one.
 4. **Calibrate each claim.** Find its evidence and tier. Direct: cite it and state it plainly. Inferred: hedge it and show the inference. Speculative: mark it. No evidence: put it in the gaps.
 5. **Verify citations by spot-checking.** If you're uncertain a cited item exists or says what the investigator claims, check it by reading the codebase or calling MCP tools. Don't propagate errors. Do not write files, commit, or modify external state.
@@ -48,7 +46,7 @@ You MUST follow [epistemics.md](epistemics.md). Read it in full before writing. 
 
 ## Output Format
 
-Write for the user, in this exact structure:
+Write for the user using this structure, scaling detail to the question while preserving confidence separation, gaps, and source coverage:
 
 ---
 
@@ -64,7 +62,7 @@ File paths, line ranges, key symbols. Two or three lines to orient a cold reader
 
 Claims with textual evidence, each quoted or paraphrased and cited precisely:
 
-- **[Direct]** {Claim}. Source: PR #123 with its verified URL / ticket ID / file:line. {Brief quote or paraphrase.}
+- **[Direct]** {Claim}. Source: [PR #123](url) / ticket ID / file:line. {Brief quote or paraphrase.}
 - **[Supported]** {Claim}. Evidence: {list of items and what each contributes}.
 
 `[Direct]` is single-source, explicit evidence. `[Supported]` is multiple indirect items converging on a conclusion.
@@ -98,17 +96,15 @@ Specific gaps: "We searched the issue tracker for [query1], [query2], [query3] a
 
 ### Sources Consulted
 
-What was actually searched, so the user can judge coverage and redirect:
+What was actually searched, so the user can judge coverage and redirect. For every category, distinguish searched (including empty results), unavailable (with the access reason), and available but not searched (with the scope reason). Do not describe an unsearched source as having no evidence:
 
-- **Source control history**: {file paths}, {number of commits reviewed}, PRs #{numbers}, and code comments searched. Or "Not searched: state the actual source-control access gap."
-- **Issue / ticket tracker**: {ticket IDs and keyword searches}. Or "Not searched. No matching source access available in this environment; name local or CLI alternatives checked."
-- **Long-form documents**: {page titles and search queries}. Or "Not searched. No matching source access available in this environment; name local or CLI alternatives checked."
-- **Real-time team chat**: {channels searched, date ranges, queries}. Or "Not searched. No matching source access available in this environment; name local or CLI alternatives checked."
-- **Infrastructure observability**: {dashboards, monitors, metrics, logs, traces, or incidents searched}. Or "Not searched. No matching source access available in this environment; name local or CLI alternatives checked."
-- **Error / exception tracking**: {issues, events, or releases searched}. Or "Not searched. No matching source access available in this environment; name local or CLI alternatives checked."
-- **Product analytics warehouse**: {fully-qualified tables queried, the time windows, and the numeric summaries (counts, percentiles, first/last-seen timestamps) that bore on the question}. Or "Not searched. No matching source access available in this environment; name local or CLI alternatives checked."
-
-When relevant, also list agent session history: project, host, time window, thread/message IDs, and gaps. Explicit user scope restrictions belong beside each skipped category.
+- **Source control history**: {file paths}, {number of commits reviewed}, PRs #{numbers}, and code comments searched. Or state the actual limitation, such as missing Git history or unauthenticated GitHub access; distinguish local history from PR access.
+- **Issue / ticket tracker**: {ticket IDs and keyword searches}. Or "Not searched. No matching MCP available in this environment."
+- **Long-form documents**: {page titles and search queries}. Or "Not searched. No matching MCP available in this environment."
+- **Real-time team chat**: {channels searched, date ranges, queries}. Or "Not searched. No matching MCP available in this environment."
+- **Infrastructure observability**: {dashboards, monitors, metrics, logs, traces, or incidents searched}. Or "Not searched. No matching MCP available in this environment."
+- **Error / exception tracking**: {issues, events, or releases searched}. Or "Not searched. No matching MCP available in this environment."
+- **Product analytics warehouse**: {fully-qualified tables queried, the time windows, and the numeric summaries (counts, percentiles, first/last-seen timestamps) that bore on the question}. Or "Not searched. No matching MCP available in this environment."
 
 ### Confidence Summary
 

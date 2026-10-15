@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 import type { TestContext } from "node:test";
-import { installedSkills, plan, run } from "../install.ts";
+import { plan, run } from "../install.ts";
 import type { Options } from "../install.ts";
 import { spawnSync } from "node:child_process";
 
@@ -13,17 +13,9 @@ async function fixture(t: TestContext): Promise<Options> {
   t.after(() => rm(directory, { recursive: true, force: true }));
   const root = join(directory, "checkout");
   const home = join(directory, "home");
-  await mkdir(join(root, "skills"), { recursive: true });
   await mkdir(join(root, "pi/extensions"), { recursive: true });
   await mkdir(home);
   return { root, home, targets: ["codex", "claude", "pi"], log: () => {} };
-}
-
-async function skill(options: Options, name = "example") {
-  const directory = join(options.root, "skills", name);
-  await mkdir(directory);
-  await writeFile(join(directory, "SKILL.md"), `---\nname: ${name}\ndescription: Test fixture\n---\n`);
-  return directory;
 }
 
 async function instructions(options: Options) {
@@ -42,95 +34,7 @@ async function references(options: Options) {
   return source;
 }
 
-test("skill selection adds checked links, removes unchecked owned links, and preserves conflicts", async (t) => {
-  const options = await fixture(t);
-  const checked = await skill(options, "checked");
-  await skill(options, "unchecked");
-  const stale = await skill(options, "deleted");
-  await run("install", options);
-  await rm(stale, { recursive: true });
-  const conflict = join(options.home, ".claude/skills/unchecked");
-  await rm(conflict);
-  await writeFile(conflict, "personal skill");
-  for (const destination of [".agents/skills/checked", ".claude/skills/checked"]) await rm(join(options.home, destination));
-  await run("install", { ...options, skills: ["checked"], dryRun: true });
-  await assert.rejects(readlink(join(options.home, ".agents/skills/checked")), { code: "ENOENT" });
-  assert.equal(await readlink(join(options.home, ".agents/skills/unchecked")), join(options.root, "skills/unchecked"));
-  assert.equal(await readlink(join(options.home, ".agents/skills/deleted")), stale);
-  await run("install", { ...options, skills: ["checked"] });
-  await run("install", { ...options, skills: ["checked"] });
-  assert.equal(await readlink(join(options.home, ".agents/skills/checked")), checked);
-  assert.equal(await readlink(join(options.home, ".claude/skills/checked")), checked);
-  assert.equal(await readFile(conflict, "utf8"), "personal skill");
-  await assert.rejects(readlink(join(options.home, ".agents/skills/unchecked")), { code: "ENOENT" });
-  await assert.rejects(readlink(join(options.home, ".agents/skills/deleted")), { code: "ENOENT" });
-  assert.deepEqual((await plan({ ...options, skills: ["checked"] })).map((link) => link.state), ["installed", "installed"]);
-});
-
-test("initial selection reflects owned skills in any selected target", async (t) => {
-  const options = await fixture(t);
-  await skill(options, "shared");
-  await skill(options, "claude-only");
-  await skill(options, "missing");
-  await skill(options, "foreign");
-  await run("install", { ...options, targets: ["codex"], skills: ["shared"] });
-  await run("install", { ...options, targets: ["claude"], skills: ["claude-only"] });
-  await symlink(join(options.root, "elsewhere"), join(options.home, ".agents/skills/foreign"));
-  assert.deepEqual(await installedSkills(options), ["claude-only", "shared"]);
-  assert.deepEqual(await installedSkills({ ...options, targets: ["pi"] }), ["shared"]);
-  assert.deepEqual(await installedSkills({ ...options, targets: ["claude"] }), ["claude-only"]);
-  await run("install", { ...options, skills: await installedSkills(options) });
-  assert.equal(await readlink(join(options.home, ".agents/skills/claude-only")), join(options.root, "skills/claude-only"));
-  assert.equal(await readlink(join(options.home, ".claude/skills/shared")), join(options.root, "skills/shared"));
-  assert.equal(await readlink(join(options.home, ".agents/skills/foreign")), join(options.root, "elsewhere"));
-});
-
-test("clearing the selection removes owned skills only in selected targets", async (t) => {
-  const options = await fixture(t);
-  const source = await skill(options);
-  await run("install", options);
-  await run("install", { ...options, targets: ["claude"], skills: [] });
-  assert.equal(await readlink(join(options.home, ".agents/skills/example")), source);
-  assert.deepEqual(await readdir(join(options.home, ".claude/skills")), []);
-  await run("install", { ...options, skills: [] });
-  assert.deepEqual(await readdir(join(options.home, ".agents/skills")), []);
-});
-
-test("empty skill selection still installs other resources and leaves skill containers untouched", async (t) => {
-  const options = await fixture(t);
-  await skill(options);
-  const source = await instructions(options);
-  const refs = await references(options);
-  await writeFile(join(options.root, "pi/extensions/hello.ts"), "export default () => {};\n");
-  await run("install", { ...options, skills: [] });
-  assert.equal(await readlink(join(options.home, ".codex/AGENTS.md")), source);
-  assert.equal(await readlink(join(options.home, ".agents/references/spellbook")), refs);
-  assert.equal(await readlink(join(options.home, ".pi/agent/extensions/spellbook-hello.ts")), join(options.root, "pi/extensions/hello.ts"));
-  await assert.rejects(readdir(join(options.home, ".agents/skills")), { code: "ENOENT" });
-  await assert.rejects(readdir(join(options.home, ".claude/skills")), { code: "ENOENT" });
-});
-
-test("CLI exposes help and rejects invalid selection modes without writing", async (t) => {
-  const options = await fixture(t);
-  const executable = join(import.meta.dirname, "..", "spellbook.ts");
-  const invoke = (args: string[]) => spawnSync(process.execPath, [executable, ...args], {
-    env: { ...process.env, HOME: options.home }, encoding: "utf8",
-  });
-  const help = invoke(["install", "--help"]);
-  assert.equal(help.status, 0);
-  assert.match(help.stdout, /spellbook install --select/);
-  for (const action of ["status", "uninstall"]) {
-    const result = invoke([action, "--select"]);
-    assert.equal(result.status, 1);
-    assert.match(result.stderr, /only supported by install/);
-  }
-  const result = invoke(["install", "--select"]);
-  assert.equal(result.status, 1);
-  assert.match(result.stderr, /interactive terminal/);
-  assert.deepEqual(await readdir(options.home), []);
-});
-
-test("each target shares readable references without discovering them as skills", async (t) => {
+test("each target shares readable references", async (t) => {
   for (const target of ["codex", "claude", "pi"] as const) {
     const options = { ...await fixture(t), targets: [target, target] };
     const source = await references(options);
@@ -153,7 +57,6 @@ test("reference conflicts prevent all writes and preserve foreign resources", as
   const options = await fixture(t);
   await references(options);
   await instructions(options);
-  await skill(options);
   const parent = join(options.home, ".agents/references");
   const destination = join(parent, "spellbook");
   await mkdir(parent, { recursive: true });
@@ -222,7 +125,6 @@ test("global instructions follow target selection and support dry run, status, a
 test("instruction conflicts preflight all resources and preserve existing files and foreign links", async (t) => {
   const options = await fixture(t);
   await instructions(options);
-  await skill(options);
   await mkdir(join(options.home, ".pi/agent"), { recursive: true });
   const destination = join(options.home, ".pi/agent/AGENTS.md");
   await writeFile(destination, "personal instructions");
@@ -251,75 +153,138 @@ test("deleted global instructions leave stale links that install and uninstall r
 
 test("empty collections do not create harness configuration", async (t) => {
   const options = await fixture(t);
-  await writeFile(join(options.root, "skills/.gitkeep"), "");
   await writeFile(join(options.root, "pi/extensions/.gitkeep"), "");
   for (const action of ["install", "status", "uninstall"] as const) await run(action, options);
   assert.deepEqual(await readdir(options.home), []);
 });
 
-test("all targets share skills and expose supported extension entry points", async (t) => {
+test("Pi extensions install supported entry points and remove broken owned links", async (t) => {
   const options = await fixture(t);
-  const source = await skill(options);
-  await writeFile(join(options.root, "pi/extensions/hello.ts"), "export default () => {};\n");
+  const source = join(options.root, "pi/extensions/hello.ts");
+  await writeFile(source, "export default () => {};\n");
   await writeFile(join(options.root, "pi/extensions/types.d.ts"), "export {};\n");
   await mkdir(join(options.root, "pi/extensions/tools"));
   await writeFile(join(options.root, "pi/extensions/tools/index.js"), "export default () => {};\n");
-  await run("install", options);
-  await run("install", options);
-  assert.equal(await readlink(join(options.home, ".agents/skills/example")), source);
-  assert.equal(await readlink(join(options.home, ".claude/skills/example")), source);
-  assert.deepEqual((await readdir(join(options.home, ".pi/agent/extensions"))).sort(), ["spellbook-hello.ts", "spellbook-tools"]);
-  assert.equal((await plan(options)).length, 4);
-  assert.ok((await plan(options)).every((link) => link.state === "installed"));
-});
-
-test("a conflict on a later target prevents earlier writes", async (t) => {
-  const options = await fixture(t);
-  await skill(options);
-  const destination = join(options.home, ".claude/skills");
-  await mkdir(destination, { recursive: true });
-  await writeFile(join(destination, "example"), "user content");
-  await assert.rejects(run("install", options), /conflict/);
-  assert.deepEqual(await readdir(options.home), [".claude"]);
-  assert.equal(await readFile(join(destination, "example"), "utf8"), "user content");
-});
-
-test("dry run leaves the home untouched", async (t) => {
-  const options = await fixture(t);
-  await skill(options);
   await run("install", { ...options, dryRun: true });
+  assert.deepEqual(await readdir(options.home), []);
+  await run("install", options);
+  await run("install", options);
+  const destination = join(options.home, ".pi/agent/extensions");
+  assert.deepEqual((await readdir(destination)).sort(), ["spellbook-hello.ts", "spellbook-tools"]);
+  assert.ok((await plan(options)).every((link) => link.state === "installed"));
+  await rm(source);
+  await symlink(join(options.root, "foreign.ts"), join(destination, "foreign.ts"));
+  await run("uninstall", options);
+  assert.deepEqual(await readdir(destination), ["foreign.ts"]);
+});
+
+test("CLI exposes resource options and rejects the removed selector without writing", async (t) => {
+  const options = await fixture(t);
+  const executable = join(import.meta.dirname, "..", "spellbook.ts");
+  const invoke = (args: string[]) => spawnSync(process.execPath, [executable, ...args], {
+    env: { ...process.env, HOME: options.home }, encoding: "utf8",
+  });
+  const help = invoke(["--help"]);
+  assert.equal(help.status, 0);
+  assert.match(help.stdout, /--target codex\|claude\|pi/);
+  assert.doesNotMatch(help.stdout, /--select/);
+  const result = invoke(["install", "--select"]);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Unknown argument: --select/);
   assert.deepEqual(await readdir(options.home), []);
 });
 
-test("uninstall removes broken owned links and preserves foreign files and links", async (t) => {
-  const options = await fixture(t);
-  const source = await skill(options);
-  await run("install", options);
-  const destination = join(options.home, ".agents/skills");
-  await writeFile(join(destination, "personal"), "keep me");
-  await symlink(join(options.root, "elsewhere"), join(destination, "foreign"), "dir");
-  await rm(source, { recursive: true });
-  assert.ok((await plan(options)).every((link) => link.state === "stale"));
-  await run("uninstall", options);
-  assert.deepEqual((await readdir(destination)).sort(), ["foreign", "personal"]);
+async function skill(options: Options, name = "example") {
+  const source = join(options.root, "skills", name);
+  await mkdir(join(source, "scripts"), { recursive: true });
+  await writeFile(join(source, "SKILL.md"), `---\nname: ${name}\ndescription: Example workflow.\n---\nRead scripts/check.txt.\n`);
+  await writeFile(join(source, "scripts/check.txt"), "supporting resource\n");
+  return source;
+}
+
+test("skills install complete trees for selected targets without exposing references as skills", async (t) => {
+  for (const [target, directory] of [
+    ["codex", ".agents/skills"], ["claude", ".claude/skills"], ["pi", ".agents/skills"],
+  ] as const) {
+    const options = { ...await fixture(t), targets: [target, target] };
+    const source = await skill(options);
+    await mkdir(join(options.root, "skills/not-a-skill"));
+    await mkdir(join(options.root, "skills/directory-entry/SKILL.md"), { recursive: true });
+    await symlink(source, join(options.root, "skills/linked-skill"), "dir");
+    await mkdir(join(options.root, "skills/.hidden"));
+    await writeFile(join(options.root, "skills/.hidden/SKILL.md"), "hidden");
+    await writeFile(join(options.root, "skills/README.md"), "catalog");
+    await mkdir(join(options.root, "references/reading"), { recursive: true });
+    await writeFile(join(options.root, "references/reading/SKILL.md"), "reading only");
+    await run("install", { ...options, dryRun: true });
+    assert.deepEqual(await readdir(options.home), []);
+    await run("install", options);
+    await run("install", options);
+    const destination = join(options.home, directory, "example");
+    assert.equal(await readlink(destination), source);
+    assert.equal(await readFile(join(destination, "scripts/check.txt"), "utf8"), "supporting resource\n");
+    assert.deepEqual(await readdir(join(options.home, directory)), ["example"]);
+    assert.equal((await plan(options)).length, 2);
+    assert.ok((await plan(options)).every((link) => link.state === "installed"));
+    await run("uninstall", options);
+    assert.deepEqual(await readdir(join(options.home, directory)), []);
+  }
 });
 
-test("install prunes links to removed skills", async (t) => {
-  const options = await fixture(t);
-  const source = await skill(options);
-  await run("install", options);
-  await rm(source, { recursive: true });
-  await run("install", options);
-  assert.deepEqual(await readdir(join(options.home, ".agents/skills")), []);
-});
-
-test("target selection and whole-directory symlink conflicts", async (t) => {
+test("skill conflicts prevent all writes and preserve foreign paths", async (t) => {
   const options = await fixture(t);
   await skill(options);
-  await run("install", { ...options, targets: ["claude"] });
+  await instructions(options);
+  const parent = join(options.home, ".claude/skills");
+  await mkdir(parent, { recursive: true });
+  const destination = join(parent, "example");
+  await writeFile(destination, "personal skill");
+  await assert.rejects(run("install", options), /conflict/);
   assert.deepEqual(await readdir(options.home), [".claude"]);
+  await run("uninstall", options);
+  assert.equal(await readFile(destination, "utf8"), "personal skill");
+  await rm(destination);
+  await symlink(join(options.root, "foreign"), destination, "dir");
+  await assert.rejects(run("install", options), /conflict/);
+  await run("uninstall", options);
+  assert.equal(await readlink(destination), join(options.root, "foreign"));
+});
+
+test("deleted skills and removed entry points leave owned links that can be cleaned", async (t) => {
+  for (const action of ["install", "uninstall"] as const) {
+    for (const removeEntryOnly of [true, false]) {
+      const options = await fixture(t);
+      const source = await skill(options);
+      await run("install", options);
+      await rm(removeEntryOnly ? join(source, "SKILL.md") : source, { recursive: true });
+      assert.equal((await plan(options)).length, 2);
+      assert.ok((await plan(options)).every((link) => link.state === "stale"));
+      await run(action, options);
+      assert.deepEqual(await plan(options), []);
+    }
+  }
+});
+
+test("skills reject symlinked containers and empty target selections do nothing", async (t) => {
+  const options = await fixture(t);
+  const source = await skill(options);
+  await run("install", { ...options, targets: [] });
+  assert.deepEqual(await readdir(options.home), []);
   await mkdir(join(options.home, ".agents"));
-  await symlink(join(options.root, "skills"), join(options.home, ".agents/skills"), "dir");
+  await symlink(source, join(options.home, ".agents/skills"), "dir");
   await assert.rejects(run("install", options), /real resource directory/);
-  assert.deepEqual(await readdir(join(options.root, "skills")), ["example"]);
+  assert.deepEqual((await readdir(source)).sort(), ["SKILL.md", "scripts"]);
+});
+
+
+test("Codex and Pi reconcile one shared skill link while Claude has its own", async (t) => {
+  const options = await fixture(t);
+  await skill(options);
+  await run("install", options);
+  assert.equal((await plan(options)).length, 2);
+  await run("uninstall", { ...options, targets: ["pi"] });
+  assert.deepEqual(await readdir(join(options.home, ".agents/skills")), []);
+  assert.equal(await readFile(join(options.home, ".claude/skills/example/scripts/check.txt"), "utf8"), "supporting resource\n");
+  await run("install", { ...options, targets: ["codex"] });
+  assert.ok((await plan(options)).every((link) => link.state === "installed"));
 });

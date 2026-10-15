@@ -1,5 +1,5 @@
 {
-  description = "Personal agent instructions, references, skills, and Pi extensions";
+  description = "Personal agent instructions, skills, references, and Pi extensions";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -22,7 +22,7 @@
       pkgs = import nixpkgs {inherit system;};
     in {
       installer = pkgs.runCommand "spellbook-installer-tests" {
-        nativeBuildInputs = [pkgs.nodejs_24];
+        nativeBuildInputs = [pkgs.nodejs_24 pkgs.git];
       } ''
         node --test ${self}/scripts/tests/*.test.ts
         touch "$out"

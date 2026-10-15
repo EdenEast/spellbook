@@ -14,7 +14,7 @@ Datadog holds the runtime record, what actually happened in production, as oppos
 
 ## How to search it
 
-Use available read-only observability access. Tool names below are examples, not required APIs; inspect the exposed schema. Local logs, existing dashboards, or read-only service status may provide relevant evidence when no connector is available. Start broad, then narrow within the target and time window.
+Use the Datadog MCP. Start broad, then narrow.
 
 1. **Identify the owning service(s).**
 

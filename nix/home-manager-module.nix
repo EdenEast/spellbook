@@ -17,39 +17,35 @@
   };
   visible = name: !(lib.hasPrefix "." name);
   skills = lib.filterAttrs (name: type:
-    visible name && type == "directory" && builtins.pathExists (skillRoot + "/${name}/SKILL.md")
-  ) (builtins.readDir skillRoot);
+    visible name && type == "directory"
+    && ((builtins.readDir (skillRoot + "/${name}"))."SKILL.md" or null) == "regular"
+  ) (if builtins.pathExists skillRoot then builtins.readDir skillRoot else {});
+  skillLinks = directory: lib.mapAttrs' (name: _: {
+    name = "${directory}/skills/${name}";
+    value.source = skillRoot + "/${name}";
+  }) skills;
   extensions = lib.filterAttrs (name: type:
     visible name && (
       (type == "regular" && (lib.hasSuffix ".ts" name || lib.hasSuffix ".js" name) && !(lib.hasSuffix ".d.ts" name))
       || (type == "directory" && (builtins.pathExists (extensionRoot + "/${name}/index.ts") || builtins.pathExists (extensionRoot + "/${name}/index.js")))
     )
   ) (builtins.readDir extensionRoot);
-  skillLinks = destination: lib.mapAttrs' (name: _: {
-    name = "${destination}/${name}";
-    value.source = skillRoot + "/${name}";
-  }) skills;
   extensionLinks = lib.mapAttrs' (name: _: {
     name = "${cfg.piDir}/extensions/spellbook-${name}";
     value.source = extensionRoot + "/${name}";
   }) extensions;
 in {
   options.programs.spellbook = {
-    enable = lib.mkEnableOption "Spellbook instructions, references, skills, and Pi extensions";
+    enable = lib.mkEnableOption "Spellbook instructions, skills, references, and Pi extensions";
     source = lib.mkOption {
       type = lib.types.path;
       default = self;
-      description = "Spellbook source tree containing instructions/, references/, skills/, and pi/extensions/.";
+      description = "Spellbook source tree containing instructions/, skills/, references/, and pi/extensions/.";
     };
     targets = lib.mkOption {
       type = lib.types.listOf (lib.types.enum ["codex" "claude" "pi"]);
       default = ["codex" "claude" "pi"];
-      description = "Harnesses to configure. Codex and Pi share the Agent Skills directory.";
-    };
-    agentSkillsDir = lib.mkOption {
-      type = lib.types.str;
-      default = ".agents/skills";
-      description = "Shared Codex/Pi skill directory, relative to the home directory.";
+      description = "Harnesses to configure.";
     };
     claudeDir = lib.mkOption {
       type = lib.types.str;
@@ -74,8 +70,8 @@ in {
       (lib.mkIf (enabled "codex") (instructionLinks "${cfg.codexDir}/AGENTS.md"))
       (lib.mkIf (enabled "claude") (instructionLinks "${cfg.claudeDir}/CLAUDE.md"))
       (lib.mkIf (enabled "pi") (instructionLinks "${cfg.piDir}/AGENTS.md"))
-      (lib.mkIf (enabled "codex" || enabled "pi") (skillLinks cfg.agentSkillsDir))
-      (lib.mkIf (enabled "claude") (skillLinks "${cfg.claudeDir}/skills"))
+      (lib.mkIf (enabled "codex" || enabled "pi") (skillLinks ".agents"))
+      (lib.mkIf (enabled "claude") (skillLinks cfg.claudeDir))
       (lib.mkIf (enabled "pi") extensionLinks)
     ];
   };
