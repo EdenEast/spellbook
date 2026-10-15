@@ -2,7 +2,8 @@
 
 Active skills live in this directory. The installer discovers each `SKILL.md`
 and makes the skill and its supporting files available together. These skills
-allow model invocation by default; their task instructions still determine
+allow model invocation by default; technical-writing requires explicit invocation.
+Their task instructions still determine
 when an action is authorized.
 
 | Skill | Use when |
@@ -13,6 +14,7 @@ when an action is authorized.
 | [html-communication](html-communication/SKILL.md) | Creating and publishing readable HTML communication documents through Postplan. |
 | [postplan-read](postplan-read/SKILL.md) | Reading a supplied `postplan.dev` URL using `curl`. |
 | [summarization](summarization/SKILL.md) | Summarizing documents, conversations, research, or technical content. |
+| [technical-writing](technical-writing/SKILL.md) | Writing or reviewing docs, RFCs, READMEs, PR descriptions, or commit messages using pstack's layered writing standard. Uses the included unslop skill. |
 | [unslop](unslop/SKILL.md) | Drafting or editing prose to remove AI writing patterns while preserving meaning and voice. |
 | [writing-for-agents](writing-for-agents/SKILL.md) | Authoring or reviewing skills and other agent instructions. |
 
