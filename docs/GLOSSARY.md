@@ -89,6 +89,56 @@ A source or upstream change whose maintenance decision is still outstanding.
 It differs from a declined change, which has been considered and deliberately excluded.
 _Avoid_: declined change, completed review (for unresolved work).
 
+## Development workflows
+
+**Brainstorming**:
+Standalone exploration of an idea, problem, or possibility without a commitment
+to specification or implementation. It can inform discovery but is outside the
+SDD cycle.
+_Avoid_: discovery (as an interchangeable name for open-ended ideation).
+
+**Discovery (SDD)**:
+The first stage of spec-driven development, grounding an existing direction in
+the project's context, constraints, and unknowns before specification. It can
+start with or without prior brainstorming.
+_Avoid_: skill discovery (which describes harness recognition of skills).
+
+**Spec-driven development (SDD)**:
+A development workflow in which explicit behavioral requirements guide planning,
+implementation, and verification. In Spellbook's first-draft workflow, discovery
+starts the cycle and brainstorming remains separate.
+_Avoid_: subagent-driven development (a different expansion used by Superpowers).
+
+**Idea brief**:
+A persistent record of brainstorming outcomes, options, decisions, assumptions,
+and unanswered questions. It can inform discovery without becoming a requirement
+or a commitment to build.
+
+**Capability spec**:
+A maintained behavioral contract for a cohesive system capability, expressed as
+requirements and acceptance scenarios. It describes the behavior delivered on
+the branch containing it.
+_Avoid_: implementation plan (which describes how to make the change).
+
+**Delta spec**:
+A change's proposed additions, modifications, or removals to a capability spec.
+It preserves the distinction between intended changes and maintained behavior.
+
+**Verification evidence**:
+Recorded observations supporting a requirement or completion claim, tied to the
+tested revision or patch and relevant environment. Missing or inconclusive
+observations leave the claim unverified.
+
+**Spec reconciliation**:
+Updating maintained capability specs to reflect the behavior a verified change
+delivers, while preserving unaffected requirements and scenarios.
+_Avoid_: merge (when only the specification records have been updated).
+
+**Merge-ready**:
+A PR state in which the current patch has its required verification evidence,
+checks, approvals, and conflict clearance. Authorization to merge can still be
+outstanding; this state does not mean the PR is merged or deployed.
+
 ## Agent availability
 
 **Harness**:

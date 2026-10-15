@@ -1,0 +1,23 @@
+schema_version = 1
+mode = "adapt"
+
+[[sources]]
+id = "matt-pocock"
+url = "https://github.com/mattpocock/skills"
+path = "skills/engineering"
+reviewed_revision = "49dd158d1076134a641b33efb035946536778336"
+incorporated = "Reuse settled context, behavioral test seams, vertical slices, and explicit task dependencies. See ADAPTATIONS.md for scope and local decisions."
+
+[[sources]]
+id = "superpowers"
+url = "https://github.com/obra/superpowers"
+path = "skills"
+reviewed_revision = "bb92a77741419a4ab5f06e711a283343f1ada0c3"
+incorporated = "Exploratory conversation, explicit assumptions, handoff clarity, verifiable tasks, and distinct integration outcomes. See ADAPTATIONS.md for scope and local decisions."
+
+[[sources]]
+id = "addy-osmani"
+url = "https://github.com/addyosmani/agent-skills"
+path = "skills"
+reviewed_revision = "aeac41d4d005999432bb7312f7ff06383a91d59d"
+incorporated = "Observable success criteria, explicit assumptions, capability boundaries, task verification, and reuse of existing artifact systems. See ADAPTATIONS.md for scope and local decisions."

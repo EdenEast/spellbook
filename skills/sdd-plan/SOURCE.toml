@@ -1,0 +1,37 @@
+schema_version = 1
+mode = "adapt"
+
+[[sources]]
+id = "matt-pocock"
+url = "https://github.com/mattpocock/skills"
+path = "skills/engineering"
+reviewed_revision = "49dd158d1076134a641b33efb035946536778336"
+incorporated = "Reuse settled context, behavioral test seams, vertical slices, and explicit task dependencies. See ADAPTATIONS.md for scope and local decisions."
+
+[[sources]]
+id = "superpowers"
+url = "https://github.com/obra/superpowers"
+path = "skills"
+reviewed_revision = "bb92a77741419a4ab5f06e711a283343f1ada0c3"
+incorporated = "Exploratory conversation, explicit assumptions, handoff clarity, verifiable tasks, and distinct integration outcomes. See ADAPTATIONS.md for scope and local decisions."
+
+[[sources]]
+id = "openspec"
+url = "https://github.com/Fission-AI/OpenSpec"
+path = "schemas/spec-driven"
+reviewed_revision = "f80d860fc510ba4f51180c8ddde35b91b32de657"
+incorporated = "Capability specs, change deltas, separated proposal/design/tasks, iterative artifacts, and reconciliation with retained history. See ADAPTATIONS.md for scope and local decisions."
+
+[[sources]]
+id = "addy-osmani"
+url = "https://github.com/addyosmani/agent-skills"
+path = "skills"
+reviewed_revision = "aeac41d4d005999432bb7312f7ff06383a91d59d"
+incorporated = "Observable success criteria, explicit assumptions, capability boundaries, task verification, and reuse of existing artifact systems. See ADAPTATIONS.md for scope and local decisions."
+
+[[sources]]
+id = "pstack"
+url = "https://github.com/cursor/plugins"
+path = "pstack/skills/poteto-mode/playbooks"
+reviewed_revision = "99743e9c151c8537cbbf1f98bb38f34ef3368453"
+incorporated = "Ownership of verification, evidence matching the patch, dependency-ordered PR delivery, and confirming actual merge state. See ADAPTATIONS.md for scope and local decisions."

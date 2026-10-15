@@ -11,6 +11,13 @@ Load the procedure relevant to the task:
 - [Worked skill examples](skill-examples.md): multi-source adaptation and staged upstream merges.
 - [Maintain shared references](maintenance.md): collection inventory, indexes, and loading triggers.
 - [Repository layout](layout.md): where maintained resources and tooling belong.
+- [Maintain the SDD workflow](sdd-workflow.md): first-draft decisions, ownership,
+  realistic walkthroughs, and validation limits.
+
+Design handoffs:
+
+- [Brainstorming and SDD workflow](sdd-handoff.md): confirmed separation of
+  brainstorming from discovery, proposed skills, source research, and next steps.
 
 For environment setup and validation commands, use the
 [development guide](../user/development.md). For installation destinations and

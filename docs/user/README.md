@@ -5,6 +5,7 @@ Use these guides to install Spellbook and work with its resources.
 - [Install from a checkout](install.md): select agents, inspect links, and uninstall.
 - [Install with Home Manager](home-manager.md): configure resource locations through Nix.
 - [Work with skills](skills.md): choose adapt or adopt and request source reviews or updates.
+- [Brainstorm and use SDD](sdd.md): explore ideas independently or take a direction through spec-driven development and PR delivery.
 - [Use shared references](references.md): find guidance and ask agents to apply it.
 - [Create and load Pi extensions](pi-extensions.md): try extensions or install the native Pi package.
 - [Develop Spellbook](development.md): set up the environment and run checks.

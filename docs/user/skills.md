@@ -22,6 +22,9 @@ for the detailed workflow.
 
 ## Available skills
 
+- [Brainstorming and SDD](sdd.md): explore an idea without committing to build,
+  or start and resume a direction through specification, implementation,
+  verification, and PR delivery. Individual stages are independently usable.
 - [Writing for agents](../../skills/writing-for-agents/SKILL.md): create, edit, or
   review agent-facing skills, project instructions, and supporting references.
   It provides writing guidance with optional references for skill mechanics,
