@@ -3,8 +3,9 @@
 Reference documents provide guidance across workflows and ordinary tasks. Global
 instructions supply the loading triggers; these files are read on demand.
 
-| Collection | Description | Use cases |
+| Reference | Description | Use cases |
 | --- | --- | --- |
+| [Agent usage](agent-usage.md) | Current-model, inline defaults and bounded investigation for skills that link here. | Before model selection or delegation in `how`, `why`, or another workflow linking this policy. |
 | [Principles](principles/README.md) | All 24 pstack principles with concrete application guidance, triggers, checks, and documented Spellbook boundaries. | Design, implementation, debugging, substantive review, or a principle named by the user. |
 
 For maintenance in this repository, read the principles’

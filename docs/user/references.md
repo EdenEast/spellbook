@@ -13,6 +13,11 @@ documents whose triggers match the task. You can name a principle, such as
 The principles collection adapts 24 pstack principles. Each document has a rule,
 triggers, application guidance, boundaries, a check, and related references.
 
+The [agent usage policy](../../references/agent-usage.md) is loaded by `how` and
+`why`. They work inline on the current model and follow relevant evidence leads;
+additional agents or model changes require an explicit request. Their coverage
+notes distinguish unsearched sources from empty searches.
+
 Installed references use `~/.agents/references/spellbook/` for all three harnesses.
 If the installed library is missing, agents continue with available instructions
 and report the gap when relevant. Agents explain a principle's effect on a
