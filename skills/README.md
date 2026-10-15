@@ -8,7 +8,7 @@ invocation. Their task instructions still determine when an action is authorized
 
 | Skill | Use when |
 | --- | --- |
-| [babysit-pr](babysit-pr/SKILL.md) | Monitoring a requested PR through review and CI. Includes a GitHub watcher requiring Node.js 24+ and authenticated `gh`. |
+| [babysit-pr](babysit-pr/SKILL.md) | Monitoring a requested PR through review and CI using T3 Code or the bundled GitHub watcher. Script usage is in a separate reference; merging requires an explicit request. |
 | [commit](commit/SKILL.md) | Creating a requested Git or Jujutsu commit, or drafting a commit message. |
 | [create-verification-skill](create-verification-skill/SKILL.md) | Generating and proving a project-local app verification skill with a maintained feature map. |
 | [file-pr](file-pr/SKILL.md) | Filing a requested PR with a concise title and description. |
