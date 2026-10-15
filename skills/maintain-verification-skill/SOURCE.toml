@@ -1,0 +1,11 @@
+schema_version = 1
+mode = "adopt"
+
+[upstream]
+repository = "https://github.com/cursor/plugins.git"
+path = "pstack/skills/maintain-verification-skill"
+base_revision = "850d7f2e9f5e55dff7eb00a0a479337fe79eb22f"
+
+[upstream.files]
+"SKILL.md" = "pstack/skills/maintain-verification-skill/SKILL.md"
+"LICENSE" = "pstack/LICENSE"
