@@ -27,7 +27,7 @@ when Home Manager customizes their configuration paths.
 
 `spellbook` accepts `install`, `uninstall`, and `status`. The repeatable
 `--target codex|claude|pi` option selects agents. Without it, all three are
-selected. `--dry-run` reports planned operations without changing links.
+selected. `--dry-run` reports planned operations without changing links or settings.
 
 ## Link handling
 
@@ -49,8 +49,22 @@ Reinstalling removes stale links to resources deleted from this checkout.
 Uninstall removes only managed links pointing into this checkout, including
 broken links. Neither action claims legacy links from the old `source/` layout.
 
-When no resources exist, the installer creates no agent directories. It does
-not change settings or credentials, and it does not install agent executables.
+When Pi is selected, `install` also enables codemode in
+`~/.pi/agent/settings.json`. It adds `+codemode` to the default tool selection,
+or `codemode` to an explicit tool list, preserving other tools and settings.
+An explicit `-codemode` is replaced, and `-builtin:codemode` is removed from
+`extensions` if present. Existing settings must be a regular file containing a
+JSON object; invalid settings or a settings symlink stop installation before
+any links are changed.
+
+`status` reports whether codemode is configured. Dry runs do not write settings,
+and reinstalling leaves already configured settings unchanged. `uninstall`
+removes resource links but leaves the codemode preference in place. Project
+settings and command-line options can still override this user-level default.
+
+When no resources exist and Pi is not selected, the installer creates no agent
+directories. It does not change credentials or install agent executables.
+This settings behavior applies to the checkout installer, not Home Manager.
 
 ## Agent documentation
 

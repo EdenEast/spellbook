@@ -1,4 +1,4 @@
-import { lstat, mkdir, readdir, readlink, symlink, unlink } from "node:fs/promises";
+import { lstat, mkdir, mkdtemp, readFile, readdir, readlink, rename, rm, symlink, unlink, writeFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import { basename, dirname, join, resolve } from "node:path";
 
@@ -145,6 +145,40 @@ export async function plan(options: Options): Promise<Link[]> {
   return links;
 }
 
+async function piSettings(options: Options) {
+  if (!options.targets.includes("pi")) return undefined;
+  const path = join(options.home, ".pi/agent/settings.json");
+  const existing = await stat(path);
+  if (existing && !existing.isFile()) throw new Error(`Expected a regular Pi settings file: ${path}`);
+  const original = existing ? await readFile(path, "utf8") : undefined;
+  let settings: Record<string, unknown>;
+  try {
+    const parsed: unknown = original === undefined ? {} : JSON.parse(original);
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error("expected a JSON object");
+    settings = parsed as Record<string, unknown>;
+    for (const key of ["defaultTools", "extensions"]) {
+      const value = settings[key];
+      if (value !== undefined && (!Array.isArray(value) || !value.every((entry) => typeof entry === "string"))) {
+        throw new Error(`${key} must be an array of strings`);
+      }
+    }
+  } catch (error) {
+    throw new Error(`Invalid Pi settings at ${path}: ${error instanceof Error ? error.message : error}`);
+  }
+  const tools = settings.defaultTools as string[] | undefined;
+  const extensions = settings.extensions as string[] | undefined;
+  const enabled = tools?.some((tool) => tool === "codemode" || tool === "+codemode") && !tools.includes("-codemode");
+  if (!enabled) {
+    const remaining = (tools ?? []).filter((tool) => !["codemode", "+codemode", "-codemode"].includes(tool));
+    const replacement = tools?.some((tool) => !tool.startsWith("+") && !tool.startsWith("-"));
+    // An explicit empty selection must not acquire Pi's other default tools.
+    settings.defaultTools = [...remaining, replacement || tools?.length === 0 ? "codemode" : "+codemode"];
+  }
+  const disabledExtension = extensions?.includes("-builtin:codemode");
+  if (extensions && disabledExtension) settings.extensions = extensions.filter((entry) => entry !== "-builtin:codemode");
+  return { path, content: `${JSON.stringify(settings, null, 2)}\n`, changed: !enabled || disabledExtension };
+}
+
 export async function run(action: Action, options: Options): Promise<void> {
   const links = await plan(options);
   const log = options.log ?? console.log;
@@ -153,7 +187,12 @@ export async function run(action: Action, options: Options): Promise<void> {
   if (action === "install" && conflicts.length) {
     throw new Error(`Existing paths conflict with installation:\n${conflicts.map((link) => link.destination).join("\n")}`);
   }
-  if (!links.length) log("No instructions, skills, references, or extensions to manage.");
+  // Validate settings before creating any links, just like resource conflicts.
+  const settings = action !== "uninstall" ? await piSettings(options) : undefined;
+  if (settings) {
+    log(`${options.dryRun ? "DRY RUN " : ""}${settings.changed ? action === "install" ? "enable codemode" : "codemode not configured" : "codemode configured"}: ${settings.path}`);
+  }
+  if (!links.length && !settings) log("No instructions, skills, references, or extensions to manage.");
   for (const link of links) {
     const remove = (action === "uninstall" && link.state === "installed") || (action !== "status" && link.state === "stale");
     const add = action === "install" && link.state === "missing";
@@ -166,6 +205,17 @@ export async function run(action: Action, options: Options): Promise<void> {
     if (add) {
       await mkdir(dirname(link.destination), { recursive: true });
       await symlink(link.source, link.destination, (await stat(link.source))?.isDirectory() ? "dir" : "file");
+    }
+  }
+  if (action === "install" && settings?.changed && !options.dryRun) {
+    await mkdir(dirname(settings.path), { recursive: true });
+    const temporary = await mkdtemp(join(dirname(settings.path), ".spellbook-settings-"));
+    try {
+      const path = join(temporary, "settings.json");
+      await writeFile(path, settings.content, { mode: 0o600 });
+      await rename(path, settings.path);
+    } finally {
+      await rm(temporary, { recursive: true, force: true });
     }
   }
 }

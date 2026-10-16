@@ -118,7 +118,7 @@ test("global instructions follow target selection and support dry run, status, a
     assert.deepEqual(await plan(selected), [{ source, destination: join(options.home, destination), state: "installed" }]);
     await run("status", selected);
     await run("uninstall", selected);
-    assert.deepEqual(await readdir(join(options.home, destination, "..")), []);
+    assert.deepEqual(await readdir(join(options.home, destination, "..")), target === "pi" ? ["settings.json"] : []);
   }
 });
 
@@ -151,11 +151,16 @@ test("deleted global instructions leave stale links that install and uninstall r
   assert.deepEqual(await plan(options), []);
 });
 
-test("empty collections do not create harness configuration", async (t) => {
+test("empty collections only create Pi settings when Pi is selected for installation", async (t) => {
   const options = await fixture(t);
   await writeFile(join(options.root, "pi/extensions/.gitkeep"), "");
-  for (const action of ["install", "status", "uninstall"] as const) await run(action, options);
+  for (const action of ["status", "uninstall"] as const) await run(action, options);
+  await run("install", { ...options, targets: ["codex", "claude"] });
   assert.deepEqual(await readdir(options.home), []);
+  await run("install", options);
+  assert.deepEqual(JSON.parse(await readFile(join(options.home, ".pi/agent/settings.json"), "utf8")), {
+    defaultTools: ["+codemode"],
+  });
 });
 
 test("Pi extensions install supported entry points and remove broken owned links", async (t) => {
