@@ -10,8 +10,11 @@ Preserved upstream's `disable-model-invocation: true` for explicit invocation.
 ## Local adjustments
 
 Restored upstream's parallel investigators, one per available evidence category,
-and the separate synthesizer. Spawns use the harness's agent tool and the session
-model unless the user names another. They keep MCP access and write nothing.
+and the separate synthesizer. Spawns use the harness's agent tool, keep MCP
+access, and write nothing. Their model and effort come from the
+`why investigators` and `why synthesizer` roles in the shared
+[model roles](../../references/models/README.md), which replaces upstream's
+`pstack-models.mdc` rule.
 
 Preserved code anchoring, historical investigation, all seven evidence categories,
 source playbooks, five confidence tiers, citation checks, competing hypotheses,
@@ -29,7 +32,7 @@ incident playbooks.
   trivial target inline. When the PR already answers a single-commit question,
   cite it and report the limited coverage.
 - Declined Cursor-only MCP discovery, Task permission settings, poteto-mode,
-  `pstack-models.mdc` model defaults, and slug fallback rules. Discover MCPs from
+  Cursor model-slug defaults, and slug fallback rules. Discover MCPs from
   the harness's tool descriptions; treat playbook tool names as examples.
 - Declined assumptions that Git history and authenticated `gh` are always
   available. Report missing or shallow history and unavailable PR access.

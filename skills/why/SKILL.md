@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 Investigate the motivation and intent behind code. The companion `how` skill answers what the code does and how it works. `why` answers what forces led to its shape.
 
-Every spawn below is a subagent started through the harness's agent tool. Use the session model unless the user names another. If a requested model is unavailable, say so and use the session model.
+Every spawn below is a subagent started through the harness's agent tool. Each spawn names a role in [model roles](~/.agents/references/spellbook/models/README.md), which sets its model, effort, and fallbacks.
 
 Give every spawn the MCP and read tools it needs. **Do not use a mode or agent type that strips MCP access.** That disables the MCP-backed investigators and the synthesizer's citation spot-checks. No spawn writes files, commits, or modifies external state.
 
@@ -46,7 +46,7 @@ Map each available MCP to one evidence category:
 
 Source control is available through git and, when authenticated, `gh`. For the other six, classify using the MCP name, server instructions, tool names, and resource descriptors. If an MCP could fit more than one category, choose the one matching its primary evidence. Record ambiguous cases in the coverage map.
 
-Spawn one investigator per category that has a matching MCP, all in a single message so they run concurrently, each owning exactly one tool or MCP. Don't ask one agent to cover multiple MCPs.
+Spawn one investigator per category that has a matching MCP, all in a single message so they run concurrently, each owning exactly one tool or MCP. Don't ask one agent to cover multiple MCPs. Role: `why investigators`.
 
 Each investigator's prompt is `references/investigator-prompt.md` filled in, plus:
 - the category playbook `references/sources/<source>.md` for the selected MCP, adapted from the examples in `references/source-playbook.md`
@@ -76,7 +76,7 @@ If the target is a single-commit change whose PR description already contains th
 
 ## Step 4. Synthesize
 
-Spawn one synthesizer. It gets:
+Spawn one synthesizer. Role: `why synthesizer`. It gets:
 1. The investigator findings, including any null results and any categories skipped with justification
 2. The code anchor
 3. The user's original question

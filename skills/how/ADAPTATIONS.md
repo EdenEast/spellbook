@@ -10,9 +10,10 @@ Preserved upstream's `disable-model-invocation: true` for explicit invocation.
 ## Local adjustments
 
 Restored upstream's explorer fan-out and separate explainer for complex
-questions. Spawns use the harness's agent tool, run read-only, and use the
-session model unless the user names another. A requested model that is
-unavailable is reported rather than silently replaced.
+questions. Spawns use the harness's agent tool and run read-only. Their model
+and effort come from the `how explorer` and `how explainer` roles in the shared
+[model roles](../../references/models/README.md), which replaces upstream's
+`pstack-models.mdc` rule.
 
 Preserved complexity assessment, exploration angles, reconciliation, architectural
 explanation sections, read-only investigation, concrete file references, and
@@ -24,9 +25,9 @@ instead of Cursor's Read, Grep, and Glob.
 - Declined spawning an explainer on the simple path. A single module or narrow
   question is explained in one pass by the main agent, so a subagent would only
   repeat that work.
-- Declined the Cursor Task API, poteto-mode dependency, `pstack-models.mdc`
-  model defaults, and rejected-slug fallback rules. These assume Cursor's model
-  roster and do not port to Codex, Claude Code, or Pi.
+- Declined the Cursor Task API, poteto-mode dependency, Cursor model-slug
+  defaults, and rejected-slug fallback rules. These assume Cursor's model
+  roster; the shared model roles cover choice and fallback instead.
 
 ## Maintenance
 

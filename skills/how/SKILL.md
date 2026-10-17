@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 Explore the codebase to answer "how does X work?" questions. Produce architectural explanations at the level of a senior engineer onboarding onto a subsystem, enough to build a working mental model, not so much that it reads like annotated source code.
 
-Every spawn is a read-only subagent started through the harness's agent tool. Use a read-only agent type when the harness offers one; otherwise instruct the subagent not to write. Use the session model unless the user names another. If a requested model is unavailable, say so and use the session model. This is an investigation and explanation workflow; do not modify the codebase.
+Every spawn is a read-only subagent started through the harness's agent tool. Use a read-only agent type when the harness offers one; otherwise instruct the subagent not to write. Explorers use the `how explorer` role and the explainer uses the `how explainer` role in [model roles](~/.agents/references/spellbook/models/README.md), which sets each role's model, effort, and fallbacks. This is an investigation and explanation workflow; do not modify the codebase.
 
 ## 1. Assess complexity
 
