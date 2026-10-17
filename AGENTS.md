@@ -24,7 +24,7 @@ Keep active skills in `skills/`; follow [skill maintenance](docs/agents/skills.m
 adapt/adopt ownership and updates. Keep installation separate from source updates.
 
 For external skills and references, follow [external-source guidance](docs/agents/external-sources.md).
-Keep provenance and applicable license notices beside the material.
+Keep provenance beside the material and each source's license once in `licenses/`.
 
 ## Pi extensions
 

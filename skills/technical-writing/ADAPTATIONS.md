@@ -21,9 +21,7 @@ Preserved upstream's `disable-model-invocation: true` for explicit invocation.
   does not retain upstream's named abstract-metaphor rule. Preserve the proposal
   workflow and its instruction to leave that skill unchanged.
 
-`SOURCE.toml` and this note are local maintenance files. `LICENSE` is an unchanged
-copy of `pstack/LICENSE`, mapped separately because it lives outside the upstream
-skill directory. No upstream workflow guidance was declined.
+`SOURCE.toml` and this note are local maintenance files. The shared [pstack license](../../licenses/pstack.txt) covers this skill. No upstream workflow guidance was declined.
 
 ## Validation
 

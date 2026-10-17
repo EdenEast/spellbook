@@ -2,8 +2,8 @@
 
 This is a locally owned adaptation with Lauren Tan's Pstack Unslop as its primary
 basis. Humanizer and Stop Slop supply selected guidance missing from that basis.
-[SOURCE.toml](SOURCE.toml) pins the reviewed versions; [LICENSES](LICENSES)
-preserves their notices. Future changes follow local judgment.
+[SOURCE.toml](SOURCE.toml) pins the reviewed versions; the shared
+[licenses](../../licenses/README.md) preserve their notices. Future changes follow local judgment.
 
 ## Pstack: Unslop
 

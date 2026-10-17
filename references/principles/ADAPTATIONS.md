@@ -2,7 +2,7 @@
 
 These documents adapt all 24 pstack principles at the recorded revision.
 [SOURCE.toml](SOURCE.toml) maps each document to its upstream file;
-[LICENSE](LICENSE) retains the upstream notice.
+the shared [pstack license](../../licenses/pstack.txt) retains the upstream notice.
 
 The references retain pstack's concrete defaults and diagnostics, including the
 three-layer flattening trigger, smallest-diff preference, tooling for nontrivial

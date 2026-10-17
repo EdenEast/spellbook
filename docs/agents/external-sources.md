@@ -1,7 +1,7 @@
 # External sources
 
-Keep provenance and applicable license notices beside external skills and
-reference collections. Skills live in `skills/`; shared reading lives in
+Keep provenance beside external skills and reference collections. Keep each
+source's license once in `licenses/`. Skills live in `skills/`; shared reading lives in
 `references/`. Use [Maintain skills](skills.md) for adapt/adopt decisions and
 [Maintain shared references](maintenance.md) for reference inventory and triggers.
 
@@ -23,6 +23,7 @@ url = "https://example.org/project"
 path = "skills/example"
 reviewed_revision = "<full Git commit SHA>"
 incorporated = "Task selection and verification procedure; see ADAPTATIONS.md."
+license = "../../licenses/example-project.txt"
 
 [[sources]]
 id = "article"
@@ -38,9 +39,18 @@ full commit SHAs; a repository-relative `path` narrows the source when needed.
 For unversioned pages, record a review date and content digest and retain a
 retrievable snapshot or archive locator where permitted. A digest identifies
 content but does not reconstruct it. Explain retrieval limitations explicitly.
-Record decisions per source in `ADAPTATIONS.md`; reviewed does not mean copied
+Point `license` to the source's file in `licenses/` when material is copied
+or adapted from it. Record decisions per source in `ADAPTATIONS.md`; reviewed does not mean copied
 or fully incorporated. Preserve attribution and notices for copied or adapted
 material as required by its license.
+
+## Licenses
+
+Store one unchanged copy of each source's license in `licenses/`, named after
+the source, and list it in `licenses/README.md` with its upstream file, checked
+revision, and the material that uses it. Do not copy licenses into skill or
+reference directories. Do not map the license in `[upstream.files]`; check it
+against `licenses/` during each update instead.
 
 ## Adaptation notes
 
@@ -64,6 +74,7 @@ mode = "adopt"
 repository = "https://example.org/project.git"
 path = "skills/example"
 base_revision = "<full Git commit SHA>"
+license = "../../licenses/example-project.txt"
 
 # Optional: local paths mapped to repository-relative upstream paths.
 # Without mappings, the entire upstream skill tree maps by relative path.
@@ -88,14 +99,14 @@ or rewrite their metadata to use the skill schema.
 
 Before an update, inspect Git status and preserve existing work. Reconstruct
 mapped files at the recorded revision and requested target outside the checkout.
-Include frontmatter, supporting dependencies, and license notices. Compare old
+Include frontmatter, supporting dependencies, and the upstream license. Compare old
 to new upstream content and old upstream to local adaptations. Account for
 format transformations separately.
 
 Review changes semantically, preserving intentional local guidance and
 authorization boundaries. Account for additions, deletions, moved files,
 companion links, and declined changes. Validate the final inventory, relative
-links, loading pointers, and notices. Update `references/README.md` and the
+links, loading pointers, and the matching file in `licenses/`. Update `references/README.md` and the
 collection index when affected. Advance `commit` only after all changes in scope
 have been accounted for; retain the original pin for incomplete integration.
 

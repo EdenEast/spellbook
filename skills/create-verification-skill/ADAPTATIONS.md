@@ -26,7 +26,7 @@ handoff. Retained upstream's explicit invocation setting.
 - Link to the sibling maintenance skill and use the active harness's invocation
   syntax instead of assuming Cursor slash commands.
 
-The feature-map example and license are unchanged. `SOURCE.toml` and this note
+The feature-map example is unchanged. The shared [pstack license](../../licenses/pstack.txt) covers this skill. `SOURCE.toml` and this note
 are local maintenance files. No upstream guidance was declined or deferred.
 
 ## Validation

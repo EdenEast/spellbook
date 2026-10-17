@@ -34,8 +34,7 @@ and the requirement to preserve `why`'s confidence language.
 
 ## Maintenance
 
-`SOURCE.toml` and this note are local-only files. `LICENSE` maps to
-`pstack/LICENSE` outside the upstream skill directory. The sibling skills are
+`SOURCE.toml` and this note are local-only files. The shared [pstack license](../../licenses/pstack.txt) covers this skill. The sibling skills are
 maintained separately, not copied into this baseline. Retain the local
 portability decisions during upstream integration.
 

@@ -31,8 +31,7 @@ instead of Cursor's Read, Grep, and Glob.
 
 ## Maintenance
 
-`SOURCE.toml` and this note are local-only files. `LICENSE` maps separately to the
-plugin license outside the upstream skill directory. Retain these local
+`SOURCE.toml` and this note are local-only files. The shared [pstack license](../../licenses/pstack.txt) covers this skill. Retain these local
 adjustments when integrating future upstream changes.
 
 ## Validation

@@ -15,8 +15,8 @@ of candidates in severity order. Retained explicit invocation through
   sibling `writing-for-agents` skill. This keeps the writing dependency available
   to Codex, Claude Code, and Pi without requiring a particular tool.
 
-`SOURCE.toml` and this note are local maintenance files. `LICENSE` is an
-unchanged upstream copy. The upstream skill has no scripts, assets, or other
+`SOURCE.toml` and this note are local maintenance files. The shared
+[mattpocock/skills license](../../licenses/mattpocock-skills.txt) covers this skill. The upstream skill has no scripts, assets, or other
 dependencies. No upstream workflow guidance was declined.
 
 ## Declined

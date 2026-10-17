@@ -13,7 +13,8 @@ The repository uses these paths:
 | `docs/agents/` | Agent maintenance procedures and repository guidance. |
 | `references/` | Shared documents loaded on demand. |
 | `references/README.md` | Reference catalog. |
-| `references/principles/` | Principles, index, provenance, and license. |
+| `references/principles/` | Principles, index, and provenance. |
+| `licenses/` | One license file per external source, with an index of what uses it. |
 | `pi/extensions/` | Pi extension files or directories with `index.ts` or `index.js`. |
 | `scripts/` | Command-line entry points and installer tooling. |
 | `scripts/tests/` | Script tests and their fixtures. |
