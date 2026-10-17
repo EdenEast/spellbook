@@ -22,8 +22,8 @@ Choose the relationship before bringing in external material:
 
 Keep optional scripts, assets, and skill-specific references beside `SKILL.md`.
 Link shared references through `~/.agents/references/spellbook/` and give a
-loading trigger. Keep source metadata and applicable license notices alongside
-external material, following [External sources](external-sources.md).
+loading trigger. Keep source metadata alongside external material and its license in
+`licenses/`, following [External sources](external-sources.md).
 
 ## Adapt a skill
 

@@ -7,6 +7,7 @@ url = "https://github.com/mattpocock/skills"
 path = "skills/productivity/writing-for-agents"
 reviewed_revision = "49dd158d1076134a641b33efb035946536778336"
 incorporated = "Loading pointers, information hierarchy, completion criteria, and pruning; see ADAPTATIONS.md."
+license = "../../licenses/mattpocock-skills.txt"
 
 [[sources]]
 id = "superpowers"
@@ -14,6 +15,7 @@ url = "https://github.com/obra/superpowers"
 path = "skills/writing-skills/SKILL.md"
 reviewed_revision = "bb92a77741419a4ab5f06e711a283343f1ada0c3"
 incorporated = "Behavioral baselines, failure-specific instruction forms, and evaluation scenarios; see ADAPTATIONS.md."
+license = "../../licenses/obra-superpowers.txt"
 
 [[sources]]
 id = "anthropic-overview"
@@ -43,6 +45,7 @@ url = "https://github.com/addyosmani/agent-skills"
 path = "skills/context-engineering/SKILL.md"
 reviewed_revision = "aeac41d4d005999432bb7312f7ff06383a91d59d"
 incorporated = "Selective context loading, ambiguity handling, and durable session handoffs; see ADAPTATIONS.md."
+license = "../../licenses/addyosmani-agent-skills.txt"
 
 [[sources]]
 id = "openai-skills"

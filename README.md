@@ -46,4 +46,5 @@ Start with the relevant guide:
 
 Spellbook includes adapted references from
 [pstack](https://github.com/cursor/plugins) by Lauren Tan. Each adapted
-collection records its upstream source in `SOURCE.toml` and includes its license.
+collection records its upstream source in `SOURCE.toml`. [licenses/](licenses/README.md)
+holds each source's license.

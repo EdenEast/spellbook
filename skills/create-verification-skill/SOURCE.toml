@@ -5,10 +5,10 @@ mode = "adopt"
 repository = "https://github.com/cursor/plugins.git"
 path = "pstack/skills/create-verification-skill"
 base_revision = "850d7f2e9f5e55dff7eb00a0a479337fe79eb22f"
+license = "../../licenses/pstack.txt"
 
 [upstream.files]
 "SKILL.md" = "pstack/skills/create-verification-skill/SKILL.md"
 "references/feature-map-example/README.md" = "pstack/skills/create-verification-skill/references/feature-map-example/README.md"
 "references/feature-map-example/create-note.md" = "pstack/skills/create-verification-skill/references/feature-map-example/create-note.md"
 "references/feature-map-example/search.md" = "pstack/skills/create-verification-skill/references/feature-map-example/search.md"
-"LICENSE" = "pstack/LICENSE"

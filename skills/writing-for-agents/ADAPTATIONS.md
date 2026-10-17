@@ -1,8 +1,9 @@
 # Sources and local decisions
 
 This locally owned adapted skill combines ideas from the external sources below.
-[SOURCE.toml](SOURCE.toml) records their reviewed versions; [LICENSES](LICENSES)
-retains the complete Git-source copyright and license notices. These sources
+[SOURCE.toml](SOURCE.toml) records their reviewed versions; the shared
+[licenses](../../licenses/README.md) retain the complete Git-source copyright and
+license notices. These sources
 inform the skill's behavior without governing its future direction.
 
 ## Source decisions

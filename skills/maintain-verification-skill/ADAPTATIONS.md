@@ -33,7 +33,7 @@ Retained upstream's explicit invocation setting.
   most one PR when authorized. `blocked` still reports incomplete coverage or
   inability to prepare a safe correction.
 
-`LICENSE` is unchanged. `SOURCE.toml` and this note are local maintenance files.
+The shared [pstack license](../../licenses/pstack.txt) covers this skill. `SOURCE.toml` and this note are local maintenance files.
 No upstream guidance was declined or deferred.
 
 ## Validation
