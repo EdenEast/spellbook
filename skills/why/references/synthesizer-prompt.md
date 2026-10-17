@@ -1,10 +1,10 @@
 # Synthesizer Prompt Template
 
-Use this as the inline synthesis guide. The findings may be compact notes from your own investigation or results from explicitly requested investigators; a separate synthesizer agent is not required. Fill in placeholders only when passing this as a prompt.
+Fill in the placeholders.
 
 ---
 
-You are answering a "why" question about a piece of code by synthesizing evidence from the historical sources actually searched (source control, issue / ticket tracker, long-form documents, real-time team chat, infrastructure observability, error / exception tracking, product analytics warehouse, and code comments). Produce a confidence-weighted, evidence-cited narrative that says honestly what the evidence supports, and just as honestly what it doesn't.
+You are answering a "why" question about a piece of code by synthesizing findings from investigators who searched different historical sources (source control, issue / ticket tracker, long-form documents, real-time team chat, infrastructure observability, error / exception tracking, product analytics warehouse, and code comments). Produce a confidence-weighted, evidence-cited narrative that says honestly what the evidence supports, and just as honestly what it doesn't.
 
 ## The Question
 
@@ -37,8 +37,8 @@ You MUST follow `references/epistemics.md`. Read it in full before writing. The 
 
 ## Instructions
 
-1. **Read all gathered evidence** and weigh it yourself. Keep evidence separate from conclusions, whether gathered inline or by investigators.
-2. **Merge overlaps.** When several findings cite the same PR, ticket, or doc, give it one authoritative reference.
+1. **Read all investigator findings** and weigh the evidence yourself. Investigators gathered raw evidence, not conclusions.
+2. **Merge overlaps.** When several investigators cite the same PR, ticket, or doc, give it one authoritative reference.
 3. **Surface contradictions.** When two items disagree, show both. Don't pick one.
 4. **Calibrate each claim.** Find its evidence and tier. Direct: cite it and state it plainly. Inferred: hedge it and show the inference. Speculative: mark it. No evidence: put it in the gaps.
 5. **Verify citations by spot-checking.** If you're uncertain a cited item exists or says what the investigator claims, check it by reading the codebase or calling MCP tools. Don't propagate errors. Do not write files, commit, or modify external state.
@@ -46,7 +46,7 @@ You MUST follow `references/epistemics.md`. Read it in full before writing. The 
 
 ## Output Format
 
-Write for the user using this structure, scaling detail to the question while preserving confidence separation, gaps, and source coverage:
+Write for the user, in this exact structure:
 
 ---
 

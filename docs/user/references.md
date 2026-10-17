@@ -13,10 +13,10 @@ documents whose triggers match the task. You can name a principle, such as
 The principles collection adapts 24 pstack principles. Each document has a rule,
 triggers, application guidance, boundaries, a check, and related references.
 
-The [agent usage policy](../../references/agent-usage.md) is loaded by `how`,
-`why`, and `teach`. They work inline on the current model and follow relevant
-evidence leads; additional agents or model changes require an explicit request.
-The `why` coverage notes distinguish unsearched sources from empty searches.
+The [model roles](../../references/models/README.md) file sets which model and
+reasoning effort each subagent role uses, such as `how explorer` or
+`why synthesizer`. Edit a role's line to change it. Each line lists fallbacks
+in order, so a role can prefer a Codex model and fall back to a Claude model.
 
 Installed references use `~/.agents/references/spellbook/` for all three harnesses.
 If the installed library is missing, agents continue with available instructions
