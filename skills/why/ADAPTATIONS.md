@@ -9,11 +9,9 @@ Preserved upstream's `disable-model-invocation: true` for explicit invocation.
 
 ## Local adjustments
 
-Both skills load the locally authored shared [agent usage policy](../../references/agent-usage.md)
-at `~/.agents/references/spellbook/agent-usage.md`. Work stays inline on the
-current model by default; additional agents and model changes require an explicit
-request. This replaces the external model-rule dependency. No model roster,
-account configuration, or installer behavior is added.
+Restored upstream's parallel investigators, one per available evidence category,
+and the separate synthesizer. Spawns use the harness's agent tool and the session
+model unless the user names another. They keep MCP access and write nothing.
 
 Preserved code anchoring, historical investigation, all seven evidence categories,
 source playbooks, five confidence tiers, citation checks, competing hypotheses,
@@ -23,33 +21,33 @@ incident playbooks.
 
 ### Declined
 
-- Declined exhaustive searches across every available evidence category and
-  the requirement to prove a source irrelevant before skipping it. Follow
-  relevant evidence leads and state actual coverage and stopping reasons.
-- Declined automatic investigator fan-out and a separate synthesizer. Investigate
-  and synthesize inline; templates support explicit delegation as an option.
+- Declined the requirement to prove a category irrelevant before skipping it,
+  and the full seven-category sweep as the default. Investigators are spawned
+  for available categories that could bear on the question; skipped categories
+  get a written scope reason in Sources Consulted.
+- Declined confirming all seven searches are redundant before answering a
+  trivial target inline. When the PR already answers a single-commit question,
+  cite it and report the limited coverage.
 - Declined Cursor-only MCP discovery, Task permission settings, poteto-mode,
-  provider defaults, and slug fallback rules. Inspect available read tool schemas;
-  treat playbook tool names as examples and record missing access.
+  `pstack-models.mdc` model defaults, and slug fallback rules. Discover MCPs from
+  the harness's tool descriptions; treat playbook tool names as examples.
 - Declined assumptions that Git history and authenticated `gh` are always
   available. Report missing or shallow history and unavailable PR access.
-- Adjusted template search breadth, cross-source lead handling, coverage wording,
-  and warehouse lineage guidance to support targeted inline investigation.
+- Kept the synthesizer's coverage wording, which separates searched, unavailable,
+  and unsearched sources, so an unsearched source is never reported as empty.
 
 ## Maintenance
 
 `SOURCE.toml` and this note are local-only files. `LICENSE` maps separately to the
-plugin license outside the upstream skill directory. The shared usage policy is
-locally authored and is not part of either upstream mapping. Retain these local
-adjustments when integrating future upstream changes, including new references
-that might reintroduce automatic delegation or exhaustive searches.
+plugin license outside the upstream skill directory. Retain these local
+adjustments when integrating future upstream changes.
 
 ## Validation
 
-Checked complete upstream file mappings, the exact baseline, unchanged license
-bytes, and all local links (excluding the illustrative citation URL placeholder).
-Verified dry-run isolation, complete-tree installation, shared-policy access,
-installed status, and uninstall for Codex, Claude Code, and Pi in temporary homes.
+Diffed every mapped file against the upstream baseline so that only the
+adjustments recorded above remain. Checked local links (excluding the
+illustrative citation URL placeholder). Installed and uninstalled for Codex,
+Claude Code, and Pi in a temporary home; `npm run check` and `npm test` passed.
 The active harness configuration was not changed.
 
 The skill-creator validator rejects the preserved `disable-model-invocation`
@@ -57,9 +55,5 @@ field. Verified that field separately as boolean true, then validated temporary
 copies with only that unsupported field removed; both passed. Repository skill
 files retain the upstream invocation setting.
 
-Manually walked through simple and cross-file explanations, a narrow rationale
-already answered by a PR, defensive code with unavailable incident evidence,
-and available sources left unsearched. Confirmed the instructions route these
-to inline work, conditional reference loading, and explicit coverage gaps.
-These are packaging and instruction checks, not independent model evaluations
-or proof of live discovery and service access in every harness.
+These are packaging and instruction checks. They do not evaluate live
+subagent fan-out, model selection, or MCP discovery in each harness.

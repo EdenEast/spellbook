@@ -1,6 +1,6 @@
 # Source playbooks
 
-The why skill investigates inline by default and loads only playbooks relevant to the question or a concrete lead. These are examples for common services; adapt their search patterns to the actual read tools and schemas available in the harness. Do not assume the named MCP or tool exists. Delegation requires an explicit user request.
+The why skill spawns one investigator per available evidence category, each reading a single source-specific playbook below. The playbooks are concrete examples for common MCPs. Adapt them for a different MCP in the same category, using the actual tool schemas available in the harness rather than assuming a named tool exists.
 
 | Category | Playbook | Example MCP it documents |
 |---|---|---|

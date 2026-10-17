@@ -1,10 +1,10 @@
 # Explorer Prompt Template
 
-Use this as an inline exploration checklist. For explicitly requested delegation, fill in the placeholders for each explorer's bounded assignment. Inline work needs compact notes, not a separate report.
+Build each explorer subagent's prompt from this template. Fill in the placeholders.
 
 ---
 
-Focus on the current exploration angle. Trace it deeply enough to answer the question without expanding into unrelated parts of the subsystem.
+Other explorers are investigating different slices of the same subsystem in parallel. Don't try to cover everything. Focus on your assigned angle and go deep.
 
 ## Question
 
