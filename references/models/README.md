@@ -10,6 +10,8 @@ how explorer: openai/gpt-6-luna low, anthropic/claude-haiku-5-5 low
 how explainer: anthropic/claude-opus-5-5 medium, openai/gpt-6.1-sol medium
 why investigators: openai/gpt-6-luna low, anthropic/claude-haiku-5-5 low
 why synthesizer: anthropic/claude-opus-5-5 medium, openai/gpt-6.1-sol medium
+interrogate reviewer A: anthropic/claude-opus-5-5 high, openai/gpt-6.1-sol high
+interrogate reviewer B: openai/gpt-6.1-sol high, anthropic/claude-opus-5-5 high
 ```
 
 Each entry is `<vendor>/<model> <effort>`. Effort is one of `low`, `medium`,
@@ -20,7 +22,9 @@ model at its current effort.
 The defaults favor usage over depth. Workers that read many files run at `low`
 on a small model. Roles that reconcile findings run at `medium`. The worker and
 judgment roles prefer different vendors so their usage draws on separate
-subscriptions.
+subscriptions. Interrogate reviewers run at `high` because the skill is invoked
+explicitly, and each prefers a different vendor because model diversity is the
+review's signal. Add an `interrogate reviewer C` line to add a reviewer.
 
 ## Choose a model for a role
 

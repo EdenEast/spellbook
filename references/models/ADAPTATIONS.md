@@ -6,7 +6,9 @@ Adapted the per-role model file that pstack's `setup-pstack` writes to
 `~/.cursor/rules/pstack-models.mdc`. Kept its shape: one line per role, a model
 with an effort level, and skill instructions that name the role they spawn.
 Kept the role names `how explorer`, `how explainer`, `why investigators`, and
-`why synthesizer` so they match the adopted `how` and `why` skills.
+`why synthesizer` so they match the adopted `how` and `why` skills. Upstream's
+single `interrogate reviewers` panel line became one `interrogate reviewer <label>`
+role per reviewer, so each reviewer keeps the usual fallback order.
 
 Local decisions:
 
@@ -29,14 +31,14 @@ Local decisions:
   role; add a budget only if editing four lines becomes a burden.
 - The `auto` alias. It is Cursor-specific; `inherit` covers the session model.
 - Roles for pstack skills Spellbook does not carry, such as arena, swarm,
-  architect, interrogate, and reflect. Add a role when a skill consumes it.
-- Panel lists, where each entry spawns another subagent. No Spellbook skill runs
-  a panel, and lists here mean fallback order instead.
+  architect, and reflect. Add a role when a skill consumes it.
+- Panel lists, where each entry spawns another subagent. Lists here mean
+  fallback order; a panel such as interrogate uses one role per member instead.
 - The optional offer to create a verification skill at the end of setup.
 
 ## Validation
 
-Checked that the four roles match the role names in the `how` and `why` skills,
+Checked that the roles match the role names in the `how`, `why`, and `interrogate` skills,
 that every default model appears in T3 Code's live provider catalog on
 2026-10-17, and that the upstream license is unchanged. This does not prove each
 harness's native subagent tool accepts every model or effort.
