@@ -8,7 +8,10 @@ with an effort level, and skill instructions that name the role they spawn.
 Kept the role names `how explorer`, `how explainer`, `why investigators`, and
 `why synthesizer` so they match the adopted `how` and `why` skills. Upstream's
 single `interrogate reviewers` panel line became one `interrogate reviewer <label>`
-role per reviewer, so each reviewer keeps the usual fallback order.
+role per reviewer, so each reviewer keeps the usual fallback order. The
+`arena runners` and `architect runners` panels became `arena runner <label>` and
+`architect runner <label>` roles the same way. The `arena cross-judge pool` became
+the `arena cross-judge` role; arena picks its first entry from another vendor.
 
 Local decisions:
 
@@ -30,15 +33,16 @@ Local decisions:
 - The budget ladder that rewrites every effort level at once. Effort is set per
   role; add a budget only if editing four lines becomes a burden.
 - The `auto` alias. It is Cursor-specific; `inherit` covers the session model.
-- Roles for pstack skills Spellbook does not carry, such as arena, swarm,
-  architect, and reflect. Add a role when a skill consumes it.
+- Roles for pstack skills Spellbook does not carry, such as swarm and
+  reflect. Add a role when a skill consumes it.
 - Panel lists, where each entry spawns another subagent. Lists here mean
-  fallback order; a panel such as interrogate uses one role per member instead.
+  fallback order; a panel such as interrogate or arena uses one role per member instead.
 - The optional offer to create a verification skill at the end of setup.
 
 ## Validation
 
-Checked that the roles match the role names in the `how`, `why`, and `interrogate` skills,
+Checked that the roles match the role names in the `how`, `why`, `interrogate`,
+`arena`, and `architect` skills,
 that every default model appears in T3 Code's live provider catalog on
 2026-10-17, and that the upstream license is unchanged. This does not prove each
 harness's native subagent tool accepts every model or effort.
