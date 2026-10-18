@@ -3,8 +3,8 @@
 Active skills live in this directory. The installer discovers each `SKILL.md`
 and makes the skill and its supporting files available together. These skills
 allow model invocation by default; how, why, create-verification-skill,
-maintain-verification-skill, retro, teach, and technical-writing require explicit
-invocation. Their task instructions still determine when an action is authorized.
+interrogate, maintain-verification-skill, retro, teach, and technical-writing
+require explicit invocation. Their task instructions still determine when an action is authorized.
 
 | Skill | Use when |
 | --- | --- |
@@ -14,6 +14,7 @@ invocation. Their task instructions still determine when an action is authorized
 | [file-pr](file-pr/SKILL.md) | Filing a requested PR with a concise title and description. |
 | [how](how/SKILL.md) | Explaining runtime behavior, subsystem architecture, or ownership and layering; investigates inline by default. |
 | [html-communication](html-communication/SKILL.md) | Creating and publishing readable HTML communication documents through Postplan. |
+| [interrogate](interrogate/SKILL.md) | Adversarially reviewing code changes with one reviewer per model role, then judging every finding as act on, consider, noted, or dismissed. Does not apply changes. |
 | [maintain-verification-skill](maintain-verification-skill/SKILL.md) | Auditing an existing verification skill and feature map against source and live app behavior. |
 | [postplan-read](postplan-read/SKILL.md) | Reading a supplied `postplan.dev` URL using `curl`. |
 | [retro](retro/SKILL.md) | Reviewing a requested coding session to suggest improvements to the agent environment, ordered by severity. |
