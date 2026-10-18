@@ -1,0 +1,14 @@
+schema_version = 1
+mode = "adopt"
+
+[upstream]
+repository = "https://github.com/cursor/plugins.git"
+path = "pstack/skills/architect"
+base_revision = "ad267954814a2d6ba4e6784de4bb21dad0c98712"
+license = "../../licenses/pstack.txt"
+
+[upstream.files]
+"SKILL.md" = "pstack/skills/architect/SKILL.md"
+"references/design-red-flags.md" = "pstack/skills/architect/references/design-red-flags.md"
+"references/rationale-template.md" = "pstack/skills/architect/references/rationale-template.md"
+"references/runner-prompt.md" = "pstack/skills/architect/references/runner-prompt.md"
