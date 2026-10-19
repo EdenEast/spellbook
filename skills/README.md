@@ -2,7 +2,7 @@
 
 Active skills live in this directory. The installer discovers each `SKILL.md`
 and makes the skill and its supporting files available together. These skills
-allow model invocation by default; arena, architect, how, why,
+allow model invocation by default; arena, architect, automate-me, how, why,
 create-verification-skill, interrogate, maintain-verification-skill, retro,
 teach, and technical-writing require explicit invocation. Their task instructions still determine when an action is authorized.
 
@@ -10,6 +10,7 @@ teach, and technical-writing require explicit invocation. Their task instruction
 | --- | --- |
 | [arena](arena/SKILL.md) | Running parallel candidates at one task from model roles, picking a base against a rubric, and grafting the strongest parts of the others into it. |
 | [architect](architect/SKILL.md) | Sketching types, signatures, and module structure through an arena of design candidates before implementing against the chosen sketch. |
+| [automate-me](automate-me/SKILL.md) | Turning the user's working style into a personal `-mode` skill from mined transcripts and a few structured questions, or updating it. |
 | [babysit-pr](babysit-pr/SKILL.md) | Monitoring a requested PR through review and CI using T3 Code or the bundled GitHub watcher. Script usage is in a separate reference; merging requires an explicit request. |
 | [commit](commit/SKILL.md) | Creating a requested Git or Jujutsu commit, or drafting a commit message. |
 | [create-verification-skill](create-verification-skill/SKILL.md) | Generating and proving a project-local app verification skill with a maintained feature map. |

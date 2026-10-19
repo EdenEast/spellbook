@@ -12,6 +12,8 @@ role per reviewer, so each reviewer keeps the usual fallback order. The
 `arena runners` and `architect runners` panels became `arena runner <label>` and
 `architect runner <label>` roles the same way. The `arena cross-judge pool` became
 the `arena cross-judge` role; arena picks its first entry from another vendor.
+Automate-me's miners, which upstream sizes through poteto-mode, take the
+`automate-me miners` role.
 
 Local decisions:
 
@@ -42,7 +44,7 @@ Local decisions:
 ## Validation
 
 Checked that the roles match the role names in the `how`, `why`, `interrogate`,
-`arena`, and `architect` skills,
+`arena`, `architect`, and `automate-me` skills,
 that every default model appears in T3 Code's live provider catalog on
 2026-10-17, and that the upstream license is unchanged. This does not prove each
 harness's native subagent tool accepts every model or effort.
