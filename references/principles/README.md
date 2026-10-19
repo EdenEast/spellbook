@@ -43,7 +43,7 @@ need no list of principles.
 | [Prove it works](prove-it-works.md) | Before claiming a task or change succeeded. | Check actual output or behavior with evidence appropriate to the claim. |
 | [Fix root causes](fix-root-causes.md) | Debugging a failure or repeated symptom. | Reproduce, test explanations, and fix the verified cause. |
 | [Sequence work into verifiable units](sequence-verifiable-units.md) | Planning dependent stages, sweeps, or delivery. | Check each small unit and do not advance until its check passes. |
-| [Test behavior, not implementation](test-behavior-not-implementation.md) | Writing, changing, or reviewing tests. | Assert observable contracts with checks that detect relevant defects. |
+| [Test behavior, not implementation](test-behavior-not-implementation.md) | Writing, changing, or reviewing tests. | Assert observable contracts with checks that detect defects and survive behavior-preserving internal refactors. |
 | [Explain the number](explain-the-number.md) | Trusting or reporting a measured performance or evaluation result. | Establish what the measurement means and rule out misleading explanations. |
 
 ## Working process and learning

@@ -14,29 +14,33 @@ problem.
 
 1. Write the shared premise and the failure each attempt left behind.
 2. Before the next fix, choose and take an observation that could falsify the
-   premise. Compare competing explanations against the evidence.
-3. For skew across workers, queues, or resources, write a rerunnable census that
-   counts the imbalance per actor. Identify which actors hold it, rather than
-   reporting only the total. Do not start another fix before the census exists.
+   premise. Make the check rerunnable and compare competing explanations against
+   the evidence.
+3. Look at how failures are distributed, not only how large they are. For skew
+   across workers, queues, or resources, a per-actor census is the usual check
+   when it distinguishes the explanations. Identify which actors hold the
+   imbalance across runs. Choose another discriminating observation when a
+   census cannot test the premise.
 4. If the same actors hold most of the imbalance across runs, find what assigns
    their persistent role. Remove the asymmetry by rotating, randomizing, or
    moving the role when the evidence supports it. A return path, shared pool,
    batched hand-off, or periodic rebalance can add recurring work while leaving
    the causal assignment intact.
-5. If the census is even, investigate other explanations for the skew and keep
-   the census as evidence. Change the premise or design when observations
-   support it.
+5. If evidence contradicts the premise, look for what the failures share that
+   the premise did not predict. If evidence supports it, ask the next why:
+   earlier fixes may have treated a consequence rather than the cause. Change
+   the premise or design when observations support it.
 
 ## Boundaries
 
 Repeated failure can also reflect a faulty check or multiple causes. An even
-distribution does not prove an assumption correct. Use a census for distribution
-problems; other problems need different discriminating observations.
+distribution does not by itself rule out a premise or prove it correct. Choose
+the observation for the premise; a census is one tool for distribution problems.
 
 ## Check
 
-What evidence supports or rejects the assumption? How does the next attempt
-differ from the failed ones?
+Was the premise written down and tested before the next fix? What evidence
+supports or rejects it? How does the next attempt differ from the failed ones?
 
 ## Related references
 
