@@ -1,6 +1,9 @@
 # Principles
 
-Read this index before design, implementation, debugging, or substantive review.
+The global instructions list each principle's "When to use" trigger, so agents
+need not read this index first. This table is the source of that list; run
+`npm run principles:sync` after changing a trigger or the inventory.
+
 Read the full document for each matching trigger before applying it. A user can
 steer a task by naming a principle, such as "subtract before you add".
 

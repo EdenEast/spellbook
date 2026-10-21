@@ -6,7 +6,7 @@ The repository uses these paths:
 | --- | --- |
 | `AGENTS.md` | Repository maintenance instructions. |
 | `docs/GLOSSARY.md` | Shared domain terminology, independent of implementation. |
-| `instructions/AGENTS.md` | Shared global agent instructions. |
+| `instructions/AGENTS.md` | Shared global agent instructions, including generated principle triggers. |
 | `skills/` | Active skills with adapt/adopt provenance and optional supporting files. |
 | `docs/README.md` | Documentation index for both audiences. |
 | `docs/user/` | User-facing setup, usage, and contributor guides. |

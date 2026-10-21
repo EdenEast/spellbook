@@ -23,12 +23,40 @@
 
 ## Principles
 
-- Before design, implementation, debugging, or substantive review, read
-  `~/.agents/references/spellbook/principles/README.md` once per session. Read the full documents whose triggers match
-  the current task, including a principle the user names. Apply their boundaries within the authorized task scope.
-- When a principle materially changes a decision, explain the choice it changed.  Only attribute a decision to a
+- Principle documents live at `~/.agents/references/spellbook/principles/<name>.md`. Before design, implementation,
+  debugging, or substantive review, read the full document for each trigger below that matches the current task, and
+  for any principle the user names. Apply their boundaries within the authorized task scope.
+- When a principle materially changes a decision, explain the choice it changed. Only attribute a decision to a
   principle you read this session.
-- If the installed index is missing, continue with available instructions and mention the missing library when relevant.
+- If the installed documents are missing, continue with available instructions and mention the missing library when
+  relevant.
+
+<!-- principles:begin -->
+- `laziness-protocol`: Refactoring, evaluating diff size, or adding abstractions or signal threading.
+- `foundational-thinking`: Before writing logic, planning dependent phases, or deciding what actors share.
+- `redesign-from-first-principles`: Integrating a requirement into an existing design.
+- `attack-the-premise`: Repeated fixes assume the same untested premise.
+- `subtract-before-you-add`: Sequencing an addition, refactor, or rewrite.
+- `minimize-reader-load`: Behavior requires tracing layers or holding hidden state.
+- `outcome-oriented-execution`: A planned migration has explicit target and phase boundaries.
+- `experience-first`: Product scope or implementation convenience competes with usability.
+- `exhaust-the-design-space`: A novel interaction, architecture, or product experience has competing shapes.
+- `build-the-lever`: Nontrivial edits, migrations, analyses, or checks, including one-off work.
+- `model-the-domain`: State combinations, repeated rules, or branching obscure the domain.
+- `boundary-discipline`: Designing validation, error handling, or adapters.
+- `type-system-discipline`: Designing types, signatures, or variant handling.
+- `make-operations-idempotent`: Commands or lifecycle steps face retries, crashes, or restarts.
+- `migrate-callers-then-delete-legacy-apis`: Replacing an API whose callers can move together.
+- `separate-before-serializing-shared-state`: Concurrent actors may write one mutable target.
+- `prove-it-works`: Before claiming a task or change succeeded.
+- `fix-root-causes`: Debugging a failure or repeated symptom.
+- `sequence-verifiable-units`: Planning dependent stages, sweeps, or delivery.
+- `test-behavior-not-implementation`: Writing, changing, or reviewing tests.
+- `explain-the-number`: Trusting or reporting a measured performance or evaluation result.
+- `guard-the-context-window`: Large artifacts or long tasks bury relevant evidence.
+- `never-block-on-the-human`: Considering a pause for a routine authorized step.
+- `encode-lessons-in-structure`: The same correction or instruction keeps recurring.
+<!-- principles:end -->
 
 ## Questions are read-only
 

@@ -4,9 +4,9 @@ References provide reading material for agent tasks without registering another
 skill. Browse the [reference catalog](../../references/README.md) to find a
 collection and its loading guidance.
 
-The global instructions direct agents to read the
-[principles index](../../references/principles/README.md) before design,
-implementation, debugging, or substantive review. Agents then read the full
+The global instructions list each principle's trigger, generated from the
+[principles index](../../references/principles/README.md). Before design,
+implementation, debugging, or substantive review, agents read the full
 documents whose triggers match the task. You can name a principle, such as
 "prove it works" or "subtract before you add", to apply it to a task.
 
