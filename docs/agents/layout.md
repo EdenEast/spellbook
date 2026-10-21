@@ -21,3 +21,4 @@ The repository uses these paths:
 | `nix/` | Home Manager integration. |
 | `package.json` | Pi skill and extension package declaration and Node tooling. |
 | `flake.nix` | Development environment, checks, and module exports. |
+| `.github/workflows/` | CI that runs `npm run check` and `npm test`. |

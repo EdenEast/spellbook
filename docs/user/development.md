@@ -21,6 +21,11 @@ npm test
 `scripts/tests/`.
 Node executes the TypeScript scripts directly; no build step is required.
 
+`npm test` also checks the repository content, such as skill frontmatter,
+`SOURCE.toml` records, license files, and relative links. Run `npm run lint` to see
+only those problems. CI runs `npm run check` and `npm test` on every push and pull
+request.
+
 After changing TypeScript tooling, run both `npm run check` and `npm test`.
 Installer tests must use temporary homes. Do not test installation against your
 active agent configuration.
