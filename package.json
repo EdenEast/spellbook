@@ -10,6 +10,7 @@
   "scripts": {
     "check": "tsc --noEmit",
     "test": "node --test scripts/tests/*.test.ts",
+    "principles:sync": "node scripts/principles.ts",
     "status": "node scripts/install.ts status",
     "resources:install": "node scripts/install.ts install",
     "resources:uninstall": "node scripts/install.ts uninstall"

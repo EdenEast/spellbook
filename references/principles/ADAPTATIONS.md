@@ -37,7 +37,11 @@ Spellbook keeps these deliberate adaptations:
   their log format and review workflow.
 
 Principles guide decisions; they do not grant permission, mandate model choices,
-or import pstack's mode and shipping workflows. Related references distinguish
+or import pstack's mode and shipping workflows. Like pstack's `poteto-mode`
+index, the global instructions list every trigger inline. Spellbook generates
+that list from the index table and keeps the documents as references rather
+than skills, because pstack's principle skills disable model invocation and
+rely on that inline index. Related references distinguish
 scope minimization from reader effort, domain modeling from type enforcement,
 and proof of a result from sequencing work or interpreting a measurement.
 

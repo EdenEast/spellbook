@@ -11,8 +11,10 @@ implementation decisions in `docs/agents/`.
 Use the [agent documentation index](docs/agents/README.md) to find maintenance
 procedures. Keep user-facing setup and usage guides in `docs/user/`.
 
-For principles in this checkout, use `references/principles/README.md` and read
-the documents whose triggers match the task.
+For principles in this checkout, read the documents in `references/principles/`
+whose triggers match the task. The trigger list in `instructions/AGENTS.md` is
+generated from `references/principles/README.md`; run `npm run principles:sync`
+after changing a trigger or the inventory.
 
 ## Shared references
 
