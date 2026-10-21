@@ -52,6 +52,11 @@
 
 - Before changing Tailscale Serve, inspect `tailscale serve status` and preserve existing service mappings.
 
+## Nix project environments
+
+- With an `.envrc`, run commands through `direnv exec . <cmd>`, not `nix develop --command` or `nix-shell --run`.
+- Ask before running `direnv allow` on a blocked `.envrc`.
+
 ## Autonomy
 
 - No is an acceptable answer. Asked whether to do something, reply with your real judgment. Recommendation is a
