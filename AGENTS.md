@@ -36,5 +36,6 @@ extension requires them. Pi host packages belong in peer dependencies.
 ## Validation
 
 Run `npm run check` and `npm test` after changing the TypeScript tooling.
+Run `npm test` after changing skills, references, or licenses; it checks content rules.
 Installer tests must use temporary homes; do not modify the user's harness
 configuration to test installation.

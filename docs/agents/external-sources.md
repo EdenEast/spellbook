@@ -5,6 +5,10 @@ source's license once in `licenses/`. Skills live in `skills/`; shared reading l
 `references/`. Use [Maintain skills](skills.md) for adapt/adopt decisions and
 [Maintain shared references](maintenance.md) for reference inventory and triggers.
 
+`npm run lint` checks the mechanical rules on this page: record shape, full
+commit SHAs, license locations and index rows, file mappings, and relative
+links. `npm test` runs the same checks.
+
 ## Source records
 
 Use `SOURCE.toml` for provenance. Skill records use `schema_version = 1` and
@@ -97,7 +101,8 @@ identify the source and last accounted-for upstream revision; `[files]` maps
 local documents to upstream paths. There is no need to register these as skills
 or rewrite their metadata to use the skill schema.
 
-Before an update, inspect Git status and preserve existing work. Reconstruct
+Before an update, inspect Git status and preserve existing work. Run
+`npm run upstream -- <collection-directory>` to list changed upstream files. Reconstruct
 mapped files at the recorded revision and requested target outside the checkout.
 Include frontmatter, supporting dependencies, and the upstream license. Compare old
 to new upstream content and old upstream to local adaptations. Account for

@@ -224,9 +224,9 @@ export async function cli(args = process.argv.slice(2)): Promise<void> {
   try {
     const [action, ...flags] = args;
     if (action === "--help" || action === "-h" || flags.includes("--help") || flags.includes("-h")) {
-      console.log("Usage: spellbook install|uninstall|status [--target codex|claude|pi]... [--dry-run]");
+      console.log("Usage: spellbook install|uninstall|status [--target codex|claude|pi]... [--dry-run]\n       spellbook lint\n       spellbook upstream [record-directory]... [--to <revision>] [--offline]");
     } else {
-      if (action !== "install" && action !== "uninstall" && action !== "status") throw new Error("Expected install, uninstall, or status. Use --help for usage.");
+      if (action !== "install" && action !== "uninstall" && action !== "status") throw new Error("Expected install, uninstall, status, lint, or upstream. Use --help for usage.");
       const targets: Target[] = [];
       let dryRun = false;
       for (let index = 0; index < flags.length; index++) {

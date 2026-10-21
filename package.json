@@ -11,6 +11,8 @@
     "check": "tsc --noEmit",
     "test": "node --test scripts/tests/*.test.ts",
     "principles:sync": "node scripts/principles.ts",
+    "lint": "node scripts/spellbook.ts lint",
+    "upstream": "node scripts/spellbook.ts upstream",
     "status": "node scripts/install.ts status",
     "resources:install": "node scripts/install.ts install",
     "resources:uninstall": "node scripts/install.ts uninstall"

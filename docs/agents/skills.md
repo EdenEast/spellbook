@@ -55,6 +55,11 @@ unfinished work. Do not merge source text mechanically into an adapted skill.
 4. Exercise the workflow in each supported environment. Document any remaining
    dependency or environment requirement instead of claiming untested support.
 
+To find what changed, run `npm run upstream -- skills/<name>`. It lists
+upstream files changed since the baseline, marks files with local edits, and
+reports license changes. It keeps one cached clone per repository, so read
+upstream files from that clone rather than cloning again.
+
 To update, reconstruct the old upstream tree (**base**) and requested upstream
 version (**target**) outside the checkout. Compare base to the local tree for
 local changes, and base to target for upstream changes. Reconcile all three,
@@ -83,7 +88,7 @@ the old baseline and document outstanding work.
 
 `spellbook install --dry-run` previews links; `spellbook install` installs all
 active skills for selected targets. `spellbook status` reports link state, not
-whether upstream versions are current. Content updates are agent-assisted
+whether upstream versions are current; `spellbook upstream` reports that. Content updates are agent-assisted
 repository work; installation never fetches or merges upstream material.
 
 See [installation paths](../user/installation-reference.md) for targets, T3 Code,
