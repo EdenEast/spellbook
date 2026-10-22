@@ -18,9 +18,12 @@ upstream's `arena runners` and `arena cross-judge pool` lines and default slugs.
 A calling skill can name its own runner roles, which is how architect keeps its
 separate runner choice.
 
-Runners spawn in the background where the harness supports it, and use the
-harness's worktree isolation when its agent tool offers it. The judge is
-read-only, using a read-only agent type or an instruction not to write.
+Runners spawn in the background where supported. Isolation must reproduce one
+input snapshot, including relevant uncommitted and untracked source without
+creating an unsolicited commit. Candidates verify that starting state and own
+separate source/output paths. The judge remains read-only. The coordinator
+applies synthesis at the caller's final destination and removes only owned,
+fully preserved temporary resources after verification.
 
 Principle references link to the shared [principles](../../references/principles/README.md)
 instead of naming pstack principle skills.

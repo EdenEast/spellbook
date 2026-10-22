@@ -1,6 +1,6 @@
 ---
 name: html-communication
-description: Create and publish readable HTML plans, specifications, reports, comparisons, or UI mock variants through Postplan. Use for communication documents, not product HTML.
+description: Create readable HTML plans, specifications, reports, comparisons, or UI mock variants, and publish through Postplan when authorized. Use for communication documents, not product HTML.
 ---
 
 # HTML Communication
@@ -60,7 +60,13 @@ When user asks for variants:
 
 ## Publish
 
-Upload is required. Postplan is either installed using `npx postplan` or globally via the `postplan` command.
+Upload when the user requests publication or existing instructions authorize
+Postplan delivery. A request to format material as HTML is not, by itself,
+permission to upload it. Without publication authorization, write the local HTML
+file, report its path, and stop before upload. Confidential content must stay
+local unless its external publication is authorized.
+
+For authorized uploads, use the installed `postplan` command or `npx postplan`.
 
 1. Write the HTML file locally.
 2. Run `postplan upload <file_path>`, or `npx postplan upload <file_path>` if the CLI is not installed globally.

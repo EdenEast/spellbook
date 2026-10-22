@@ -22,6 +22,11 @@ a fallback is visible.
 The rubric names generic file reading and search tools instead of Cursor's Read,
 Grep, and Glob.
 
+Review scope includes relevant staged, unstaged, and untracked source unless the
+user limits it to a commit or diff. The intent records the base, commit, and
+exclusions. Reviewers receive the same source snapshot; isolation does not
+silently substitute committed files for current working-tree contents.
+
 Preserved scope and intent steps, the shared reviewer template, rubric,
 code-quality lens, synthesis, lead-judgment buckets, output format, and the rule
 not to apply changes.

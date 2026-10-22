@@ -13,14 +13,15 @@ Spawn one reviewer per configured model to adversarially review code changes. Th
 Identify what to review from context:
 
 - If the user points at specific files or a diff, use that.
-- If on a feature branch, run `git diff main...HEAD` (or the appropriate base branch) for the full changeset.
-- If the user's message references recent work, gather the relevant files.
+- If on a feature branch, determine the appropriate base and inspect `git diff <base>...HEAD` for committed changes.
+- Unless the user limits the review to a commit or diff, also inspect `git diff HEAD --` for staged and unstaged changes. Inventory untracked files with `git ls-files --others --exclude-standard` and read those relevant to the task. Do not package secrets, unrelated private files, or generated bulk.
+- If the user's message references recent work, gather the relevant files, including current working-tree contents.
 
-Package the diff or file contents with any surrounding context files the reviewers need to understand the code.
+Package the diff or file contents with any surrounding context files the reviewers need to understand the code. Make the current state clear when committed and uncommitted edits touch the same file. Give every reviewer the same source snapshot; worktree isolation alone does not transfer uncommitted files.
 
 ## Step 2, Intent
 
-Before spawning reviewers, state the intent in one clear paragraph from the user's message, commit messages, the PR description if one exists, and the code. If you're unsure about the intent, ask the user before proceeding.
+Before spawning reviewers, state the intent in one clear paragraph from the user's message, commit messages, the PR description if one exists, and the code. State the base and reviewed commit, whether staged, unstaged, and relevant untracked work is included, and any exclusions. If you're unsure about the intent, ask the user before proceeding.
 
 ## Step 3, Spawn Reviewers
 
