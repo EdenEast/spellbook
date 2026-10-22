@@ -25,6 +25,7 @@ async function exists(path: string): Promise<boolean> {
 
 async function lintSkills(root: string): Promise<string[]> {
   const problems: string[] = [];
+  const catalog = await readFile(join(root, "skills/README.md"), "utf8").catch(() => "");
   for (const entry of await readdir(join(root, "skills"), { withFileTypes: true })) {
     if (!entry.isDirectory() || entry.name.startsWith(".")) continue;
     const where = `skills/${entry.name}`;
@@ -36,6 +37,7 @@ async function lintSkills(root: string): Promise<string[]> {
       problems.push(`${where}: missing SKILL.md`);
       continue;
     }
+    if (!catalog.includes(`](${entry.name}/SKILL.md)`)) problems.push(`skills/README.md: catalog does not link ${entry.name}/SKILL.md`);
     const frontmatter = /^---\n([\s\S]*?)\n---\n/.exec(text)?.[1];
     if (frontmatter === undefined) {
       problems.push(`${where}/SKILL.md: missing frontmatter`);

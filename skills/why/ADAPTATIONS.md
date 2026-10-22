@@ -9,8 +9,16 @@ Preserved upstream's `disable-model-invocation: true` for explicit invocation.
 
 ## Local adjustments
 
-Restored upstream's parallel investigators, one per available evidence category,
-and the separate synthesizer. Spawns use the harness's agent tool, keep MCP
+Retained parallel investigators and the separate synthesizer. Investigators own
+individual relevant connectors rather than one connector per category, with git
+and authenticated `gh` forming the source-control investigation. Coverage names
+each source within its category. One bounded follow-up pass routes cross-source
+leads, and synthesis reports leads still unsearched.
+
+Warehouse schemas and columns are examples requiring discovery, not assumed
+company conventions. Incident signals stay within each investigator's source.
+
+Spawns use the harness's agent tool, keep MCP
 access, and write nothing. Their model and effort come from the
 `why investigators` and `why synthesizer` roles in the shared
 [model roles](../../references/models/README.md), which replaces upstream's

@@ -16,6 +16,7 @@ async function write(root: string, files: Record<string, string>) {
 
 // A checkout with one adopted skill, one reference collection, and their license.
 const valid: Record<string, string> = {
+  "skills/README.md": "# Skills\n\n| Skill | Use when |\n| --- | --- |\n| [example](example/SKILL.md) | Reviewing examples. |\n",
   "skills/example/SKILL.md": "---\nname: example\ndescription: Use for examples.\n---\n\nSee [the helper](scripts/check.sh) and [docs](https://example.org).\n",
   "skills/example/scripts/check.sh": "#!/bin/sh\n",
   "skills/example/SOURCE.toml": [
@@ -66,6 +67,7 @@ test("each broken rule is reported with its location", async (t) => {
   // Report order is not part of the contract.
   assert.deepEqual((await lint(root)).sort(), [
     "skills/other/SOURCE.toml: line 3: unsupported value: [1]",
+    "skills/README.md: catalog does not link other/SKILL.md",
     'skills/example/SKILL.md: frontmatter name must be "example", found "sample"',
     "skills/example/SKILL.md: frontmatter needs a non-empty description",
     "references/notes/SOURCE.toml: second.md is not mapped in [files]",
@@ -76,6 +78,13 @@ test("each broken rule is reported with its location", async (t) => {
     "skills/example/LICENSE: keep licenses in licenses/, not beside resources",
     "skills/example/SKILL.md: broken link scripts/missing.sh",
   ].sort());
+});
+
+test("the active-skill catalog must include every discovered skill", async (t) => {
+  const root = await checkout(t, { ...valid, "skills/README.md": "# Skills\n" });
+  assert.deepEqual(await lint(root), ["skills/README.md: catalog does not link example/SKILL.md"]);
+  await write(root, { "skills/README.md": valid["skills/README.md"] });
+  assert.deepEqual(await lint(root), []);
 });
 
 test("a license outside licenses/ is reported once the record parses", async (t) => {
