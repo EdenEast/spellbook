@@ -1,0 +1,50 @@
+schema_version = 1
+mode = "adapt"
+
+[[sources]]
+id = "superpowers-brainstorming"
+url = "https://github.com/obra/superpowers"
+path = "skills/brainstorming"
+reviewed_revision = "b739a8af570e10a95898f2bdf6cec97467fa6c12"
+incorporated = "Primary basis: opening, conversation, playback, sizing, builder check, and approval gate; see ADAPTATIONS.md."
+license = "../../licenses/obra-superpowers.txt"
+
+[[sources]]
+id = "interview-me"
+url = "https://github.com/addyosmani/agent-skills"
+path = "skills/interview-me"
+reviewed_revision = "aeac41d4d005999432bb7312f7ff06383a91d59d"
+incorporated = "Guessed hypothesis with confidence, guess per question, should-want probe, and stop test; see ADAPTATIONS.md."
+license = "../../licenses/addyosmani-agent-skills.txt"
+
+[[sources]]
+id = "idea-refine"
+url = "https://github.com/addyosmani/agent-skills"
+path = "skills/idea-refine"
+reviewed_revision = "aeac41d4d005999432bb7312f7ff06383a91d59d"
+incorporated = "Divergent lenses, stress tests, assumption sorting, and the not-doing list; see ADAPTATIONS.md."
+license = "../../licenses/addyosmani-agent-skills.txt"
+
+[[sources]]
+id = "grilling"
+url = "https://github.com/mattpocock/skills"
+path = "skills/productivity/grilling"
+reviewed_revision = "5beb35b040e3de97e54fa9e386d7e42d15c295c2"
+incorporated = "Decision tree, frontier rounds with recommended answers, and facts as the agent's job; see ADAPTATIONS.md."
+license = "../../licenses/mattpocock-skills.txt"
+
+[[sources]]
+id = "to-spec"
+url = "https://github.com/mattpocock/skills"
+path = "skills/engineering/to-spec"
+reviewed_revision = "5beb35b040e3de97e54fa9e386d7e42d15c295c2"
+incorporated = "Brief sections for decisions and out of scope, and the prototype-snippet exception; see ADAPTATIONS.md."
+license = "../../licenses/mattpocock-skills.txt"
+
+[[sources]]
+id = "in-your-own-words"
+url = "https://github.com/cursor/plugins"
+path = "pstack/skills/in-your-own-words"
+reviewed_revision = "1541ad72393f5a771eb45d99e1b6276e3636c3ea"
+incorporated = "The closing restatement of the user's goals and problem; see ADAPTATIONS.md."
+license = "../../licenses/pstack.txt"

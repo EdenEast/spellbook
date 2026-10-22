@@ -5,12 +5,12 @@ adapted from a source points here from its `SOURCE.toml` `license` field.
 
 | License | Upstream file | Checked at | Used by |
 | --- | --- | --- | --- |
-| [pstack.txt](pstack.txt) | [cursor/plugins](https://github.com/cursor/plugins) `pstack/LICENSE` | `ad267954814a2d6ba4e6784de4bb21dad0c98712` | `references/models`, `references/principles`, `skills/arena`, `skills/architect`, `skills/automate-me`, `skills/create-verification-skill`, `skills/how`, `skills/interrogate`, `skills/maintain-verification-skill`, `skills/teach`, `skills/technical-writing`, `skills/unslop`, `skills/why` |
-| [mattpocock-skills.txt](mattpocock-skills.txt) | [mattpocock/skills](https://github.com/mattpocock/skills) `LICENSE` | `49dd158d1076134a641b33efb035946536778336` | `skills/retro`, `skills/writing-for-agents` |
+| [pstack.txt](pstack.txt) | [cursor/plugins](https://github.com/cursor/plugins) `pstack/LICENSE` | `ad267954814a2d6ba4e6784de4bb21dad0c98712` | `references/models`, `references/principles`, `skills/arena`, `skills/architect`, `skills/automate-me`, `skills/brainstorm`, `skills/create-verification-skill`, `skills/how`, `skills/interrogate`, `skills/maintain-verification-skill`, `skills/teach`, `skills/technical-writing`, `skills/unslop`, `skills/why` |
+| [mattpocock-skills.txt](mattpocock-skills.txt) | [mattpocock/skills](https://github.com/mattpocock/skills) `LICENSE` | `49dd158d1076134a641b33efb035946536778336` | `skills/brainstorm`, `skills/retro`, `skills/writing-for-agents` |
 | [blader-humanizer.txt](blader-humanizer.txt) | [blader/humanizer](https://github.com/blader/humanizer) `LICENSE` | `225a6f39ac85f76ee48dbad772ea4abe4ed6c9d8` | `skills/unslop` |
 | [hardikpandya-stop-slop.txt](hardikpandya-stop-slop.txt) | [hardikpandya/stop-slop](https://github.com/hardikpandya/stop-slop) `LICENSE` | `8da1f030185bdfe8471220585162991eaeb970e9` | `skills/unslop` |
-| [obra-superpowers.txt](obra-superpowers.txt) | [obra/superpowers](https://github.com/obra/superpowers) `LICENSE` | `bb92a77741419a4ab5f06e711a283343f1ada0c3` | `skills/writing-for-agents` |
-| [addyosmani-agent-skills.txt](addyosmani-agent-skills.txt) | [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) `LICENSE` | `aeac41d4d005999432bb7312f7ff06383a91d59d` | `skills/writing-for-agents` |
+| [obra-superpowers.txt](obra-superpowers.txt) | [obra/superpowers](https://github.com/obra/superpowers) `LICENSE` | `bb92a77741419a4ab5f06e711a283343f1ada0c3` | `skills/brainstorm`, `skills/writing-for-agents` |
+| [addyosmani-agent-skills.txt](addyosmani-agent-skills.txt) | [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) `LICENSE` | `aeac41d4d005999432bb7312f7ff06383a91d59d` | `skills/brainstorm`, `skills/writing-for-agents` |
 
 When a source update changes its license, update the file here and record the
 change in each affected `ADAPTATIONS.md`. Add a file for a new source; keep one

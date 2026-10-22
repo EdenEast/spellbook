@@ -2,8 +2,8 @@
 
 Active skills live in this directory. The installer discovers each `SKILL.md`
 and makes the skill and its supporting files available together. These skills
-allow model invocation by default; arena, architect, automate-me, how, why,
-create-verification-skill, in-your-own-words, interrogate,
+allow model invocation by default; arena, architect, automate-me, brainstorm, how,
+why, create-verification-skill, in-your-own-words, interrogate,
 maintain-verification-skill, retro, teach, technical-writing, and wait-what require
 explicit invocation. Their task instructions still determine when an action is authorized.
 
@@ -13,6 +13,7 @@ explicit invocation. Their task instructions still determine when an action is a
 | [architect](architect/SKILL.md) | Sketching types, signatures, and module structure through an arena of design candidates before implementing against the chosen sketch. |
 | [automate-me](automate-me/SKILL.md) | Turning the user's working style into a personal `-mode` skill from mined transcripts and a few structured questions, or updating it. |
 | [babysit-pr](babysit-pr/SKILL.md) | Monitoring a requested PR through review and CI using T3 Code or the bundled GitHub watcher. Script usage is in a separate reference; merging requires an explicit request. |
+| [brainstorm](brainstorm/SKILL.md) | Turning a vague idea into a confirmed brief an agent can build from: intent interview, explored directions, decision rounds, a closing restatement in its own words, and a cold builder check. Nothing is built before approval. |
 | [commit](commit/SKILL.md) | Creating a requested Git or Jujutsu commit, or drafting a commit message. |
 | [create-verification-skill](create-verification-skill/SKILL.md) | Generating and proving a project-local app verification skill with a maintained feature map. |
 | [file-pr](file-pr/SKILL.md) | Filing a requested PR with a concise title and description. |
