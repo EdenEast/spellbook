@@ -14,6 +14,8 @@ role per reviewer, so each reviewer keeps the usual fallback order. The
 the `arena cross-judge` role; arena picks its first entry from another vendor.
 Automate-me's miners, which upstream sizes through poteto-mode, take the
 `automate-me miners` role.
+The local `brainstorm` skill's cold reader takes the `brainstorm builder` role;
+it has no upstream counterpart.
 
 Local decisions:
 

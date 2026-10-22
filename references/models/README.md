@@ -18,6 +18,7 @@ arena cross-judge: anthropic/claude-opus-5-5 high, openai/gpt-6.1-sol high
 architect runner A: anthropic/claude-opus-5-5 medium, openai/gpt-6.1-sol medium
 architect runner B: openai/gpt-6.1-sol medium, anthropic/claude-opus-5-5 medium
 automate-me miners: openai/gpt-6-luna low, anthropic/claude-haiku-5-5 low
+brainstorm builder: openai/gpt-6.1-sol medium, anthropic/claude-opus-5-5 medium
 ```
 
 Each entry is `<vendor>/<model> <effort>`. Effort is one of `low`, `medium`,
@@ -34,6 +35,8 @@ review's signal. Add an `interrogate reviewer C` line to add a reviewer.
 Arena and architect runners follow the same pattern for candidates. The arena
 cross-judge takes the first entry whose vendor differs from the session model's.
 Automate-me miners read transcripts, so they run like the other file-reading workers.
+The brainstorm builder reads a brief cold, so it prefers a different vendor
+from the default session for a fresh perspective.
 
 ## Choose a model for a role
 
