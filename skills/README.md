@@ -2,8 +2,8 @@
 
 Active skills live in this directory. The installer discovers each `SKILL.md`
 and makes the skill and its supporting files available together. These skills
-allow model invocation by default; arena, architect, automate-me, how, why,
-create-verification-skill, in-your-own-words, interrogate,
+allow model invocation by default; arena, architect, automate-me, brainstorm, how,
+why, create-verification-skill, in-your-own-words, interrogate,
 maintain-verification-skill, retro, teach, technical-writing, and wait-what require
 explicit invocation. Their task instructions still determine when an action is authorized.
 

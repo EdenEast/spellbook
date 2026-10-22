@@ -24,8 +24,8 @@ check prompt is reworded in `references/builder-check.md`.
 
 **Declined**
 
-- Triggering before all creative work: the description is narrowed to
-  brainstorming and vague ideas, so ordinary tasks are not interrupted.
+- Triggering before all creative work: the skill runs only on explicit
+  invocation, so ordinary tasks are not interrupted.
 - The browser visual companion and its server: use **html-communication** or
   the harness's preview tools, which Spellbook already maintains.
 - Asking permission before recon: read-only lookups are the agent's job, per
@@ -117,8 +117,9 @@ target established projects.
 
 - Name `brainstorm` avoids a collision with Superpowers' `brainstorming` when
   both are installed.
-- Automatic discovery is kept, with a narrow description, so a user saying
-  "help me brainstorm" reaches the skill without a command.
+- Explicit invocation only, at the user's request: the user decides when an
+  idea needs a brainstorm, and requests like "brainstorm ten names" are not
+  routed into a long interview.
 - The builder check uses a `brainstorm builder` model role that, like the
   arena cross-judge, takes the first entry from a vendor other than the
   session's, so the cold reader brings a different perspective.

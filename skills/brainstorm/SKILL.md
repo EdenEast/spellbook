@@ -1,6 +1,7 @@
 ---
 name: brainstorm
-description: Turn a vague idea into a brief an agent can build from, through a guided conversation that finds the intent, explores directions, and settles decisions. Use when the user wants to brainstorm, refine an idea, or work out what to build before a plan or code exists. Not for clear tasks or changes whose design is already settled.
+description: Use when the user has a vague idea and wants to work out what to build before any plan or code exists.
+disable-model-invocation: true
 ---
 
 # Brainstorm
