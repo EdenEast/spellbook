@@ -28,6 +28,11 @@ options as the fallback.
 Mode skills are placed in the user's skill source repository, such as
 Spellbook's `skills/`, and follow its maintenance rules. The harness's personal
 skill directory is the fallback. This replaces `.cursor/skills/` paths.
+Destination and delivery are selected before drafting. Repository edits use a
+prepared worktree from the intended base, carrying relevant existing edits;
+commits and PRs require authorization. Personal-directory delivery does not
+require Git infrastructure. Untracked skills without history use a known date
+or a user-selected mining window rather than a fabricated last-edit date.
 
 Mining reads the user's always-loaded instructions, and clustering sends
 every-turn rules there. A mode skill is invoked explicitly, so it should add to

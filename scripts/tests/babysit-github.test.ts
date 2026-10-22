@@ -2,13 +2,14 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { parseSnapshot, readSnapshot } from "../../skills/babysit-pr/scripts/github.ts";
 import type { Command } from "../../skills/babysit-pr/scripts/github.ts";
+import { assess } from "../../skills/babysit-pr/scripts/policy.ts";
 
-const facts = { url: "https://github.com/o/r/pull/42", headRefOid: "head", baseRefOid: "base", state: "OPEN", isDraft: false, mergeable: "MERGEABLE", mergeStateStatus: "BLOCKED", reviewDecision: "REVIEW_REQUIRED" };
+const facts = { url: "https://github.com/o/r/pull/42", headRefOid: "head", baseRefOid: "base", baseRefName: "feature/base", state: "OPEN", isDraft: false, mergeable: "MERGEABLE", mergeStateStatus: "BLOCKED", reviewDecision: "REVIEW_REQUIRED" };
 const build = { name: "build", workflow: "CI", link: "https://github.com/o/r/actions/runs/1", bucket: "pass", state: "SUCCESS" };
 const optional = { ...build, name: "optional", bucket: "pending", state: "IN_PROGRESS" };
 const rawComment = { id: 100, updated_at: "now", body: "Fix this", html_url: "https://github.com/o/r/pull/42#discussion_r100", user: { login: "bot" }, commit_id: "head", path: "src/a.ts", line: 12, start_line: 10, side: "RIGHT" };
 const thread = (id: string, root: number) => ({ id, isResolved: false, comments: { nodes: [{ databaseId: root, url: `https://github.com/o/r/pull/42#discussion_r${root}` }] } });
-const graph = (nodes: unknown[]) => ({ data: { repository: { pullRequest: { reviewThreads: { nodes } } } } });
+const graph = (nodes: unknown[]) => ({ data: { repository: { pullRequest: { baseRef: { branchProtectionRule: null }, reviewThreads: { nodes } } } } });
 function fixture(overrides: { noRequired?: boolean; noAll?: boolean; moving?: "head" | "base"; badThread?: boolean } = {}): Command {
   let views = 0;
   return async (args) => {
@@ -21,6 +22,7 @@ function fixture(overrides: { noRequired?: boolean; noAll?: boolean; moving?: "h
     } else if (args[1] === "graphql") value = [graph([overrides.badThread ? { ...thread("T1", 100), isResolved: "false" } : thread("T1", 100)]), graph([thread("T2", 300)])];
     else if (args[1]?.includes("/pulls/42/comments")) value = [[rawComment], [{ ...rawComment, id: 101, body: "Reply", in_reply_to_id: 100 }, { ...rawComment, id: 300, body: "Other thread" }]];
     else if (args[1]?.includes("/issues/")) value = [[{ id: 77, updated_at: "now", body: "Summary", html_url: "issue-url", user: null }]];
+    else if (args[1]?.includes("/rules/branches/")) value = [[]];
     else value = [[]];
     return { code: 0, stdout: JSON.stringify(value), stderr: "" };
   };
@@ -47,6 +49,33 @@ test("legacy saved snapshots retain unknown required status and tolerate missing
 test("moving head/base and malformed thread booleans are rejected at the boundary", async () => {
   for (const moving of ["head", "base"] as const) await assert.rejects(readSnapshot("o/r", 42, fixture({ moving })), /PR changed while reading/);
   await assert.rejects(readSnapshot("o/r", 42, fixture({ badThread: true })), /Expected a boolean/);
+});
+test("requirements include unreported classic and ruleset checks on the actual base branch", async () => {
+  const run = fixture({ noRequired: true });
+  const snapshot = await readSnapshot("o/r", 42, async (args) => {
+    if (args[1] === "graphql") return { code: 0, stderr: "", stdout: JSON.stringify([
+      { data: { repository: { pullRequest: { baseRef: { branchProtectionRule: { requiredStatusCheckContexts: ["classic-build"] } }, reviewThreads: { nodes: [] } } } } },
+    ]) };
+    if (args[1]?.includes("/rules/branches/")) {
+      assert.equal(args[1], "repos/o/r/rules/branches/feature%2Fbase?per_page=100");
+      assert.ok(args.includes("--paginate"));
+      return { code: 0, stderr: "", stdout: JSON.stringify([[{ type: "non_fast_forward" }], [{ type: "required_status_checks", parameters: { required_status_checks: [{ context: "ruleset-test" }] } }]]) };
+    }
+    return run(args);
+  });
+  assert.equal(snapshot.facts.baseName, "feature/base");
+  assert.deepEqual(snapshot.expectedRequiredChecks, ["classic-build", "ruleset-test"]);
+  assert.deepEqual(parseSnapshot(snapshot).expectedRequiredChecks, ["classic-build", "ruleset-test"]);
+  assert.deepEqual(assess(snapshot), {
+    status: "unknown", babysitComplete: false, mergeReady: false,
+    reasons: ["check-unreported:classic-build", "check-unreported:ruleset-test"],
+  });
+});
+test("a repository with no required contexts is distinct from an unreadable ruleset", async () => {
+  const run = fixture({ noRequired: true });
+  assert.deepEqual((await readSnapshot("o/r", 42, run)).expectedRequiredChecks, []);
+  await assert.rejects(readSnapshot("o/r", 42, async (args) => args[1]?.includes("/rules/branches/")
+    ? { code: 1, stdout: "", stderr: "rules unavailable" } : run(args)), /rules unavailable/);
 });
 test("required-only newer run is retained instead of dropping a required gate", async () => {
   const run = fixture();

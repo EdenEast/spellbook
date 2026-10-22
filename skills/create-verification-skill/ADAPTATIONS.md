@@ -26,13 +26,15 @@ handoff. Retained upstream's explicit invocation setting.
 - Link to the sibling maintenance skill and use the active harness's invocation
   syntax instead of assuming Cursor slash commands.
 
-The feature-map example is unchanged. The shared [pstack license](../../licenses/pstack.txt) covers this skill. `SOURCE.toml` and this note
+The search example restores the populated browser result state after clearing
+it, before capturing proof artifacts. Other feature-map examples are unchanged.
+The shared [pstack license](../../licenses/pstack.txt) covers this skill. `SOURCE.toml` and this note
 are local maintenance files. No upstream guidance was declined or deferred.
 
 ## Validation
 
-Checked upstream inventory, source mappings, frontmatter, links, unchanged example
-files and license, and complete-tree installation for Codex, Claude Code, and Pi
+Checked upstream inventory, source mappings, frontmatter, links, example files
+and unchanged license, and complete-tree installation for Codex, Claude Code, and Pi
 in temporary homes. Manually walked the instructions for a web app with an
 existing browser harness, a short-lived CLI with an isolated session per drive,
 and a checkout that cannot start. The workflow requires real execution before

@@ -7,7 +7,8 @@ Keep active skills in `skills/<name>/`, with a `SKILL.md` entry point whose
 frontmatter contains `name` and `description`. Use lowercase letters, digits,
 and hyphens for directory names. Preserve an adopted skill's upstream name and
 identity. Installed directories retain the skill name and contents. Link ownership is
-identified by the source path rather than renaming the skill.
+identified by the source path rather than renaming the skill. Keep every active
+skill linked in `skills/README.md`; content lint checks catalog membership.
 
 Choose the relationship before bringing in external material:
 

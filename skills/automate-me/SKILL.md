@@ -19,8 +19,18 @@ Look recursively for `*-mode/SKILL.md` matching the user's handle in the user's 
 - Update the existing skill (default for repeat runs)
 - Start fresh (rare, ask why before doing it)
 
+Choose the destination and delivery route before drafting. Prefer the user's
+skill source repository. Before writing repository files in step 4, prepare a
+worktree from the intended base branch (the user's choice or repository default,
+not an assumed `main`) and preserve existing edits. For an update, carry the
+existing skill's relevant uncommitted contents into that worktree so the draft
+does not start from an older version. For a personal-directory destination with
+no repository, deliver the skill there only when writing to that harness path is
+within scope; otherwise keep a local draft for review. This route needs no Git
+branch, commit, or PR.
+
 Update mode changes the rest of the flow:
-- Step 1 mines only history since the skill was last edited (`git log -1 --format=%cI <path>`).
+- Step 1 mines only history since the skill was last edited (`git log -1 --format=%cI -- <path>` when tracked). Without repository history, use a known prior revision date or ask for a time window; do not invent one.
 - Step 2 asks what's changed or missing, not what to capture from zero.
 - Step 4 edits the existing file in place. Preserve sections the user hasn't contradicted. Revise ones with new evidence. Add new sections only for genuinely new rules.
 
@@ -74,7 +84,8 @@ A finding that should hold on every turn, not only when the mode is invoked, bel
 
 ### 4. Draft the skill
 
-Use the **writing-for-agents** skill to author the skill. Placement:
+Use the **writing-for-agents** skill to author the skill at the destination chosen
+in step 0. Repository edits stay in the prepared worktree. Placement:
 
 - Path: preserve an existing mode skill's category. For a new mode, use `skills/<handle>/<handle>-mode/SKILL.md` when the user's skill source repository has an established personal category for that handle. Otherwise default to `skills/<handle>-mode/SKILL.md` in that repository, following its skill maintenance rules. Without a skill source repository, use the harness's personal skill directory.
 - Handle: the user's first name or chosen identifier.
@@ -90,7 +101,12 @@ Show the draft to the user and take feedback. Expect multiple iterations. Cut ru
 
 ### 6. Land it
 
-Work in a worktree off main. Commit and open a PR. Don't push to main directly.
+Show the completed skill and its destination. For repository-backed delivery,
+commit and open a PR only when authorized; otherwise leave the worktree changes
+ready for review. Do not push directly to the base branch. For personal-directory
+delivery, report the written path and any discovery check performed; do not
+require or create Git infrastructure. A draft outside its final destination is
+not an installed skill.
 
 ## Guardrails
 

@@ -28,7 +28,7 @@ Before spawning investigators, build the seed context inline: file paths and lin
 
 ## Step 3. Spawn Parallel Investigators
 
-**Default to a parallel investigation.** Spawn an investigator for every available category that could bear on the question. Document the null, and record every skipped category with its reason.
+**Default to a parallel investigation.** Spawn an investigator for every available source that could bear on the question, grouping coverage by evidence category. Document empty results and record each skipped source with its reason.
 
 ### Discovery
 
@@ -46,18 +46,18 @@ Map each available MCP to one evidence category:
 
 Source control is available through git and, when authenticated, `gh`. For the other six, classify using the MCP name, server instructions, tool names, and resource descriptors. If an MCP could fit more than one category, choose the one matching its primary evidence. Record ambiguous cases in the coverage map.
 
-Spawn one investigator per category that has a matching MCP, all in a single message so they run concurrently, each owning exactly one tool or MCP. Don't ask one agent to cover multiple MCPs. Role: `why investigators`.
+Spawn one investigator per relevant connector, plus the source-control investigator using local git and authenticated `gh` where available. Each owns one source and its read tools. If a category has several relevant connectors, such as Notion and Google Drive, search both with separate investigators. Launch together within the harness's capacity and queue the rest; do not silently omit a connector. Role: `why investigators`.
 
 Each investigator's prompt is `references/investigator-prompt.md` filled in, plus:
 - the category playbook `references/sources/<source>.md` for the selected MCP, adapted from the examples in `references/source-playbook.md`
 - `references/sources/incident-postmortem.md` **if the target code looks defensive** (null checks, retry logic, timeout handling, rate limiting, feature flags, egress guards, OOM handlers)
 - the code anchor and the user's original question
 
-### Investigator roster, one per available evidence category
+### Evidence categories for the investigator roster
 
 Each category below is uniquely positioned to surface one shape of "why", shown after "Best at". Use it to know what to expect back, to name a gap when a category returns empty, and to decide whether a category could bear on the question.
 
-1. **Source control** (git history, `gh` for PRs, code comments, tests). Always spawn, the most reliable source. Best at *implementation-time rationale captured during review*.
+1. **Source control** (git history, `gh` for PRs, code comments, tests). Use available local and remote history; record unavailable access. Best at *implementation-time rationale captured during review*.
 2. **Issue / ticket tracker** (e.g. Linear, Jira, GitHub Issues, Plane, Shortcut MCP). Best at *the product or business forcing function*. Strongest when the why is external to engineering.
 3. **Long-form documents** (e.g. Notion, Confluence, Google Docs, Coda MCP). Best at *long-form design rationale*, written out before it becomes code.
 4. **Real-time team chat** (e.g. Slack, Discord, Microsoft Teams, Mattermost MCP). Best at *real-time deliberation that never reached a doc*. Especially important when the source control, ticket, and doc paper trail is thin.
@@ -67,29 +67,45 @@ Each category below is uniquely positioned to surface one shape of "why", shown 
 
 ### When to skip an investigator
 
-Only with an **explicit, written justification** that goes in the final Sources Consulted. Two valid reasons:
+Record an **explicit, written justification** in the final Sources Consulted for each skipped source, including individual connectors within a searched category. Valid reasons:
 
 - **No MCP is available for that category** in this environment. Flag it as a gap, not a choice: "Real-time team chat skipped. No matching MCP available, so the conversational record was not searchable."
-- **The category cannot plausibly bear on the question.** State the scope reason: "Error / exception tracking skipped. Target is a build-time script with no runtime code path." An unsearched source is not an empty search, so never report it as having no evidence.
+- **The source cannot plausibly bear on the question.** State the scope reason: "Error / exception tracking skipped. Target is a build-time script with no runtime code path."
+- **A source is unavailable or access is denied.** Name the connector and limitation even if another source in its category was searched.
+
+An unsearched source is not an empty search, so never report it as having no evidence.
 
 If the target is a single-commit change whose PR description already contains the complete answer, you may answer inline without investigators. Cite the PR and report the limited coverage explicitly.
 
-## Step 4. Synthesize
+## Step 4. Route Cross-Source Leads
+
+Collect `Additional Leads` after the initial investigators finish. Deduplicate
+links and identifiers, then route leads likely to answer the question to the
+investigator owning that source. Run at most one additional read-only pass per
+affected source, with the original question, code anchor, prior source findings,
+and routed leads. If the lead names an available source not yet assigned, assign
+it now when within scope. Do not recursively expand follow-up leads.
+
+Pass the follow-up results to synthesis. Explicitly list relevant leads left
+unsearched and why, including unavailable connectors and leads beyond this
+bounded pass. A deferred link is not a searched source.
+
+## Step 5. Synthesize
 
 Spawn one synthesizer. Role: `why synthesizer`. It gets:
-1. The investigator findings, including any null results and any categories skipped with justification
+1. The initial and follow-up investigator findings, including empty results, remaining leads, and each skipped source with justification
 2. The code anchor
 3. The user's original question
 4. The epistemics framework from `references/epistemics.md`
 5. The synthesizer prompt template from `references/synthesizer-prompt.md`
 
-## Step 5. Present
+## Step 6. Present
 
 Present the synthesizer's output to the user. You may lightly edit for clarity or add context from the conversation, but **do not rewrite the confidence language**.
 
 ## Output Format
 
-The structure is the one in `references/synthesizer-prompt.md`: The Question, The Code in Question, What We Found, What We Can Reasonably Infer, Competing Hypotheses, What We Don't Know, Sources Consulted, Confidence Summary. Adapt as needed, but keep the confidence separation intact, and keep Sources Consulted as one line per evidence category, including the ones that returned nothing or were skipped, with the reason.
+The structure is the one in `references/synthesizer-prompt.md`: The Question, The Code in Question, What We Found, What We Can Reasonably Infer, Competing Hypotheses, What We Don't Know, Sources Consulted, Confidence Summary. Adapt as needed, but keep the confidence separation intact, and keep Sources Consulted grouped by evidence category, naming every relevant connector and its searched, unavailable, or skipped status with the reason. Include categories that returned nothing or were skipped.
 
 After Sources Consulted, if the user's `why` question is a precursor to changing this code, convert the lineage findings into a Preserve / Change / Avoid / Risk constraint set for planning the change.
 

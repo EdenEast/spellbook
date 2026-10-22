@@ -20,6 +20,9 @@ You are answering a "why" question about a piece of code by synthesizing finding
 
 {ALL_INVESTIGATOR_FINDINGS}
 
+Include initial and bounded follow-up findings, plus relevant leads still
+unsearched and their reasons.
+
 ## Sources That Weren't Searched
 
 {SKIPPED_SOURCES_WITH_REASONS}
@@ -92,11 +95,12 @@ Specific gaps: "We searched the issue tracker for [query1], [query2], [query3] a
 - Questions that went unanswered
 - Searches that returned nothing
 - Sources that were unavailable, and why (such as a missing real-time team chat MCP)
+- Relevant cross-source leads left unsearched, with their destination and reason
 - People who would likely know but whom you can't ask
 
 ### Sources Consulted
 
-What was actually searched, so the user can judge coverage and redirect. For every category, distinguish searched (including empty results), unavailable (with the access reason), and available but not searched (with the scope reason). Do not describe an unsearched source as having no evidence:
+What was actually searched, so the user can judge coverage and redirect. For every category, name each relevant connector separately and distinguish searched (including empty results), unavailable (with the access reason), and available but not searched (with the scope reason). Searching Notion does not establish that Google Drive was searched. Do not describe an unsearched source as having no evidence:
 
 - **Source control history**: {file paths}, {number of commits reviewed}, PRs #{numbers}, and code comments searched. Or state the actual limitation, such as missing Git history or unauthenticated GitHub access; distinguish local history from PR access.
 - **Issue / ticket tracker**: {ticket IDs and keyword searches}. Or "Not searched. No matching MCP available in this environment."

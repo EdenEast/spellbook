@@ -35,7 +35,7 @@ Work like a **careful, cautious, and precise investigator**. Surface evidence an
 
 1. **Cast a wide net first** so you don't miss related context. Only then narrow in on specific items.
 2. **Read the whole thing.** Read each PR, ticket, doc, or thread fully, not just the title or summary. The key evidence is often in a comment, a subtask, or a follow-up.
-3. **Follow links within your source only.** Pull the PR or commit a PR references, the parent or sibling of a ticket, the doc a doc links. Do NOT chase a cross-source reference. Record it under Additional Leads for that source's investigator. The one-investigator-per-category design depends on this. Chasing it duplicates work and confuses scope.
+3. **Follow links within your source only.** Pull the PR or commit a PR references, the parent or sibling of a ticket, the doc a doc links. Do NOT chase a cross-source reference. Record it under Additional Leads with its destination source and why it matters, so the coordinator can route it in the bounded follow-up pass. The one-investigator-per-source design depends on this. Chasing it duplicates work and confuses scope.
 4. **Quote verbatim**, with the exact location (PR number, ticket ID, URL, commit hash, file:line), so the reader can confirm the claim in seconds.
 5. **Record what you searched, not just what you found.** Write queries verbatim. An empty search is a finding.
 6. **Resist the story.** If two items in your source disagree, record both. Don't suppress the inconvenient one. If three items line up and a fourth contradicts them, the contradiction is the most interesting finding.
@@ -81,4 +81,4 @@ Items that disagree with each other, with both citations.
 What you searched for and didn't find, specifically: "Searched the issue tracker for [query] across [time range]. No matching issues."
 
 ### Additional Leads
-Anything that suggests further investigation in a different source, for its investigator or a follow-up pass. For example, a chat thread that a PR mentions.
+Links or identifiers worth following in another source, with the destination connector or category and why each could answer the question. The coordinator routes these after the initial pass. In a follow-up pass, label newly discovered leads as still unsearched rather than chasing them recursively. For example, a chat thread that a PR mentions.

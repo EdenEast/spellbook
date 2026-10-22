@@ -3,7 +3,7 @@ import { mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
-import { loadDelivery, stageDelivery } from "../../skills/babysit-pr/scripts/delivery.ts";
+import { loadDelivery, stageDelivery, withDeliveryLock } from "../../skills/babysit-pr/scripts/delivery.ts";
 import type { Snapshot } from "../../skills/babysit-pr/scripts/watch-pr.ts";
 
 const url = "https://github.com/owner/repo/pull/12";
@@ -27,6 +27,36 @@ async function fixture(run: (path: string) => Promise<void>): Promise<void> {
   finally { await rm(directory, { recursive: true, force: true }); }
 }
 const output = JSON.stringify({ schemaVersion: 1, kind: "ACTIVITY", reasons: ["comments"], snapshot: snapshot(), comments: [{ body: "Please fix this" }] });
+
+test("overlapping watchers cannot replace or acknowledge an owner's pending delivery", async () => {
+  await fixture(async (path) => {
+    let pendingToken = "";
+    await withDeliveryLock(path, async () => {
+      const pending = await stageDelivery(path, await loadDelivery(path, url, parse), snapshot(), output);
+      pendingToken = pending.token;
+      let entered = false;
+      await assert.rejects(withDeliveryLock(path, async () => { entered = true; }), /state is locked/);
+      assert.equal(entered, false);
+      assert.equal((await loadDelivery(path, url, parse)).pending?.token, pendingToken);
+      assert.equal((await stat(`${path}.lock`)).mode & 0o777, 0o600);
+    });
+    await withDeliveryLock(path, async () => {
+      assert.equal((await loadDelivery(path, url, parse)).pending?.token, pendingToken);
+      assert.equal((await loadDelivery(path, url, parse, pendingToken)).pending, null);
+    });
+    await assert.rejects(stat(`${path}.lock`), { code: "ENOENT" });
+  });
+});
+
+test("locks release on failure but an existing unknown owner is never removed", async () => {
+  await fixture(async (path) => {
+    await assert.rejects(withDeliveryLock(path, async () => { throw new Error("read failed"); }), /read failed/);
+    await withDeliveryLock(path, async () => {});
+    await writeFile(`${path}.lock`, "interrupted owner");
+    await assert.rejects(withDeliveryLock(path, async () => {}), /state is locked/);
+    assert.equal(await readFile(`${path}.lock`, "utf8"), "interrupted owner");
+  });
+});
 
 test("an event interrupted before stdout remains pending and replays identical feedback", async () => {
   await fixture(async (path) => {

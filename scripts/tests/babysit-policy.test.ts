@@ -77,6 +77,39 @@ test("unresolved threads, changes requested, and conflicts block completion", ()
     assert.equal(assess(current).babysitComplete, false, blocker);
   }
 });
+test("unknown conflict status cannot establish babysit completion", () => {
+  for (const field of ["mergeable", "mergeState"] as const) {
+    const current = snapshot();
+    current.facts[field] = "UNKNOWN";
+    assert.deepEqual(assess(current), {
+      status: "unknown", babysitComplete: false, mergeReady: false, reasons: ["mergeability-unknown"],
+    });
+  }
+});
+test("unreported required contexts block completion even when optional CI passes", () => {
+  const current = snapshot();
+  current.expectedRequiredChecks = ["build"];
+  current.checks = [{ ...current.checks[0]!, name: "format", required: false }];
+  assert.deepEqual(assess(current), {
+    status: "unknown", babysitComplete: false, mergeReady: false, reasons: ["check-unreported:build"],
+  });
+  current.expectedRequiredChecks = [];
+  assert.equal(assess(current).babysitComplete, true);
+});
+test("configured required contexts remain required before run metadata catches up", () => {
+  const current = snapshot();
+  current.expectedRequiredChecks = ["build"];
+  current.checks[0]!.required = false;
+  for (const [bucket, status] of [["pending", "unknown"], ["fail", "blocked"], ["cancel", "blocked"], ["pass", "unknown"]] as const) {
+    current.checks[0]!.bucket = bucket;
+    assert.equal(assess(current).status, status);
+    assert.equal(assess(current).babysitComplete, false);
+    assert.equal(assess(current).mergeReady, false);
+  }
+  // An optional same-name run (for example from another app) cannot satisfy the gate.
+  current.checks[0]!.required = true;
+  assert.equal(assess(current).babysitComplete, true);
+});
 test("empty checks are unknown and closed PRs are terminal", () => {
   const current = snapshot();
   current.checks = [];

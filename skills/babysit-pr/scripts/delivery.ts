@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { open, readFile, rename, rm } from "node:fs/promises";
 import { dirname } from "node:path";
+import { hostname } from "node:os";
 import type { Snapshot } from "./github.ts";
 
 export type PendingDelivery = { token: string; output: string; exitCode: number; snapshot: Snapshot };
@@ -50,7 +51,23 @@ async function save(path: string, state: DeliveryState): Promise<void> {
   } finally { await rm(temporary, { force: true }); }
 }
 
-// One watcher owns each state file. Acknowledgment and the next wait use one invocation.
+/** Hold exclusive ownership across acknowledgment, polling, and staging the next event. */
+export async function withDeliveryLock<T>(path: string, run: () => Promise<T>): Promise<T> {
+  const lockPath = `${path}.lock`;
+  const owner = await open(lockPath, "wx", 0o600).catch((error: NodeJS.ErrnoException) => {
+    if (error.code === "EEXIST") throw new Error(`Watcher state is locked: ${lockPath}. Confirm the prior owner has stopped before removing its lock.`);
+    throw error;
+  });
+  try {
+    await owner.writeFile(JSON.stringify({ pid: process.pid, hostname: hostname(), startedAt: new Date().toISOString() }));
+    return await run();
+  } finally {
+    await owner.close();
+    await rm(lockPath);
+  }
+}
+
+// Callers hold withDeliveryLock for the entire read/acknowledge/wait/stage transaction.
 export async function loadDelivery(
   path: string, expectedUrl: string, parse: SnapshotParser, acknowledgment?: string,
 ): Promise<DeliveryState> {

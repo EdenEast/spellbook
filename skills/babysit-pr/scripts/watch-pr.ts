@@ -1,11 +1,11 @@
 #!/usr/bin/env node
-import { parseArgs } from "node:util";
+import { isDeepStrictEqual, parseArgs } from "node:util";
 import { setTimeout as delay } from "node:timers/promises";
 import { pathToFileURL } from "node:url";
 import { readSnapshot, parseSnapshot } from "./github.ts";
 import type { Snapshot } from "./github.ts";
-import { assess, isReviewAutomationCheck } from "./policy.ts";
-import { loadDelivery, stageDelivery } from "./delivery.ts";
+import { assess, humanGate, isReviewAutomationCheck } from "./policy.ts";
+import { loadDelivery, stageDelivery, withDeliveryLock } from "./delivery.ts";
 
 export { readSnapshot, parseSnapshot } from "./github.ts";
 export type { Snapshot, Check, Comment, Review, Thread, Facts, Command } from "./github.ts";
@@ -36,7 +36,7 @@ export function changes(previous: Snapshot, current: Snapshot): string[] {
   if (canonical(previous.comments, (row) => row.id) !== canonical(current.comments, (row) => row.id)) reasons.push("comments");
   if (canonical(previous.reviews, (row) => row.id) !== canonical(current.reviews, (row) => row.id)) reasons.push("reviews");
   if (canonical(previous.threads, (row) => row.id) !== canonical(current.threads, (row) => row.id)) reasons.push("threads");
-  if (JSON.stringify(previous.facts) !== JSON.stringify(current.facts) && !reasons.includes("head") && !reasons.includes("base")) reasons.push("pr-state");
+  if (!isDeepStrictEqual(previous.facts, current.facts) && !reasons.includes("head") && !reasons.includes("base")) reasons.push("pr-state");
   return reasons;
 }
 export async function watch(options: {
@@ -51,10 +51,12 @@ export async function watch(options: {
     ...(options.previous?.expectedReviewChecks ?? []), ...(options.reviewChecks ?? []),
     ...(options.previous?.checks.filter(isReviewAutomationCheck).map((check) => check.name) ?? []),
   ]);
+  let expectedRequiredChecks = options.previous?.expectedRequiredChecks ?? options.previous?.checks.filter((check) => check.required !== false).map((check) => check.name) ?? [];
+  let lastAssessment: ReturnType<typeof assess> | null = null;
   let errors = 0;
   while (true) {
     if (options.timeout > 0 && now() - started >= options.timeout)
-      return { schemaVersion: 1, kind: "TIMEOUT", reasons: [], snapshot: null, assessment: null };
+      return { schemaVersion: 1, kind: "TIMEOUT", reasons: lastAssessment?.reasons ?? [], snapshot: null, assessment: lastAssessment };
     let snapshot: Snapshot;
     try {
       snapshot = await options.read();
@@ -68,8 +70,14 @@ export async function watch(options: {
     }
     for (const check of snapshot.checks)
       if (isReviewAutomationCheck(check)) expectedReviewChecks.add(check.name);
-    snapshot = { ...snapshot, expectedReviewChecks: [...expectedReviewChecks].sort() };
+    // A live requirements read supersedes history; legacy snapshots retain known gates.
+    expectedRequiredChecks = [...new Set([
+      ...(snapshot.expectedRequiredChecks ?? expectedRequiredChecks),
+      ...snapshot.checks.filter((check) => check.required !== false).map((check) => check.name),
+    ])].filter((name) => !humanGate(name)).sort();
+    snapshot = { ...snapshot, expectedRequiredChecks, expectedReviewChecks: [...expectedReviewChecks].sort() };
     const assessment = assess(snapshot, snapshot.expectedReviewChecks);
+    lastAssessment = assessment;
     const reasons = options.previous === null ? [] : changes(options.previous, snapshot);
     // Feedback must reach the agent even when checks turn green in the same poll.
     const kind = snapshot.facts.state !== "OPEN" ? "CLOSED"
@@ -91,7 +99,7 @@ Without acknowledgment, the pending event is replayed without querying GitHub.
 --ack TOKEN           Acknowledge the handled event and continue watching
 --review-check NAME   Additional review check to await (repeat for each name)
 --interval SECONDS    Poll interval (default 60)
---timeout SECONDS     Maximum wait (default 0, unlimited)
+--timeout SECONDS     Maximum wait (default 900; 0 for unlimited)
 --max-errors COUNT    Consecutive query error limit (default 5)
 --help               Show this help
 
@@ -104,7 +112,7 @@ export async function main(argv: string[]): Promise<number> {
     const { values } = parseArgs({ args: argv, options: {
       ack: { type: "string" }, repo: { type: "string" }, pr: { type: "string" }, state: { type: "string" },
       "review-check": { type: "string", multiple: true },
-      interval: { type: "string", default: "60" }, timeout: { type: "string", default: "0" },
+      interval: { type: "string", default: "60" }, timeout: { type: "string", default: "900" },
       "max-errors": { type: "string", default: "5" }, help: { type: "boolean" },
     } });
     if (values.help) { process.stdout.write(help); return 0; }
@@ -121,22 +129,23 @@ export async function main(argv: string[]): Promise<number> {
   }
   try {
     const expectedUrl = `https://github.com/${options.repo}/pull/${options.pr}`;
-    const delivery = await loadDelivery(options.state, expectedUrl, parseSnapshot, options.ack);
-    if (delivery.pending !== null) {
-      process.stdout.write(`${delivery.pending.output}\n`);
-      return delivery.pending.exitCode;
-    }
-    const previous = delivery.previous;
-    const event = await watch({ ...options, previous, read: () => readSnapshot(options.repo, options.pr) });
-    if (event.snapshot !== null) {
-      if (event.snapshot.facts.url.toLowerCase() !== expectedUrl.toLowerCase()) throw new Error("Watcher supports github.com repositories only");
-      event.snapshot = parseSnapshot(event.snapshot);
-      const pending = await stageDelivery(options.state, delivery, event.snapshot, renderEvent(event, previous), 0);
-      process.stdout.write(`${pending.output}\n`);
-    } else {
-      process.stdout.write(`${renderEvent(event, previous)}\n`);
-    }
-    return event.kind === "TIMEOUT" ? 5 : 0;
+    const result = await withDeliveryLock(options.state, async () => {
+      const delivery = await loadDelivery(options.state, expectedUrl, parseSnapshot, options.ack);
+      if (delivery.pending !== null) {
+        return { output: delivery.pending.output, exitCode: delivery.pending.exitCode };
+      }
+      const previous = delivery.previous;
+      const event = await watch({ ...options, previous, read: () => readSnapshot(options.repo, options.pr) });
+      if (event.snapshot !== null) {
+        if (event.snapshot.facts.url.toLowerCase() !== expectedUrl.toLowerCase()) throw new Error("Watcher supports github.com repositories only");
+        event.snapshot = parseSnapshot(event.snapshot);
+        const pending = await stageDelivery(options.state, delivery, event.snapshot, renderEvent(event, previous), 0);
+        return { output: pending.output, exitCode: pending.exitCode };
+      }
+      return { output: renderEvent(event, previous), exitCode: event.kind === "TIMEOUT" ? 5 : 0 };
+    });
+    process.stdout.write(`${result.output}\n`);
+    return result.exitCode;
   } catch (error) {
     process.stdout.write(`${JSON.stringify({ schemaVersion: 1, kind: "ERROR", message: error instanceof Error ? error.message : String(error) })}\n`);
     return 7;

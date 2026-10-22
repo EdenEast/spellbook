@@ -12,7 +12,7 @@ export async function runHarnessCase(scenario: "comment" | "ci", idleMs = 600, s
   try {
     const dataPath = join(directory, "data.json"), callsPath = join(directory, "calls.jsonl");
     const data = {
-      facts: { url: "https://github.com/owner/repo/pull/42", headRefOid: "head", baseRefOid: "base", state: "OPEN",
+      facts: { url: "https://github.com/owner/repo/pull/42", headRefOid: "head", baseRefOid: "base", baseRefName: "main", state: "OPEN",
         isDraft: false, mergeable: "MERGEABLE", mergeStateStatus: "BLOCKED", reviewDecision: "REVIEW_REQUIRED" },
       checks: [{ name: "CI", state: "IN_PROGRESS", bucket: "pending", link: "https://example.com/check", workflow: "CI" }],
       comments: [] as object[],
@@ -27,7 +27,8 @@ const data = JSON.parse(fs.readFileSync(${JSON.stringify(dataPath)}, 'utf8'));
 let result;
 if (args[0] === 'pr' && args[1] === 'view') result = data.facts;
 else if (args[0] === 'pr') result = data.checks;
-else if (args[1] === 'graphql') result = [{ data: { repository: { pullRequest: { reviewThreads: { nodes: [] } } } } }];
+else if (args[1] === 'graphql') result = [{ data: { repository: { pullRequest: { baseRef: { branchProtectionRule: null }, reviewThreads: { nodes: [] } } } } }];
+else if (args[1].includes('/rules/branches/')) result = [[]];
 else if (args[1].includes('/issues/')) result = [data.comments];
 else result = [[]];
 process.stdout.write(JSON.stringify(result));

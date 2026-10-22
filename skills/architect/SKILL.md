@@ -30,7 +30,13 @@ Run the **arena** skill with the design-sketch task and the Phase A grounding ar
 
 Take the runners from the `architect runner` roles in [model roles](~/.agents/references/spellbook/models/README.md), in place of the `arena runner` roles. The cross-judge still uses the `arena cross-judge` role.
 
-Design it twice. Require at least two structurally distinct candidates before synthesis, even when the first looks sufficient. This is [exhaust-the-design-space](~/.agents/references/spellbook/principles/exhaust-the-design-space.md) made concrete. Whole-shape alternatives, not point fixes inside one shape.
+Design it twice. Require at least two independent candidate attempts before
+synthesis, even when the first looks sufficient. Explore whole-shape alternatives,
+not point fixes inside one shape, per [exhaust-the-design-space](~/.agents/references/spellbook/principles/exhaust-the-design-space.md).
+If independent attempts genuinely converge after considering alternatives,
+accept arena's consensus rule and explain why. If a plausible, structurally
+different direction remains unexplored, run one additional candidate on that
+direction before synthesis; do not manufacture differences just to meet a quota.
 
 Screen every candidate against [`references/design-red-flags.md`](references/design-red-flags.md) before synthesis. Assume the next contributor is an agent that sees only the files it opened, copies the nearest example, and takes the shortest path that compiles. Prefer the design where a change that looks right from one file is right for the whole repo.
 

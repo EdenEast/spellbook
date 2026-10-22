@@ -20,7 +20,11 @@ shared [principles](../../references/principles/README.md) instead of naming
 pstack principle skills. The `how`, `why`, `arena`, and `interrogate` skills it
 runs are all carried in Spellbook.
 
-Preserved grounding, the design-it-twice rule, the red-flag screen, interface
+The design-it-twice rule requires independent attempts, accepts genuine
+convergence after alternatives were considered, and requests one additional
+candidate only when a plausible structural direction remains unexplored.
+
+Preserved grounding, the red-flag screen, interface
 depth comparison, the opt-in checkpoint, implementing against the sketch, the
 scrap signals and procedure, the runner prompt, and the rationale template.
 
