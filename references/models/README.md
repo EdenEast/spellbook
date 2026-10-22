@@ -35,8 +35,8 @@ review's signal. Add an `interrogate reviewer C` line to add a reviewer.
 Arena and architect runners follow the same pattern for candidates. The arena
 cross-judge takes the first entry whose vendor differs from the session model's.
 Automate-me miners read transcripts, so they run like the other file-reading workers.
-The brainstorm builder reads a brief cold, so it prefers a different vendor
-from the default session for a fresh perspective.
+The brainstorm builder reads a brief cold, so, like the arena cross-judge, it
+takes the first entry whose vendor differs from the session model's.
 
 ## Choose a model for a role
 

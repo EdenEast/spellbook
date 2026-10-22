@@ -9,17 +9,17 @@ preserve their notices. Future changes follow local judgment.
 
 The skill fills the gap before Spellbook's other design skills. The Pstack
 skills assume an established project; this one starts from a vague idea and
-ends with a brief that **architect**, **interrogate**, or an implementing agent
-can take over.
+ends with a brief that **architect** or an implementing agent can take over.
 
 ## Superpowers: brainstorming
 
 Reviewed `SKILL.md` and `builder-check-prompt.md`, and skimmed
 `visual-companion.md` and the companion server's start script. Retained the "what do you know" check, the opt-out
-line, one open question per message, getting the user describing before
+line, plain language in the user's own vocabulary with process terms kept
+internal, one open question per message, getting the user describing before
 offering options, the "how it gets made" questions, the ground-to-cover list,
 private divergence, spikes, chunked playback with guesses marked, the size
-table, the builder check and its three piles, and the approval gate. The builder
+table chosen once the intent is understood and stepped up when the work grows, the builder check and its three piles, and the approval gate. The builder
 check prompt is reworded in `references/builder-check.md`.
 
 **Declined**
@@ -33,8 +33,8 @@ check prompt is reworded in `references/builder-check.md`.
 - `docs/superpowers/specs/` and committing the design: use `docs/ideas/` and
   commit only on request, matching Spellbook's commit rules.
 - Invoking `superpowers:writing-plans` as the only next step: offer
-  Spellbook's **architect** and **interrogate** skills or a fresh
-  implementation session instead.
+  Spellbook's **architect** skill or a fresh implementation session instead.
+  **Interrogate** reviews code changes, so it is not offered for a brief.
 
 ## Agent Skills: interview-me
 
@@ -119,8 +119,10 @@ target established projects.
   both are installed.
 - Automatic discovery is kept, with a narrow description, so a user saying
   "help me brainstorm" reaches the skill without a command.
-- The builder check uses a `brainstorm builder` model role that prefers a
-  different vendor from the default session, so the cold reader brings a
-  different perspective.
+- The builder check uses a `brainstorm builder` model role that, like the
+  arena cross-judge, takes the first entry from a vendor other than the
+  session's, so the cold reader brings a different perspective.
+- For a small change, the yes to the restate is the approval, and building
+  follows the normal workflow. Only a project hands off and stops.
 - The brief ends with first slices, riskiest unknown first, so an implementing
   agent has a verifiable starting point.
