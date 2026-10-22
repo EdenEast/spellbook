@@ -72,6 +72,41 @@ test("observed review bots remain expected across head changes and acknowledged 
   const second = await watch({ previous: first.snapshot, interval: 100, timeout: 200, maxErrors: 1, ...time, read: async () => current });
   assert.equal(second.kind, "TIMEOUT");
 });
+test("required contexts survive a push and a restart before the new checks register", async () => {
+  const previous = snapshot();
+  previous.checks[0]!.required = true;
+  const current = snapshot();
+  current.facts.head = "new-head";
+  current.checks = [{ ...current.checks[0]!, name: "format", required: false, bucket: "pass", state: "SUCCESS" }];
+  const first = await watch({ previous, interval: 1, timeout: 100, maxErrors: 1, read: async () => current });
+  assert.equal(first.assessment?.babysitComplete, false);
+  assert.deepEqual(first.snapshot?.expectedRequiredChecks, ["build"]);
+  const second = await watch({ previous: first.snapshot, interval: 100, timeout: 200, maxErrors: 1, ...clock(), read: async () => current });
+  assert.equal(second.kind, "TIMEOUT");
+  assert.deepEqual(second.reasons, ["check-unreported:build"]);
+  assert.equal(second.assessment?.babysitComplete, false);
+  const reported = structuredClone(current);
+  reported.checks.push({ ...previous.checks[0]!, bucket: "pass", state: "SUCCESS" });
+  assert.equal((await watch({ previous: first.snapshot, interval: 1, timeout: 100, maxErrors: 1, read: async () => reported })).assessment?.babysitComplete, true);
+});
+test("a fresh authoritative requirements read replaces historical required contexts", async () => {
+  const previous = snapshot();
+  previous.expectedRequiredChecks = ["retired-build"];
+  const current = snapshot();
+  current.expectedRequiredChecks = [];
+  current.checks = [{ ...current.checks[0]!, name: "format", required: false, bucket: "pass", state: "SUCCESS" }];
+  const event = await watch({ previous, interval: 1, timeout: 100, maxErrors: 1, read: async () => current });
+  assert.deepEqual(event.snapshot?.expectedRequiredChecks, []);
+  assert.equal(event.assessment?.babysitComplete, true);
+});
+test("missing bot checks return an actionable timeout instead of silent success", async () => {
+  const previous = snapshot();
+  previous.expectedReviewChecks = ["Optional Reviewer"];
+  const event = await watch({ previous, interval: 100, timeout: 200, maxErrors: 1, ...clock(), read: async () => snapshot() });
+  assert.equal(event.kind, "TIMEOUT");
+  assert.deepEqual(event.reasons, ["check-unreported:Optional Reviewer"]);
+  assert.equal(event.assessment?.babysitComplete, false);
+});
 test("human gates in review workflows are not persisted as expected bot work", async () => {
   const previous = snapshot();
   previous.checks = [{ ...previous.checks[0]!, name: "Code Review Gate", workflow: "PR Review", required: true }];
@@ -92,6 +127,9 @@ test("changed checks, edited comments, reviews, threads, and head wake the watch
   current.reviews = [{ id: "2", submittedAt: "now", state: "CHANGES_REQUESTED", body: "Fix", url: "url", author: "reviewer", commit: "new" }];
   current.threads = [{ id: "3", resolved: false }];
   assert.deepEqual(changes(previous, current), ["head", "checks", "comments", "reviews", "threads"]);
+  const { reviewDecision, ...otherFacts } = current.facts;
+  const reorderedFacts = { ...current, facts: { reviewDecision, ...otherFacts } };
+  assert.deepEqual(changes(current, reorderedFacts), []);
   current.comments.push({ ...current.comments[0]!, id: "other" });
   const reordered = structuredClone(current);
   reordered.comments.reverse();
@@ -128,7 +166,7 @@ test("merged and closed PRs return terminal state even with an existing cursor",
   }
 });
 
-const rawFacts = { url: "https://github.com/owner/repo/pull/42", headRefOid: "abc", baseRefOid: "base", state: "OPEN",
+const rawFacts = { url: "https://github.com/owner/repo/pull/42", headRefOid: "abc", baseRefOid: "base", baseRefName: "main", state: "OPEN",
   isDraft: false, mergeable: "MERGEABLE", mergeStateStatus: "UNSTABLE", reviewDecision: "" };
 function fakeCommand(headMoves = false): Command {
   let views = 0;
@@ -137,10 +175,11 @@ function fakeCommand(headMoves = false): Command {
     if (args[0] === "pr" && args[1] === "view") data = { ...rawFacts, headRefOid: headMoves && ++views > 1 ? "new" : "abc" };
     else if (args[0] === "pr") data = snapshot().checks;
     else if (args[1] === "graphql") data = [
-      { data: { repository: { pullRequest: { reviewThreads: { nodes: [{ id: "a", isResolved: true, comments: { nodes: [{ databaseId: 10, url: "url" }] } }] } } } } },
-      { data: { repository: { pullRequest: { reviewThreads: { nodes: [{ id: "b", isResolved: false, comments: { nodes: [{ databaseId: 11, url: "url" }] } }] } } } } },
+      { data: { repository: { pullRequest: { baseRef: { branchProtectionRule: null }, reviewThreads: { nodes: [{ id: "a", isResolved: true, comments: { nodes: [{ databaseId: 10, url: "url" }] } }] } } } } },
+      { data: { repository: { pullRequest: { baseRef: { branchProtectionRule: null }, reviewThreads: { nodes: [{ id: "b", isResolved: false, comments: { nodes: [{ databaseId: 11, url: "url" }] } }] } } } } },
     ];
     else if (args[1]?.includes("/reviews")) data = [[{ id: 12, submitted_at: "now", state: "APPROVED", body: "good", html_url: "url", user: { login: "reviewer" }, commit_id: "abc" }]];
+    else if (args[1]?.includes("/rules/branches/")) data = [[]];
     else data = [[{ id: 10, updated_at: "before", body: "first", html_url: "url", user: null }], [{ id: 11, updated_at: "now", body: "second", html_url: "url", user: { login: "bot" } }]];
     return { code: 0, stdout: JSON.stringify(data), stderr: "" };
   };
@@ -179,7 +218,8 @@ const fs = require('node:fs');
 let result;
 if (args[0] === 'pr' && args[1] === 'view') result = ${JSON.stringify(rawFacts)};
 else if (args[0] === 'pr') result = ${JSON.stringify(snapshot().checks)};
-else if (args[1] === 'graphql') result = [{data:{repository:{pullRequest:{reviewThreads:{nodes:[]}}}}}];
+else if (args[1] === 'graphql') result = [{data:{repository:{pullRequest:{baseRef:{branchProtectionRule:null},reviewThreads:{nodes:[]}}}}}];
+else if (args[1].includes('/rules/branches/')) result = [[]];
 else if (args[1].includes('/issues/')) result = JSON.parse(fs.readFileSync(${JSON.stringify(feedback)}, 'utf8'));
 else result = [[]];
 console.log(JSON.stringify(result));\n`);
@@ -223,6 +263,13 @@ process.exitCode = await main(${JSON.stringify(interruptedArgs)});`;
   const otherPr = spawnSync(process.execPath, [script, "--repo", "other/repo", "--pr", "42", "--state", state], { encoding: "utf8" });
   assert.equal(otherPr.status, 7);
   assert.match(JSON.parse(otherPr.stdout).message, /another PR/);
+  const beforeOverlap = await readFile(state, "utf8");
+  await writeFile(`${state}.lock`, JSON.stringify({ pid: process.pid, hostname: "test-owner" }));
+  const overlapping = run();
+  assert.equal(overlapping.status, 7);
+  assert.match(JSON.parse(overlapping.stdout).message, /state is locked/);
+  assert.equal(await readFile(state, "utf8"), beforeOverlap);
+  await rm(`${state}.lock`);
   await writeFile(state, "{}");
   const corrupt = run();
   assert.equal(corrupt.status, 7);

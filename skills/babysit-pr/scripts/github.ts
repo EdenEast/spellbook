@@ -5,11 +5,11 @@ export type Comment = { id: string; updatedAt: string; body: string; url: string
 export type Review = { id: string; submittedAt: string | null; state: string; body: string; url: string; author: string | null; commit: string };
 export type Thread = { id: string; resolved: boolean; rootCommentId?: number | null; url?: string | null };
 export type Facts = {
-  url: string; head: string; base: string; state: string; draft: boolean;
+  url: string; head: string; base: string; baseName?: string; state: string; draft: boolean;
   mergeable: string; mergeState: string; reviewDecision: string;
 };
 export type Snapshot = {
-  schemaVersion: 1; facts: Facts; checks: Check[]; comments: Comment[]; reviews: Review[]; threads: Thread[]; expectedReviewChecks?: string[];
+  schemaVersion: 1; facts: Facts; checks: Check[]; comments: Comment[]; reviews: Review[]; threads: Thread[]; expectedReviewChecks?: string[]; expectedRequiredChecks?: string[];
 };
 export type CommandResult = { code: number; stdout: string; stderr: string };
 export type Command = (args: string[]) => Promise<CommandResult>;
@@ -51,10 +51,10 @@ async function json(run: Command, args: string[]): Promise<unknown> {
   if (result.code !== 0) throw new Error(result.stderr.trim() || `gh exited with ${result.code}`);
   return JSON.parse(result.stdout);
 }
-function facts(value: unknown): Facts {
+function facts(value: unknown): Facts & { baseName: string } {
   const row = object(value);
   return {
-    url: string(row.url), head: string(row.headRefOid), base: string(row.baseRefOid),
+    url: string(row.url), head: string(row.headRefOid), base: string(row.baseRefOid), baseName: string(row.baseRefName),
     state: string(row.state), draft: boolean(row.isDraft), mergeable: string(row.mergeable),
     mergeState: string(row.mergeStateStatus), reviewDecision: nullableString(row.reviewDecision) ?? "",
   };
@@ -80,6 +80,7 @@ function comment(value: unknown): Comment {
 }
 const threadQuery = `query($owner:String!,$repo:String!,$number:Int!,$endCursor:String) {
   repository(owner:$owner,name:$repo) { pullRequest(number:$number) {
+    baseRef { branchProtectionRule { requiredStatusCheckContexts } }
     reviewThreads(first:100,after:$endCursor) {
       nodes { id isResolved comments(first:1) { nodes { databaseId url } } } pageInfo { hasNextPage endCursor }
     }
@@ -88,7 +89,7 @@ const threadQuery = `query($owner:String!,$repo:String!,$number:Int!,$endCursor:
 export async function readSnapshot(repo: string, pr: number, run: Command = command): Promise<Snapshot> {
   const [owner, name] = repo.split("/");
   const viewArgs = ["pr", "view", String(pr), "--repo", repo, "--json",
-    "url,headRefOid,baseRefOid,state,isDraft,mergeable,mergeStateStatus,reviewDecision"];
+    "url,headRefOid,baseRefOid,baseRefName,state,isDraft,mergeable,mergeStateStatus,reviewDecision"];
   const before = facts(await json(run, viewArgs));
   if (before.state !== "OPEN") return { schemaVersion: 1, facts: before, checks: [], comments: [], reviews: [], threads: [] };
   const endpoint = `repos/${repo}`;
@@ -100,6 +101,7 @@ export async function readSnapshot(repo: string, pr: number, run: Command = comm
     json(run, ["api", `${endpoint}/pulls/${pr}/reviews?per_page=100`, "--paginate", "--slurp"]),
     json(run, ["api", "graphql", "--paginate", "--slurp", "-f", `query=${threadQuery}`,
       "-f", `owner=${owner}`, "-f", `repo=${name}`, "-F", `number=${pr}`]),
+    json(run, ["api", `${endpoint}/rules/branches/${encodeURIComponent(before.baseName)}?per_page=100`, "--paginate", "--slurp"]),
   ]);
   const values = results.map((result) => {
     if (result.status === "rejected") throw result.reason;
@@ -129,10 +131,23 @@ export async function readSnapshot(repo: string, pr: number, run: Command = comm
     return { id: id(row.id), submittedAt: nullableString(row.submitted_at), state: string(row.state),
       body: string(row.body), url: string(row.html_url), author: author(row.user), commit: string(row.commit_id) };
   });
+  // Read requirements, not just reported runs: both classic protection and rulesets apply.
+  const requiredContexts = new Set(checks.filter((check) => check.required).map((check) => check.name));
+  for (const value of pages(values[6])) {
+    const rule = object(value);
+    if (rule.type === "required_status_checks") {
+      for (const check of array(object(rule.parameters).required_status_checks)) requiredContexts.add(string(object(check).context));
+    }
+  }
   const threads = array(values[5]).flatMap((value) => {
     const page = object(value);
     if (page.errors !== undefined) throw new Error("GraphQL returned review-thread errors");
-    const connection = object(object(object(object(page.data).repository).pullRequest).reviewThreads);
+    const pull = object(object(object(page.data).repository).pullRequest);
+    const protection = object(pull.baseRef).branchProtectionRule;
+    if (protection !== null) {
+      for (const context of array(object(protection).requiredStatusCheckContexts ?? [])) requiredContexts.add(string(context));
+    }
+    const connection = object(pull.reviewThreads);
     return array(connection.nodes).map((value): Thread => {
       const row = object(value);
       const roots = array(object(row.comments).nodes);
@@ -154,9 +169,9 @@ export async function readSnapshot(repo: string, pr: number, run: Command = comm
     }
   }
   const after = facts(await json(run, viewArgs));
-  if (before.head !== after.head || before.base !== after.base || before.state !== after.state)
+  if (before.head !== after.head || before.base !== after.base || before.baseName !== after.baseName || before.state !== after.state)
     throw new Error("PR changed while reading; retrying a fresh snapshot");
-  return { schemaVersion: 1, facts: after, checks, comments, reviews, threads };
+  return { schemaVersion: 1, facts: after, checks, comments, reviews, threads, expectedRequiredChecks: [...requiredContexts].sort() };
 }
 
 export function parseSnapshot(value: unknown): Snapshot {
@@ -166,10 +181,12 @@ export function parseSnapshot(value: unknown): Snapshot {
   const parsedFacts: Facts = {
     url: string(f.url), head: string(f.head), base: string(f.base), state: string(f.state),
     draft: boolean(f.draft), mergeable: string(f.mergeable), mergeState: string(f.mergeState), reviewDecision: string(f.reviewDecision),
+    ...(f.baseName === undefined ? {} : { baseName: string(f.baseName) }),
   };
   return {
     schemaVersion: 1, facts: parsedFacts,
     ...(row.expectedReviewChecks === undefined ? {} : { expectedReviewChecks: array(row.expectedReviewChecks).map(string) }),
+    ...(row.expectedRequiredChecks === undefined ? {} : { expectedRequiredChecks: array(row.expectedRequiredChecks).map(string) }),
     checks: array(row.checks).map((v) => { const r = object(v); return { name: string(r.name), state: string(r.state), bucket: string(r.bucket), link: string(r.link), workflow: string(r.workflow), ...(r.required === undefined ? {} : { required: boolean(r.required) }) }; }),
     comments: array(row.comments).map((v) => { const r = object(v); return { id: string(r.id), updatedAt: string(r.updatedAt), body: string(r.body), url: string(r.url), author: nullableString(r.author), commit: nullableString(r.commit), databaseId: optionalNumber(r.databaseId), path: optionalString(r.path), line: optionalNumber(r.line), startLine: optionalNumber(r.startLine), side: optionalString(r.side), inReplyTo: optionalNumber(r.inReplyTo), threadId: optionalString(r.threadId), originalLine: optionalNumber(r.originalLine), originalStartLine: optionalNumber(r.originalStartLine), originalCommit: optionalString(r.originalCommit) }; }),
     reviews: array(row.reviews).map((v) => { const r = object(v); return { id: string(r.id), submittedAt: nullableString(r.submittedAt), state: string(r.state), body: string(r.body), url: string(r.url), author: nullableString(r.author), commit: string(r.commit) }; }),

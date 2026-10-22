@@ -32,14 +32,19 @@ on the user's behalf as:
 [actual reply]
 ```
 
-Watch `main` and rebase when needed. If an overlapping PR makes this one
-obsolete, stop and report it; ask before closing unless already authorized.
+Read the PR's actual base branch and monitor it, preserving the parent of stacked
+PRs. Update the branch only when needed and authorized; do not assume `main` or
+overwrite collaborators' work. If an overlapping PR makes this one obsolete,
+stop and report it; ask before closing unless already authorized.
 
 ## Finishing
 
 Stop when the latest head's required checks and expected review automation pass
 or skip, feedback is handled, threads are resolved, and there are no conflicts
-or requested changes. Missing check data does not establish completion. Human
+or requested changes. Missing required checks and unknown conflict status do not
+establish completion. If an expected bot check remains absent after a bounded
+wait, investigate its trigger and report the blocker instead of silently waiting
+forever or treating absence as success. Human
 approval, draft status, optional CI, and the human `Code Review Gate` do not
 prolong babysitting; report remaining human merge gates separately.
 
