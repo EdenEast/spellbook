@@ -49,21 +49,35 @@ Reinstalling removes stale links to resources deleted from this checkout.
 Uninstall removes only managed links pointing into this checkout, including
 broken links. Neither action claims legacy links from the old `source/` layout.
 
-When Pi is selected, `install` also enables codemode in
+## Code Mode settings
+
+When Claude Code is selected, `install` sets
+`env.CLAUDE_CODE_EXPERIMENTAL_CODE_MODE` to `"1"` in
+`~/.claude/settings.json`, replacing an explicit `"0"` while preserving other
+settings and environment variables. The `env` value, if present, must be a JSON
+object. Claude Code requires a supported version and an interactive terminal
+session, and asks for confirmation before the first Code Mode session. See
+[Claude Code Mode](https://code.claude.com/docs/en/code-mode) for requirements.
+
+When Pi is selected, `install` enables codemode in
 `~/.pi/agent/settings.json`. It adds `+codemode` to the default tool selection,
 or `codemode` to an explicit tool list, preserving other tools and settings.
 An explicit `-codemode` is replaced, and `-builtin:codemode` is removed from
-`extensions` if present. Existing settings must be a regular file containing a
+`extensions` if present.
+
+For both agents, existing settings must be a regular file containing a
 JSON object; invalid settings or a settings symlink stop installation before
 any links are changed.
 
-`status` reports whether codemode is configured. Dry runs do not write settings,
-and reinstalling leaves already configured settings unchanged. `uninstall`
-removes resource links but leaves the codemode preference in place. Project
-settings and command-line options can still override this user-level default.
+`status` reports whether codemode is configured for each selected agent.
+Dry runs do not write settings, and reinstalling leaves already configured
+settings unchanged. `uninstall`
+removes resource links but leaves the codemode preferences in place. Pi project
+settings and command-line options can still override its user-level default.
+Claude's configured preference does not establish runtime availability.
 
-When no resources exist and Pi is not selected, the installer creates no agent
-directories. It does not change credentials or install agent executables.
+When no resources exist and neither Claude nor Pi is selected, the installer
+creates no agent directories. It does not change credentials or install agent executables.
 This settings behavior applies to the checkout installer, not Home Manager.
 
 ## Agent documentation

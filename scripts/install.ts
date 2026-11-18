@@ -179,6 +179,31 @@ async function piSettings(options: Options) {
   return { path, content: `${JSON.stringify(settings, null, 2)}\n`, changed: !enabled || disabledExtension };
 }
 
+async function claudeSettings(options: Options) {
+  if (!options.targets.includes("claude")) return undefined;
+  const path = join(options.home, ".claude/settings.json");
+  const existing = await stat(path);
+  if (existing && !existing.isFile()) throw new Error(`Expected a regular Claude settings file: ${path}`);
+  const original = existing ? await readFile(path, "utf8") : undefined;
+  let settings: Record<string, unknown>;
+  let env: Record<string, unknown>;
+  try {
+    const parsed: unknown = original === undefined ? {} : JSON.parse(original);
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error("expected a JSON object");
+    settings = parsed as Record<string, unknown>;
+    const value = settings.env;
+    if (value !== undefined && (!value || typeof value !== "object" || Array.isArray(value))) {
+      throw new Error("env must be a JSON object");
+    }
+    env = (value ?? {}) as Record<string, unknown>;
+  } catch (error) {
+    throw new Error(`Invalid Claude settings at ${path}: ${error instanceof Error ? error.message : error}`);
+  }
+  const changed = env.CLAUDE_CODE_EXPERIMENTAL_CODE_MODE !== "1";
+  settings.env = { ...env, CLAUDE_CODE_EXPERIMENTAL_CODE_MODE: "1" };
+  return { path, content: `${JSON.stringify(settings, null, 2)}\n`, changed };
+}
+
 export async function run(action: Action, options: Options): Promise<void> {
   const links = await plan(options);
   const log = options.log ?? console.log;
@@ -188,11 +213,13 @@ export async function run(action: Action, options: Options): Promise<void> {
     throw new Error(`Existing paths conflict with installation:\n${conflicts.map((link) => link.destination).join("\n")}`);
   }
   // Validate settings before creating any links, just like resource conflicts.
-  const settings = action !== "uninstall" ? await piSettings(options) : undefined;
-  if (settings) {
-    log(`${options.dryRun ? "DRY RUN " : ""}${settings.changed ? action === "install" ? "enable codemode" : "codemode not configured" : "codemode configured"}: ${settings.path}`);
+  const settings = action !== "uninstall"
+    ? [await piSettings(options), await claudeSettings(options)].filter((entry) => entry !== undefined)
+    : [];
+  for (const entry of settings) {
+    log(`${options.dryRun ? "DRY RUN " : ""}${entry.changed ? action === "install" ? "enable codemode" : "codemode not configured" : "codemode configured"}: ${entry.path}`);
   }
-  if (!links.length && !settings) log("No instructions, skills, references, or extensions to manage.");
+  if (!links.length && !settings.length) log("No instructions, skills, references, or extensions to manage.");
   for (const link of links) {
     const remove = (action === "uninstall" && link.state === "installed") || (action !== "status" && link.state === "stale");
     const add = action === "install" && link.state === "missing";
@@ -207,13 +234,14 @@ export async function run(action: Action, options: Options): Promise<void> {
       await symlink(link.source, link.destination, (await stat(link.source))?.isDirectory() ? "dir" : "file");
     }
   }
-  if (action === "install" && settings?.changed && !options.dryRun) {
-    await mkdir(dirname(settings.path), { recursive: true });
-    const temporary = await mkdtemp(join(dirname(settings.path), ".spellbook-settings-"));
+  for (const entry of settings) {
+    if (action !== "install" || !entry.changed || options.dryRun) continue;
+    await mkdir(dirname(entry.path), { recursive: true });
+    const temporary = await mkdtemp(join(dirname(entry.path), ".spellbook-settings-"));
     try {
       const path = join(temporary, "settings.json");
-      await writeFile(path, settings.content, { mode: 0o600 });
-      await rename(path, settings.path);
+      await writeFile(path, entry.content, { mode: 0o600 });
+      await rename(path, entry.path);
     } finally {
       await rm(temporary, { recursive: true, force: true });
     }

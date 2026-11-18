@@ -55,10 +55,15 @@ spellbook install --target codex --target claude
 
 Any selected agent also manages the shared reference link used by all three agents.
 
+Selecting Claude Code also configures Code Mode for new terminal sessions in
+`~/.claude/settings.json`, preserving other settings and environment variables.
+Claude asks for confirmation before the first Code Mode session. See
+[Claude Code Mode](https://code.claude.com/docs/en/code-mode) for requirements.
+
 Selecting Pi also enables codemode by default in `~/.pi/agent/settings.json`,
 preserving other settings and tools. This includes the default all-agent install.
-`status` reports whether codemode is configured; project settings or command-line
-flags can still override this default.
+`status` reports whether codemode is configured for each selected agent.
+For Pi, project settings or command-line flags can still override this default.
 
 ## Refresh or remove links
 
@@ -70,8 +75,8 @@ spellbook uninstall
 ```
 
 Uninstall removes only resource links that point into this checkout, including
-broken links. It preserves unrelated files and links, and leaves Pi's codemode
-preference in place.
+broken links. It preserves unrelated files and links, and leaves Claude's and
+Pi's codemode preferences in place.
 
 ## Use command shortcuts
 

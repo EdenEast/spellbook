@@ -118,7 +118,7 @@ test("global instructions follow target selection and support dry run, status, a
     assert.deepEqual(await plan(selected), [{ source, destination: join(options.home, destination), state: "installed" }]);
     await run("status", selected);
     await run("uninstall", selected);
-    assert.deepEqual(await readdir(join(options.home, destination, "..")), target === "pi" ? ["settings.json"] : []);
+    assert.deepEqual(await readdir(join(options.home, destination, "..")), target === "codex" ? [] : ["settings.json"]);
   }
 });
 
@@ -151,15 +151,18 @@ test("deleted global instructions leave stale links that install and uninstall r
   assert.deepEqual(await plan(options), []);
 });
 
-test("empty collections only create Pi settings when Pi is selected for installation", async (t) => {
+test("empty collections create settings only for selected Claude and Pi targets on install", async (t) => {
   const options = await fixture(t);
   await writeFile(join(options.root, "pi/extensions/.gitkeep"), "");
   for (const action of ["status", "uninstall"] as const) await run(action, options);
-  await run("install", { ...options, targets: ["codex", "claude"] });
+  await run("install", { ...options, targets: ["codex"] });
   assert.deepEqual(await readdir(options.home), []);
   await run("install", options);
   assert.deepEqual(JSON.parse(await readFile(join(options.home, ".pi/agent/settings.json"), "utf8")), {
     defaultTools: ["+codemode"],
+  });
+  assert.deepEqual(JSON.parse(await readFile(join(options.home, ".claude/settings.json"), "utf8")), {
+    env: { CLAUDE_CODE_EXPERIMENTAL_CODE_MODE: "1" },
   });
 });
 
