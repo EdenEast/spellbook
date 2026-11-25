@@ -37,6 +37,50 @@ accepts strings. Unlike Codex's native batched card, questions appear sequential
 This tool does not collect secrets or grant permission approvals. In T3, use
 `request_secret` for secrets. Permission confirmations remain the host's job.
 
+## Track a task plan
+
+The maintained `tasks` extension adds a Codex-style `update_plan` tool and a
+progress widget above Pi's terminal editor. Try it for one invocation:
+
+```sh
+npm ci
+pi --extension ./pi/extensions/tasks/index.ts
+```
+
+For multi-step work, the agent can create a plan and update it as it works:
+
+```json
+{
+  "plan": [
+    { "step": "Inspect the repository", "status": "completed" },
+    { "step": "Build the extension", "status": "in_progress" },
+    { "step": "Run the tests", "status": "pending" }
+  ]
+}
+```
+
+Each update replaces the full ordered plan. At most one step can be
+`in_progress`. An optional `explanation` describes why the plan changed.
+Calling `update_plan` with `{}` reads the plan; `{"plan": []}` clears it.
+Plans support up to 50 steps, each up to 300 characters of single-line text.
+
+The widget shows the completion count, current step, and up to five nearby
+steps. Completed steps have a checkmark, the active step has a filled marker,
+and pending steps have an empty circle. It stays visible after completion.
+
+- `/tasks` collapses or expands the widget.
+- `/tasks list` shows every step, including those outside the compact view.
+
+Plans are stored in tool-result details in the session history, not in a shared
+file. Resuming, forking, or navigating the session tree restores the plan for
+that branch. Starting a new session starts with no tasks. The collapsed view is
+an in-memory preference, not saved in the session.
+
+The tool works in RPC and non-interactive runs, but the persistent widget is
+terminal-only. T3 Code does not receive a task card from this extension; it can
+still display the tool calls and results. The plan tracks work; it does not
+schedule tasks, run subagents, or enforce completion.
+
 ## Add an extension
 
 Put a standalone `.ts` or `.js` extension in `pi/extensions/`. For a multi-file
