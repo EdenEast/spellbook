@@ -82,7 +82,7 @@
 
 ## Nix project environments
 
-- With an `.envrc`, run commands through `direnv exec . <cmd>`, not `nix develop --command` or `nix-shell --run`.
+- On unix machines with an `.envrc`, run commands through `direnv exec . <cmd>`, not `nix develop --command` or `nix-shell --run`.
 - Ask before running `direnv allow` on a blocked `.envrc`.
 
 ## Autonomy
