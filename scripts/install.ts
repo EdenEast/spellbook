@@ -1,6 +1,7 @@
 import { lstat, mkdir, mkdtemp, readFile, readdir, readlink, rename, rm, symlink, unlink, writeFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import { basename, dirname, join, resolve } from "node:path";
+import { isDeepStrictEqual, parseEnv } from "node:util";
 
 export type Target = "codex" | "claude" | "pi";
 type Action = "install" | "uninstall" | "status";
@@ -12,6 +13,7 @@ export type Options = {
   root: string;
   home: string;
   targets: Target[];
+  t3Home?: string;
   dryRun?: boolean;
   log?: (message: string) => void;
 };
@@ -204,6 +206,31 @@ async function claudeSettings(options: Options) {
   return { path, content: `${JSON.stringify(settings, null, 2)}\n`, changed };
 }
 
+async function t3ServiceEnvironment({ home, t3Home, targets }: Options) {
+  if (!targets.length) return undefined;
+  const directory = t3Home ?? join(home, ".t3");
+  const existingDirectory = await stat(directory);
+  if (existingDirectory && !existingDirectory.isDirectory()) {
+    throw new Error(`Expected a real T3 Code data directory: ${directory}`);
+  }
+  const path = join(directory, "service.env");
+  const existing = await stat(path);
+  if (existing && !existing.isFile()) throw new Error(`Expected a regular T3 Code service environment file: ${path}`);
+  const original = existing ? await readFile(path, "utf8") : "";
+  const env = parseEnv(original);
+  if (env.T3CODE_TELEMETRY_ENABLED === "false") return { path, content: original, changed: false };
+
+  // T3's launcher uses Node's dotenv parser: the last assignment wins.
+  // Append rather than risk editing an assignment inside a multiline value.
+  const newline = original.includes("\r\n") ? "\r\n" : "\n";
+  const separator = original && !original.endsWith("\n") ? newline : "";
+  const content = `${original}${separator}T3CODE_TELEMETRY_ENABLED=false${newline}`;
+  if (!isDeepStrictEqual(parseEnv(content), { ...env, T3CODE_TELEMETRY_ENABLED: "false" })) {
+    throw new Error(`Cannot safely set T3 Code telemetry in ${path}. Check the dotenv syntax.`);
+  }
+  return { path, content, changed: true };
+}
+
 export async function run(action: Action, options: Options): Promise<void> {
   const links = await plan(options);
   const log = options.log ?? console.log;
@@ -218,6 +245,14 @@ export async function run(action: Action, options: Options): Promise<void> {
     : [];
   for (const entry of settings) {
     log(`${options.dryRun ? "DRY RUN " : ""}${entry.changed ? action === "install" ? "enable codemode" : "codemode not configured" : "codemode configured"}: ${entry.path}`);
+  }
+  const t3 = action !== "uninstall" ? await t3ServiceEnvironment(options) : undefined;
+  if (t3) {
+    const message = t3.changed
+      ? action === "install" ? "disable T3 Code service telemetry" : "T3 Code service telemetry opt-out not configured"
+      : "T3 Code service telemetry opt-out configured";
+    log(`${options.dryRun ? "DRY RUN " : ""}${message}: ${t3.path}`);
+    settings.push(t3);
   }
   if (!links.length && !settings.length) log("No instructions, skills, references, or extensions to manage.");
   for (const link of links) {
@@ -239,7 +274,7 @@ export async function run(action: Action, options: Options): Promise<void> {
     await mkdir(dirname(entry.path), { recursive: true });
     const temporary = await mkdtemp(join(dirname(entry.path), ".spellbook-settings-"));
     try {
-      const path = join(temporary, "settings.json");
+      const path = join(temporary, basename(entry.path));
       await writeFile(path, entry.content, { mode: 0o600 });
       await rename(path, entry.path);
     } finally {
@@ -267,7 +302,12 @@ export async function cli(args = process.argv.slice(2)): Promise<void> {
         } else throw new Error(`Unknown argument: ${arg}`);
       }
       const root = resolve(import.meta.dirname, "..");
-      const options: Options = { root, home: homedir(), targets: targets.length ? targets : ["codex", "claude", "pi"], dryRun };
+      const home = homedir();
+      const configuredT3Home = process.env.T3CODE_HOME?.trim();
+      const t3Home = configuredT3Home === "~" ? home
+        : configuredT3Home?.match(/^~[\\/]/) ? resolve(home, configuredT3Home.slice(2))
+        : configuredT3Home ? resolve(configuredT3Home) : undefined;
+      const options: Options = { root, home, t3Home, targets: targets.length ? targets : ["codex", "claude", "pi"], dryRun };
       await run(action, options);
     }
   } catch (error) {
