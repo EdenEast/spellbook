@@ -65,6 +65,13 @@ preserving other settings and tools. This includes the default all-agent install
 `status` reports whether codemode is configured for each selected agent.
 For Pi, project settings or command-line flags can still override this default.
 
+## T3 Code privacy
+
+`spellbook install` opts the T3 Code background service out of product analytics
+and T3 Connect relay tracing. If the service is already running, run
+`t3 service restart` to apply the change. See [T3 Code settings](installation-reference.md#t3-code)
+for standalone desktop and foreground CLI launches.
+
 ## Refresh or remove links
 
 After deleting resources from the checkout, run `install` again to remove stale
@@ -75,8 +82,8 @@ spellbook uninstall
 ```
 
 Uninstall removes only resource links that point into this checkout, including
-broken links. It preserves unrelated files and links, and leaves Claude's and
-Pi's codemode preferences in place.
+broken links. It preserves unrelated files and links, and leaves the Code Mode
+preferences and the T3 Code service telemetry opt-out in place.
 
 ## Use command shortcuts
 

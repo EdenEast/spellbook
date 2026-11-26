@@ -76,9 +76,8 @@ removes resource links but leaves the codemode preferences in place. Pi project
 settings and command-line options can still override its user-level default.
 Claude's configured preference does not establish runtime availability.
 
-When no resources exist and neither Claude nor Pi is selected, the installer
-creates no agent directories. It does not change credentials or install agent executables.
-This settings behavior applies to the checkout installer, not Home Manager.
+The installer does not change credentials or install agent executables.
+These settings changes apply to the checkout installer, not Home Manager.
 
 ## Agent documentation
 
@@ -88,6 +87,26 @@ These upstream pages describe instruction files and skill discovery:
 - [Claude Code instructions](https://code.claude.com/docs/en/memory).
 
 ## T3 Code
+
+### Background service privacy
+
+Regardless of the selected harness, `install` sets `T3CODE_TELEMETRY_ENABLED=false`
+in `~/.t3/service.env`, or in `$T3CODE_HOME/service.env` if `T3CODE_HOME` is set.
+It creates the file if needed and preserves existing entries. If telemetry was
+explicitly enabled, the appended setting takes precedence. A symlink or other
+non-regular file at that path stops installation before any links change.
+
+`status` checks the saved setting, not the running service. Dry runs do not
+write it, and `uninstall` leaves the opt-out in place. Run `t3 service restart`
+if the service is already running.
+
+This disables product analytics and T3 Connect relay tracing for the background
+service. The installer does not change shell profiles. For standalone desktop or
+foreground CLI launches, set `T3CODE_TELEMETRY_ENABLED=false` in their environment
+and restart. Mobile diagnostics and any OpenTelemetry endpoints you configured
+are separate. See [T3 Code’s telemetry documentation](https://github.com/pingdotgg/t3code/blob/571d187ce5a5419edb2b877ee7fa97f2650f3873/docs/user/telemetry.md).
+
+### Skill discovery
 
 Install for the harness and execution account used by the T3 backend: select
 `--target codex` for Codex or `--target claude` for Claude Code. T3 Code is not a

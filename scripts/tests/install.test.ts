@@ -3,6 +3,7 @@ import { mkdir, mkdtemp, readFile, readdir, readlink, rm, symlink, writeFile } f
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
+import { parseEnv } from "node:util";
 import type { TestContext } from "node:test";
 import { plan, run } from "../install.ts";
 import type { Options } from "../install.ts";
@@ -151,12 +152,16 @@ test("deleted global instructions leave stale links that install and uninstall r
   assert.deepEqual(await plan(options), []);
 });
 
-test("empty collections create settings only for selected Claude and Pi targets on install", async (t) => {
+test("empty collections configure T3 service telemetry and only the selected Code Mode settings", async (t) => {
   const options = await fixture(t);
   await writeFile(join(options.root, "pi/extensions/.gitkeep"), "");
   for (const action of ["status", "uninstall"] as const) await run(action, options);
-  await run("install", { ...options, targets: ["codex"] });
   assert.deepEqual(await readdir(options.home), []);
+  await run("install", { ...options, targets: ["codex"] });
+  assert.deepEqual(await readdir(options.home), [".t3"]);
+  assert.deepEqual(parseEnv(await readFile(join(options.home, ".t3/service.env"), "utf8")), {
+    T3CODE_TELEMETRY_ENABLED: "false",
+  });
   await run("install", options);
   assert.deepEqual(JSON.parse(await readFile(join(options.home, ".pi/agent/settings.json"), "utf8")), {
     defaultTools: ["+codemode"],
@@ -164,6 +169,56 @@ test("empty collections create settings only for selected Claude and Pi targets 
   assert.deepEqual(JSON.parse(await readFile(join(options.home, ".claude/settings.json"), "utf8")), {
     env: { CLAUDE_CODE_EXPERIMENTAL_CODE_MODE: "1" },
   });
+});
+
+test("T3 service opt-out preserves other settings and survives reinstall and uninstall", async (t) => {
+  const options = await fixture(t);
+  const directory = join(options.home, ".t3");
+  const path = join(directory, "service.env");
+  const original = '# user configuration\r\nT3CODE_PORT=3773\r\nexport T3CODE_TELEMETRY_ENABLED="true" # old choice';
+  await mkdir(directory);
+  await writeFile(path, original);
+  const logs: string[] = [];
+  options.log = (message) => logs.push(message);
+  await run("status", options);
+  assert.ok(logs.includes(`T3 Code service telemetry opt-out not configured: ${path}`));
+  await run("install", { ...options, dryRun: true });
+  assert.ok(logs.includes(`DRY RUN disable T3 Code service telemetry: ${path}`));
+  assert.equal(await readFile(path, "utf8"), original);
+
+  await run("install", options);
+  const configured = await readFile(path, "utf8");
+  assert.ok(configured.startsWith(original));
+  assert.deepEqual(parseEnv(configured), { T3CODE_PORT: "3773", T3CODE_TELEMETRY_ENABLED: "false" });
+  await run("status", options);
+  assert.ok(logs.includes(`T3 Code service telemetry opt-out configured: ${path}`));
+  await run("install", options);
+  await run("uninstall", options);
+  assert.equal(await readFile(path, "utf8"), configured);
+});
+
+test("a conflicting T3 service environment file stops installation without following the link", async (t) => {
+  const options = await fixture(t);
+  await instructions(options);
+  const directory = join(options.home, ".t3");
+  const foreign = join(options.root, "foreign.env");
+  await writeFile(foreign, "T3CODE_PORT=3773\n");
+  await mkdir(directory);
+  await symlink(foreign, join(directory, "service.env"), "file");
+  await assert.rejects(run("install", options), /Expected a regular T3 Code service environment file/);
+  assert.equal(await readFile(foreign, "utf8"), "T3CODE_PORT=3773\n");
+  assert.deepEqual(await readdir(options.home), [".t3"]);
+});
+
+test("the CLI applies the opt-out to T3CODE_HOME when set", async (t) => {
+  const { home } = await fixture(t);
+  const executable = join(import.meta.dirname, "..", "spellbook.ts");
+  const result = spawnSync(process.execPath, [executable, "install", "--target", "codex"], {
+    env: { ...process.env, HOME: home, USERPROFILE: home, T3CODE_HOME: "~/custom-t3" }, encoding: "utf8",
+  });
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(parseEnv(await readFile(join(home, "custom-t3/service.env"), "utf8")).T3CODE_TELEMETRY_ENABLED, "false");
+  assert.ok(!(await readdir(home)).includes(".t3"));
 });
 
 test("Pi extensions install supported entry points and remove broken owned links", async (t) => {
